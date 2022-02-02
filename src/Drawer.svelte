@@ -1,0 +1,99 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/>
+
+<script lang="ts">
+    import Drawer, {
+        Content,
+        Header,
+        Title,
+    } from '@smui/drawer';
+    import List, { Item, Text, Graphic } from '@smui/list';
+
+    import "@smui/drawer/bare.css";
+    import "@smui/button/bare.css";
+    import "@smui/list/bare.css";
+
+    import { navigate } from "svelte-routing";
+
+    let open = true;
+
+    export let active;
+</script>
+
+    <!-- Don't include fixed={false} if this is a page wide drawer.
+          It adds a style for absolute positioning. -->
+    <Drawer variant="dismissible" fixed={true} bind:open>
+        <Header>
+            <Title>MeetPlan</Title>
+        </Header>
+        <Content>
+            <List>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate('/')}
+                        activated={active === 'pregled'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+                    <Text>Pregled</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate('/samotestiranje')}
+                        activated={active === 'samotestiranje'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
+                    <Text>Samotestiranje</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate('/mojrazred')}
+                        activated={active === 'mojrazred'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                    <Text>Moj razred</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate('/mojipredmeti')}
+                        activated={active === 'mojipredmeti'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">library_books</Graphic>
+                    <Text>Moji predmeti</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate('/redovalnica')}
+                        activated={active === 'redovalnica'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
+                    <Text>Redovalnica</Text>
+                </Item>
+            </List>
+        </Content>
+    </Drawer>
+
+<style>
+    /* These classes are only needed because the
+      drawer is in a container on the page. */
+    .drawer-container {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        z-index: 0;
+    }
+
+    * :global(.app-content) {
+        flex: auto;
+        overflow: auto;
+        position: relative;
+        flex-grow: 1;
+    }
+
+    .main-content {
+        overflow: auto;
+        padding: 16px;
+        height: 100%;
+        box-sizing: border-box;
+    }
+</style>
