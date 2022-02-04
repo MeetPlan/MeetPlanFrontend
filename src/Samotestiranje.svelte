@@ -24,13 +24,13 @@
     let classId = "";
 
     async function getClasses() {
-        let response = await fetch("http://127.0.0.1:8000/classes/get")
+        let response = await fetch("http://127.0.0.1:8000/classes/get", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         const r = await response.json();
         classes = r["data"];
     }
 
     async function makeRequest(c: number) {
-        let response = await fetch("http://127.0.0.1:8000/class/get/" + c + "/self_testing")
+        let response = await fetch("http://127.0.0.1:8000/class/get/" + c + "/self_testing", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         const r = await response.json();
         options = r["data"];
     }

@@ -30,9 +30,18 @@
     import List, { Item, Text, Graphic } from '@smui/list';
     import { navigate } from "svelte-routing";
 
-    let open = true;
+    import jwt_decode, { JwtPayload } from "jwt-decode";
 
-    export let active;
+    const token = localStorage.getItem("key");
+    if (token === null || token === undefined) {
+        navigate("/login");
+    }
+
+    const decoded = jwt_decode<JwtPayload>(token);
+
+    let open: boolean = true;
+
+    export let active: string;
 </script>
 
     <!-- Don't include fixed={false} if this is a page wide drawer.
@@ -59,30 +68,50 @@
                     <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                     <Text>Samotestiranje</Text>
                 </Item>
-                <Item
-                        href="javascript:void(0)"
-                        on:click={() => navigate('/mojrazred')}
-                        activated={active === 'mojrazred'}
-                >
-                    <Graphic class="material-icons" aria-hidden="true">school</Graphic>
-                    <Text>Moj razred</Text>
-                </Item>
-                <Item
-                        href="javascript:void(0)"
-                        on:click={() => navigate('/mojipredmeti')}
-                        activated={active === 'mojipredmeti'}
-                >
-                    <Graphic class="material-icons" aria-hidden="true">library_books</Graphic>
-                    <Text>Moji predmeti</Text>
-                </Item>
-                <Item
-                        href="javascript:void(0)"
-                        on:click={() => navigate('/redovalnica')}
-                        activated={active === 'redovalnica'}
-                >
-                    <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
-                    <Text>Redovalnica</Text>
-                </Item>
+                {#if decoded["role"] === "teacher"}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/mojrazred')}
+                            activated={active === 'mojrazred'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                        <Text>Moj razred</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/mojipredmeti')}
+                            activated={active === 'mojipredmeti'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">library_books</Graphic>
+                        <Text>Moji predmeti</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/redovalnica')}
+                            activated={active === 'redovalnica'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
+                        <Text>Redovalnica</Text>
+                    </Item>
+                {/if}
+                {#if decoded["role"] === "admin"}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/users')}
+                            activated={active === 'users'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">people</Graphic>
+                        <Text>Vsi uporabniki</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/classes')}
+                            activated={active === 'classes'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                        <Text>Vsi razredi</Text>
+                    </Item>
+                {/if}
             </List>
         </Content>
     </Drawer>

@@ -3,6 +3,10 @@
 	import Samotestiranje from "./Samotestiranje.svelte";
 	import Home from "./Home.svelte";
 	import Login from "./Login.svelte";
+	import Register from "./register.svelte";
+	import Users from "./Admin/Users.svelte";
+	import Classes from "./Classes.svelte";
+	import User from "./User.svelte";
 
 	export let url = "";
 </script>
@@ -12,6 +16,12 @@
 		<div>
 			<Route path="/samotestiranje" component="{Samotestiranje}" />
 			<Route path="/login" component="{Login}" />
+			<Route path="/register" component="{Register}" />
+			<Route path="/users" component="{Users}" />
+			<Route path="/user/:id" let:params >
+				<User id="{params.id}" />
+			</Route>
+			<Route path="/classes" component="{Classes}" />
 			<Route path="/"><Home /></Route>
 		</div>
 	</Router>
