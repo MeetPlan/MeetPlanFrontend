@@ -11,52 +11,90 @@
         SecondaryText,
     } from '@smui/list';
 
+    import IconButton from "@smui/button";
+
+    import Select, {Option} from "@smui/select";
+
     import Tipi from "./Samotestiranje/Tipi.svelte";
+    import {onMount} from "svelte";
+    import {to_number} from "svelte/internal";
 
-    let options = [
-        {
-            name: 'Bruce Willis',
-            description: 'Actor',
-        },
-        {
-            name: 'Austin Powers',
-            description: 'Fictional Character',
-        },
-        {
-            name: 'Thomas Edison',
-            description: 'Inventor',
-        },
-        {
-            name: 'Stephen Hawking',
-            description: 'Scientist',
-        },
-    ];
+    let options;
+    let classes = [];
+    let classId = "";
 
+    async function getClasses() {
+        let response = await fetch("http://127.0.0.1:8000/classes/get")
+        const r = await response.json();
+        classes = r["data"];
+    }
+
+    async function makeRequest(c: number) {
+        let response = await fetch("http://127.0.0.1:8000/class/get/" + c + "/self_testing")
+        const r = await response.json();
+        options = r["data"];
+    }
+
+    onMount(async () => {
+        if (classId !== "") {
+            await makeRequest(to_number(classId))
+        } else {
+            await getClasses()
+        }
+    });
 </script>
 
 <Drawer active="samotestiranje" />
 <AppContent class="app-content">
     <main class="main-content">
         <div>
-            <List
-                    twoLine
-                    avatarList
-                    singleSelection
-            >
-                {#each options as item}
-                    <Item>
-                        <Graphic
-                                style="background-image: url(https://place-hold.it/40x40?text={item.name.split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
-                        />
-                        <Text>
-                            <PrimaryText>{item.name}</PrimaryText>
-                            <SecondaryText>{item.description}</SecondaryText>
-                        </Text>
-                        <Meta><Tipi/></Meta>
-                    </Item>
+            <div class="columns margins" style="justify-content: flex-start; width: 100px;">
+                <Select bind:classId label="Izberite razred" variant="outlined">
+                    <Option value="" on:click={() => options = undefined}/>
+                    {#each classes as c}
+                        <Option on:click={async () => {await makeRequest(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+                    {/each}
+                </Select>
+            </div>
+            {#if options !== undefined}
+                <List
+                        twoLine
+                        avatarList
+                        singleSelection
+                >
+                    {#each options as item}
+                        <Item>
+                            <Graphic
+                                    style="background-image: url(https://place-hold.it/40x40?text={item['UserName'].split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
+                            />
+                            <Text>
+                                <PrimaryText>{item["UserName"]}</PrimaryText>
+                                <SecondaryText>{item["IsDone"] ? "Je opravil testiranje" : "Ni opravil testiranja"}</SecondaryText>
+                            </Text>
+                            <Meta>
+                                <Tipi selected={item["Result"]} userId={item["UserID"]} onSelect={async () => {await makeRequest(item["ClassID"])}} />
+                            </Meta>
+                            <Meta>
+                                {#if item["IsDone"] && item["Result"] !== "SE NE TESTIRA"}
+                                    <IconButton class="material-icons" on:click={() => {
+                                        fetch("http://127.0.0.1:8000/user/self_testing/get_results/pdf/" + item["ID"], {})
+                                            .then((response) => response.blob())
+                                            .then((blob) => {
+                                              var _url = window.URL.createObjectURL(blob);
+                                              window.open(_url, "_blank").focus();
+                                          }).catch((err) => {
+                                            console.log(err);
+                                          });
+                                    }}>download</IconButton>
+                                {:else}
+                                    <div></div>
+                                {/if}
+                            </Meta>
+                        </Item>
 
-                {/each}
-            </List>
+                    {/each}
+                </List>
+            {/if}
         </div>
     </main>
 </AppContent>

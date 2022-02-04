@@ -1,6 +1,25 @@
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+
+<svelte:head>
+    <!-- Fonts -->
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,600,700"
+    />
+
+    <!-- Material Typography -->
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/@material/typography@13.0.0/dist/mdc.typography.css"
+    />
+
+    <!-- SMUI -->
+    <link rel="stylesheet" href="https://unpkg.com/svelte-material-ui/bare.css" />
+</svelte:head>
 
 <script lang="ts">
     import Drawer, {
@@ -9,11 +28,6 @@
         Title,
     } from '@smui/drawer';
     import List, { Item, Text, Graphic } from '@smui/list';
-
-    import "@smui/drawer/bare.css";
-    import "@smui/button/bare.css";
-    import "@smui/list/bare.css";
-
     import { navigate } from "svelte-routing";
 
     let open = true;

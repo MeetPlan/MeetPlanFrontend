@@ -2,17 +2,28 @@
     import SegmentedButton, {Segment} from "@smui/segmented-button";
     import { Label } from '@smui/common';
 
-    import "@smui/segmented-button/bare.css";
-
     let choices = ['SE NE TESTIRA', 'NEGATIVEN', 'POZITIVEN', 'NEVELJAVEN'];
 
-    let selected = '';
+    export let selected: string;
+    export let userId: number;
+    export let onSelect;
 </script>
 
 <div class="columns margins">
     <SegmentedButton segments={choices} let:segment singleSelect bind:selected>
         <!-- Note: the `segment` property is required! -->
-        <Segment {segment}>
+        <Segment {segment} on:click={() => {
+            let formData = new FormData();
+            formData.append("result", segment)
+
+            fetch("http://127.0.0.1:8000/user/self_testing/patch/" + userId, {method: "PATCH", body: formData}).then((response) => {
+                return response.json()
+            }).then((response) => {
+                console.log(response);
+                selected = response["data"]["Result"];
+                onSelect();
+            })
+        }}>
             <Label>{segment}</Label>
         </Segment>
     </SegmentedButton>
