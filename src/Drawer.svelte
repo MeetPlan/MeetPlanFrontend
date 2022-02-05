@@ -69,7 +69,7 @@
                     <Text>Samotestiranje</Text>
                 </Item>
                 {#if decoded["role"] === "teacher"}
-                    <Item
+                    <!--<Item
                             href="javascript:void(0)"
                             on:click={() => navigate('/mojrazred')}
                             activated={active === 'mojrazred'}
@@ -92,7 +92,7 @@
                     >
                         <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
                         <Text>Redovalnica</Text>
-                    </Item>
+                    </Item>-->
                 {/if}
                 {#if decoded["role"] === "admin"}
                     <Item
