@@ -52,7 +52,10 @@
                 <Select bind:classId label="Izberite razred" variant="outlined">
                     <Option value="" on:click={() => options = undefined}/>
                     {#each classes as c}
-                        <Option on:click={async () => {await makeRequest(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+                        <Option on:click={async () => {
+                            await makeRequest(c["ID"]);
+                            classId = c["ID"];
+                        }} value={c["ID"]}>{c["Name"]}</Option>
                     {/each}
                 </Select>
             </div>
@@ -72,12 +75,12 @@
                                 <SecondaryText>{item["IsDone"] ? "Je opravil testiranje" : "Ni opravil testiranja"}</SecondaryText>
                             </Text>
                             <Meta>
-                                <Tipi selected={item["Result"]} userId={item["UserID"]} onSelect={async () => {await makeRequest(item["ClassID"])}} />
+                                <Tipi selected={item["Result"]} userId={item["UserID"]} onSelect={async () => {await makeRequest(item["ClassID"])}} classId="{classId}" />
                             </Meta>
                             <Meta>
                                 {#if item["IsDone"] && item["Result"] !== "SE NE TESTIRA"}
                                     <IconButton class="material-icons" on:click={() => {
-                                        fetch("http://127.0.0.1:8000/user/self_testing/get_results/pdf/" + item["ID"], {})
+                                        fetch("http://127.0.0.1:8000/user/self_testing/get_results/pdf/" + item["ID"], {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                                             .then((response) => response.blob())
                                             .then((blob) => {
                                               var _url = window.URL.createObjectURL(blob);

@@ -47,24 +47,23 @@
                     <Cell>Email</Cell>
                     <Cell>Change role</Cell>
                     <Cell>Delete user</Cell>
+                    <Cell>View</Cell>
                 </Row>
             </Head>
             <Body>
             {#each items as item}
-                <Row on:click={() => {
-                    navigate("/user/" + item["ID"])
-                }}>
+                <Row>
                     <Cell numeric>{item["ID"]}</Cell>
                     <Cell>{item["Name"]}</Cell>
                     <Cell>{item["Email"]}</Cell>
                     <Cell>
                         {#if decoded["email"] !== item["Email"]}
-                            <SegmentedButton segments={choices} let:segment singleSelect on:change={(val) => {
-                                val.stopPropagation();
-                                console.log(val);
+                            <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
+                                e.stopPropagation();
+                                console.log(e);
 
                                 let fd = new FormData();
-                                fd.append("role", val.detail.segmentId);
+                                fd.append("role", e.detail.segmentId);
 
                                 fetch('http://127.0.0.1:8000/user/role/update/' + item["ID"], {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
@@ -86,8 +85,8 @@
                     </Cell>
                     <Cell>
                         {#if decoded["email"] !== item["Email"]}
-                            <IconButton class="material-icons" on:click={(val) => {
-                                val.stopPropagation();
+                            <IconButton class="material-icons" on:click={(e) => {
+                                e.stopPropagation();
                                 fetch('http://127.0.0.1:8000/user/delete/' + item["ID"], {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
                                     method: "DELETE"
@@ -99,6 +98,12 @@
                                     );
                             }}>delete</IconButton>
                         {/if}
+                    </Cell>
+                    <Cell>
+                        <IconButton class="material-icons" on:click={(e) => {
+                            e.stopPropagation();
+                            navigate("/user/" + item["ID"])
+                        }}>info</IconButton>
                     </Cell>
                 </Row>
             {/each}

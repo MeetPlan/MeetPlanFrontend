@@ -4,6 +4,7 @@
 
     let choices = ['SE NE TESTIRA', 'NEGATIVEN', 'POZITIVEN', 'NEVELJAVEN'];
 
+    export let classId: string;
     export let selected: string;
     export let userId: number;
     export let onSelect;
@@ -16,7 +17,7 @@
             let formData = new FormData();
             formData.append("result", segment)
 
-            fetch("http://127.0.0.1:8000/user/self_testing/patch/" + userId, {method: "PATCH", body: formData}).then((response) => {
+            fetch("http://127.0.0.1:8000/user/self_testing/patch/" + classId + "/" + userId, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + localStorage.getItem("key")}}).then((response) => {
                 return response.json()
             }).then((response) => {
                 console.log(response);

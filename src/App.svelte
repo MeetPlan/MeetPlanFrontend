@@ -7,6 +7,7 @@
 	import Users from "./Admin/Users.svelte";
 	import Classes from "./Classes.svelte";
 	import User from "./User.svelte";
+	import Class from "./Class.svelte";
 
 	export let url = "";
 </script>
@@ -20,6 +21,9 @@
 			<Route path="/users" component="{Users}" />
 			<Route path="/user/:id" let:params >
 				<User id="{params.id}" />
+			</Route>
+			<Route path="/class/:id" let:params >
+				<Class id="{params.id}" />
 			</Route>
 			<Route path="/classes" component="{Classes}" />
 			<Route path="/"><Home /></Route>
