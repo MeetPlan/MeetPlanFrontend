@@ -68,6 +68,16 @@
                     <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                     <Text>Samotestiranje</Text>
                 </Item>
+                {#if decoded["role"] === "teacher" || decoded["role"] === "admin"}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/new/meeting')}
+                            activated={active === 'novosrecanje'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">add</Graphic>
+                        <Text>Dodaj srečanje</Text>
+                    </Item>
+                {/if}
                 {#if decoded["role"] === "teacher"}
                     <!--<Item
                             href="javascript:void(0)"

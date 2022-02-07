@@ -76,7 +76,7 @@
         <Select bind:teacherId label="Izberite razrednika" variant="outlined">
             <Option value=""/>
             {#each teachers as c}
-                <Option value={c["ID"]}>{c["Name"]}</Option>
+                <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
             {/each}
         </Select>
         <Button on:click={() => newClass()} variant="raised">

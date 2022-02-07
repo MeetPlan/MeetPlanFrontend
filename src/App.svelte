@@ -8,6 +8,8 @@
 	import Classes from "./Classes.svelte";
 	import User from "./User.svelte";
 	import Class from "./Class.svelte";
+	import NewMeeting from "./NewMeeting.svelte";
+	import Meeting from "./Meeting.svelte";
 
 	export let url = "";
 </script>
@@ -19,8 +21,15 @@
 			<Route path="/login" component="{Login}" />
 			<Route path="/register" component="{Register}" />
 			<Route path="/users" component="{Users}" />
+			<Route path="/new/meeting" component="{NewMeeting}" />
 			<Route path="/user/:id" let:params >
 				<User id="{params.id}" />
+			</Route>
+			<Route path="/edit/:id" let:params >
+				<NewMeeting editId="{params.id}" />
+			</Route>
+			<Route path="/meeting/:id" let:params >
+				<Meeting meetingId="{params.id}" />
 			</Route>
 			<Route path="/class/:id" let:params >
 				<Class id="{params.id}" />

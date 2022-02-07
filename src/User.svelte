@@ -46,14 +46,14 @@
 <Drawer active="user" />
 <AppContent class="app-content">
     <main class="main-content">
-        <h2>Dodaj kot razrednika v razred:</h2>
+        <h2>Dodaj učenca v razred:</h2>
         <Select bind:classId label="Izberite razred" variant="outlined">
             <Option value=""/>
             {#each classes as c}
                 <Option on:click={() => {assignToClass(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
             {/each}
         </Select>
-        <h2>Razredi, v katerih je uporabnik razrednik:</h2>
+        <h2>Razredi, v katere je učenec dodan:</h2>
         <List class="demo-list">
             {#each myClasses as item}
                 <Item>
