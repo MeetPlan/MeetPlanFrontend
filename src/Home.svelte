@@ -43,7 +43,10 @@
             <Option value="" on:click={() => classId = ""}/>
             {#each items as c}
                 <Option on:click={async () => {
-                    classId = c["ID"];
+                    classId = "";
+                    setTimeout(() => {
+                        classId = c["ID"];
+                    }, 100);
                 }} value={c["ID"]}>{c["Name"]}</Option>
             {/each}
         </Select>
