@@ -7,6 +7,8 @@
 
     import {onMount} from "svelte";
 
+    import {baseurl} from "./constants";
+
     let myClasses;
     let students;
     let classId = "";
@@ -14,19 +16,19 @@
     export let id: number;
 
     async function getClass() {
-        let response = await fetch("http://127.0.0.1:8000/class/get/" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         let r = await response.json();
         students = r["data"];
     }
 
     function assignToClass(cid: string) {
-        fetch("http://127.0.0.1:8000/class/get/" + cid + "/add_user/" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
 
     function deleteFromClass(cid: string) {
-        fetch("http://127.0.0.1:8000/class/get/" + cid + "/remove_user/" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getClass());
     }

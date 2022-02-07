@@ -3,6 +3,7 @@
     import {AppContent} from "@smui/drawer";
 
     import Button, {Icon, Label} from "@smui/button";
+    import {baseurl} from "../constants";
 
     import {onMount} from "svelte";
 
@@ -10,7 +11,7 @@
     let classId = "";
 
     async function getTestings() {
-        let response = await fetch("http://127.0.0.1:8000/user/self_testing/get_results", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/user/self_testing/get_results`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         const r = await response.json();
         testings = r["data"];
     }
@@ -34,7 +35,7 @@
             Rezultat: <b>{test.Result}</b>
             <p />
             <Button on:click={() => {
-                fetch("http://127.0.0.1:8000/user/self_testing/get_results/pdf/" + test["ID"], {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
                     .then((blob) => {
                       var _url = window.URL.createObjectURL(blob);

@@ -11,6 +11,8 @@
         SecondaryText,
     } from '@smui/list';
 
+    import {baseurl} from "./constants";
+
     import IconButton from "@smui/button";
 
     import Select, {Option} from "@smui/select";
@@ -36,13 +38,13 @@
     let classId = "";
 
     async function getClasses() {
-        let response = await fetch("http://127.0.0.1:8000/classes/get", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         const r = await response.json();
         classes = r["data"];
     }
 
     async function makeRequest(c: number) {
-        let response = await fetch("http://127.0.0.1:8000/class/get/" + c + "/self_testing", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/class/get/${c}/self_testing`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         const r = await response.json();
         options = r["data"];
     }
@@ -93,7 +95,7 @@
                                 <Meta>
                                     {#if item["IsDone"] && item["Result"] !== "SE NE TESTIRA"}
                                         <IconButton class="material-icons" on:click={() => {
-                                            fetch("http://127.0.0.1:8000/user/self_testing/get_results/pdf/" + item["ID"], {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                                            fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                                                 .then((response) => response.blob())
                                                 .then((blob) => {
                                                   var _url = window.URL.createObjectURL(blob);

@@ -2,6 +2,8 @@
     import Drawer from "./Drawer.svelte";
     import {AppContent} from "@smui/drawer";
 
+    import {baseurl} from "./constants";
+
     import Select, {
         Option,
     } from '@smui/select';
@@ -16,25 +18,25 @@
     export let id: number;
 
     function getClasses() {
-        fetch("http://127.0.0.1:8000/classes/get", {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((r) => classes = r["data"]);
     }
 
     function getMyClasses() {
-        fetch("http://127.0.0.1:8000/user/get/classes?id=" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/classes?id=${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((r) => myClasses = r["data"]);
     }
 
     function assignToClass(cid: string) {
-        fetch("http://127.0.0.1:8000/class/get/" + cid + "/add_user/" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getMyClasses());
     }
 
     function deleteFromClass(cid: string) {
-        fetch("http://127.0.0.1:8000/class/get/" + cid + "/remove_user/" + id, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getMyClasses());
     }

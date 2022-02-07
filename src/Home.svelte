@@ -8,6 +8,7 @@
     import Select, {Option} from "@smui/select";
 
     import { navigate } from "svelte-routing";
+    import {baseurl} from "./constants";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -20,7 +21,7 @@
     const decoded = jwt_decode<JwtPayload>(token);
 
     function loadThings() {
-        fetch('http://127.0.0.1:8000' + (decoded["role"] === "student" ? '/user/get/classes' : "/classes/get"), {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/${(decoded["role"] === "student" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];

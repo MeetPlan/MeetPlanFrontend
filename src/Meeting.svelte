@@ -5,19 +5,20 @@
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
+    import {baseurl} from "./constants";
 
     export let meetingId: number;
 
     let meetingData;
 
     function getMeetingData() {
-        fetch("http://127.0.0.1:8000/meeting/get/" + meetingId, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => meetingData = r.data)
     }
 
     function deleteMeeting() {
-        fetch("http://127.0.0.1:8000/meetings/new/" + meetingId, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => navigate("/"))
     }

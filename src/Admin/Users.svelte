@@ -5,6 +5,7 @@
     import LinearProgress from '@smui/linear-progress';
     import SegmentedButton, {Segment, Label} from "@smui/segmented-button";
     import IconButton from "@smui/icon-button";
+    import {baseurl} from "../constants";
 
     let loaded: boolean = false;
     let items = [];
@@ -14,7 +15,7 @@
     function loadThings() {
         loaded = false;
 
-        fetch('http://127.0.0.1:8000/users/get', {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -65,7 +66,7 @@
                                 let fd = new FormData();
                                 fd.append("role", e.detail.segmentId);
 
-                                fetch('http://127.0.0.1:8000/user/role/update/' + item["ID"], {
+                                fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
                                     body: fd,
                                     method: "PATCH"
@@ -87,7 +88,7 @@
                         {#if decoded["email"] !== item["Email"]}
                             <IconButton class="material-icons" on:click={(e) => {
                                 e.stopPropagation();
-                                fetch('http://127.0.0.1:8000/user/delete/' + item["ID"], {
+                                fetch(`${baseurl}/user/delete/${item["ID"]}`, {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
                                     method: "DELETE"
                                 })
@@ -102,7 +103,7 @@
                     <Cell>
                         <IconButton class="material-icons" on:click={(e) => {
                             e.stopPropagation();
-                            navigate("/user/" + item["ID"])
+                            navigate(`/user/${item["ID"]}`)
                         }}>info</IconButton>
                     </Cell>
                 </Row>

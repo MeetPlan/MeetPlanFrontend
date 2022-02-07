@@ -17,12 +17,13 @@
     import Select, {Option} from "@smui/select";
 
     import { navigate } from "svelte-routing";
+    import {baseurl} from "./constants";
 
     let items = [];
     let teachers = [];
 
     function loadThings() {
-        fetch('http://127.0.0.1:8000/classes/get', {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -31,7 +32,7 @@
     }
 
     function getTeachers() {
-        fetch('http://127.0.0.1:8000/teachers/get', {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     teachers = json["data"];
@@ -49,7 +50,7 @@
         let fd = new FormData();
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
-        fetch('http://127.0.0.1:8000/class/new', {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/class/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
                     loadThings();
@@ -58,7 +59,7 @@
     }
 
     function deleteClass(cid: number) {
-        fetch('http://127.0.0.1:8000/class/get/' + cid, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((json) => {
                     loadThings();

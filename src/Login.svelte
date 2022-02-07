@@ -28,6 +28,8 @@
     import Textfield from "@smui/textfield";
     import "@smui/textfield/bare.css";
 
+    import {baseurl} from "./constants";
+
     import Icon from '@smui/textfield/icon';
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
@@ -41,7 +43,7 @@
         fd.append("email", email);
         fd.append("pass", password);
         try {
-            let r = await fetch("http://127.0.0.1:8000/user/login", {body: fd, method: "POST"})
+            let r = await fetch(`${baseurl}/user/login`, {body: fd, method: "POST"})
             let response = await r.json();
             if (response["success"] === true) {
                 localStorage.setItem("key", response["data"]);

@@ -9,6 +9,7 @@
     import Switch from '@smui/switch';
     import Button, {Label} from "@smui/button";
     import Timetable from "./Widgets/Timetable.svelte";
+    import {baseurl} from "./constants";
 
     import {navigate} from "svelte-routing";
 
@@ -43,7 +44,7 @@
     }
 
     function loadThings() {
-        fetch('http://127.0.0.1:8000/classes/get', {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -52,7 +53,7 @@
     }
 
     function getMeetingData() {
-        fetch('http://127.0.0.1:8000/meeting/get/' + editId, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     date = json["data"]["Date"];
@@ -98,7 +99,7 @@
         fd.append("is_grading", isGrading ? "true" : "false")
         fd.append("is_written_assessment", isWrittenAssessment ? "true" : "false")
         fd.append("is_test", isTest ? "true" : "false")
-        fetch("http://127.0.0.1:8000/" + (editId === undefined ? "meetings/new" : "meetings/new/" + editId),
+        fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
             .then((r) => r.json())
             .then((r) => console.log(r))
