@@ -41,7 +41,7 @@
     } from "date-fns";
     import IconButton from "@smui/icon-button";
     import { Link } from "svelte-routing";
-
+    import {baseurl} from "../constants";
 
     export let date: Date = new Date();
     export let hour = -1;
@@ -75,7 +75,7 @@
 
     function getTimetable() {
         console.log(fmtStart, fmtEnd)
-        fetch(`http://127.0.0.1:8000/timetable/get?start=${fmtStart}&end=${fmtEnd}&classId=${classId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&classId=${classId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
                 mon = r["data"][0]["meetings"];
