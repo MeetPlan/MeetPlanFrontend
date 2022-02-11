@@ -23,6 +23,8 @@
     import {onMount} from "svelte";
     import {to_number} from "svelte/internal";
 
+    import { Icon } from '@smui/common';
+
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import { navigate } from "svelte-routing";
 
@@ -61,6 +63,17 @@
 <Drawer active="samotestiranje" />
 {#if decoded.role === "teacher" || decoded.role === "admin"}
     <AppContent class="app-content">
+        <div
+                tabindex="0"
+                style="background-color: #FDD835; padding: 10px;"
+        >
+            <Icon class="material-icons">error</Icon>
+            Te funkcije morda ni možno uporabljati v vaši državi zaradi zakonov o varstvu osebnih podatkov.<br>
+            Države v katerih te funkcije zagotovo ni možno uporabljati:<br>
+            - Slovenija<br>
+            (možno je, da obstajajo tudi druge države, katerih nismo omenili tukaj)<br>
+        </div>
+        <br>
         <main class="main-content">
             <div>
                 <div class="columns margins" style="justify-content: flex-start; width: 100px;">
