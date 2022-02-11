@@ -36,7 +36,7 @@
     const decoded = jwt_decode<JwtPayload>(token);
 </script>
 
-<Drawer active="srecanje" />
+<Drawer active="srecanje" meetingActive={meetingId} />
 <AppContent class="app-content">
     <main class="main-content">
         {#if meetingData !== undefined}

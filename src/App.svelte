@@ -10,6 +10,7 @@
 	import Class from "./Class.svelte";
 	import NewMeeting from "./NewMeeting.svelte";
 	import Meeting from "./Meeting.svelte";
+	import AbsenceManagement from "./AbsenceManagement.svelte"
 
 	export let url = "";
 </script>
@@ -27,6 +28,9 @@
 			</Route>
 			<Route path="/edit/:id" let:params >
 				<NewMeeting editId="{params.id}" />
+			</Route>
+			<Route path="/meeting/:id/absence" let:params >
+				<AbsenceManagement meetingId="{params.id}" />
 			</Route>
 			<Route path="/meeting/:id" let:params >
 				<Meeting meetingId="{params.id}" />
