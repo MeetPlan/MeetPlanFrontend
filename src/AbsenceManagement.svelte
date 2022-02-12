@@ -26,12 +26,13 @@
 
     export let meetingId;
 
-    let choices = ["UNMANAGED", "ABSENT", "PRESENT", "PRESENT ONLINE"];
+    let choices = ["UNMANAGED", "ABSENT", "LATE", "PRESENT", "PRESENT ONLINE"];
     let c = {
         "UNMANAGED": "Še ne urejeno",
         "ABSENT": "Odsoten",
         "PRESENT": "Prisoten",
-        "PRESENT ONLINE": "Prisoten na daljavo"
+        "PRESENT ONLINE": "Prisoten na daljavo",
+        "LATE": "Zamudil",
     }
 
     getStudents();

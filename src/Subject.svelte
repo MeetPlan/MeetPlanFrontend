@@ -49,7 +49,7 @@
     <main class="main-content">
         {#if students !== undefined}
             {#if !students.InheritsClass}
-                <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
+                <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">
                     <Option value="" on:click={() => classId = ""}/>
                     {#each studentsToAdd as c}
                         <Option value={c["ID"]} on:click={() => assignToSubject(c["ID"])}>{c["Name"]}</Option>

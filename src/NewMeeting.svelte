@@ -26,9 +26,7 @@
     let isWrittenAssessment = false;
     let isTest = false;
 
-    let items = [];
     let subjects = [];
-    let classId = "";
     let subjectId = "";
 
     export let editId;
@@ -54,21 +52,12 @@
         return `${dd}-${mm}-${date.getFullYear()}`
     }
 
-    function loadThings() {
-        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    items = json["data"];
-                },
-            );
-    }
-
     function getMeetingData() {
         fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     date = json["data"]["Date"];
-                    classId = json["data"]["ClassID"];
+                    subjectId = json["data"]["SubjectID"];
                     name = json["data"]["MeetingName"];
                     description = json["data"]["Details"];
                     url = json["data"]["URL"];
@@ -100,7 +89,7 @@
         console.log(hour)
         let fd = new FormData()
         console.log(fmtDate(new Date(date)));
-        fd.append("classId", classId);
+        fd.append("subjectId", subjectId);
         fd.append("date", fmtDate(new Date(date)));
         fd.append("name", name);
         fd.append("details", description);
@@ -117,7 +106,6 @@
             .then(() => navigate("/"))
     }
 
-    loadThings();
     getSubjects();
     if (editId !== undefined) {
         getMeetingData();
@@ -127,27 +115,14 @@
 <Drawer active="novosrecanje" />
 <AppContent class="app-content">
     <main class="main-content">
-        {#if classId === ""}
-            <Select bind:subjectId label="Izberite predmet" variant="outlined">
-                <Option value="" on:click={() => subjectId = ""}/>
-                {#each subjects as c}
-                    <Option on:click={async () => {
-                        subjectId = c["ID"];
-                    }} value={c["ID"]}>{c["Name"]}</Option>
-                {/each}
-            </Select>
-        {/if}
-        <p/>
-        {#if subjectId === ""}
-            <Select bind:classId label="Izberite razred" variant="outlined">
-                <Option value="" on:click={() => classId = ""}/>
-                {#each items as c}
-                    <Option on:click={async () => {
-                        classId = c["ID"];
-                    }} value={c["ID"]}>{c["Name"]}</Option>
-                {/each}
-            </Select>
-        {/if}
+        <Select bind:subjectId label="Izberite predmet" variant="outlined">
+            <Option value="" on:click={() => subjectId = ""}/>
+            {#each subjects as c}
+                <Option on:click={async () => {
+                    subjectId = c["ID"];
+                }} value={c["ID"]}>{c["Name"]}</Option>
+            {/each}
+        </Select>
         <p/>
         <Textfield bind:value={date} label="Datum srečanja" type="date" required on:click={() => date = ""}>
             <Icon class="material-icons" slot="leadingIcon">event</Icon>
@@ -161,6 +136,8 @@
                 }}>{h}.</Option>
             {/each}
         </Select>
+        <!--
+        Commented out until I resolve thing with migration to Subjects
         <p/>
         {#if classId !== ""}
             {#if date !== ""}
@@ -173,6 +150,7 @@
                 <Timetable classId={classId} />
             {/if}
         {/if}
+        -->
         <p/>
         <Textfield bind:value={name} label="Ime srečanja" required style="width: 100%;" helperLine$style="width: 100%;">
             <HelperText slot="helper">Izberite poljubno ime srečanja</HelperText>

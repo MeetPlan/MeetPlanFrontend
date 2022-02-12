@@ -13,6 +13,7 @@
 	import AbsenceManagement from "./AbsenceManagement.svelte";
 	import Subjects from "./Subjects.svelte";
 	import Subject from "./Subject.svelte";
+	import SubjectGrades from "./SubjectGrades.svelte";
 
 	export let url = "";
 </script>
@@ -30,6 +31,9 @@
 			</Route>
 			<Route path="/edit/:id" let:params >
 				<NewMeeting editId="{params.id}" />
+			</Route>
+			<Route path="/meeting/:id/grading" let:params >
+				<SubjectGrades meetingId="{params.id}" />
 			</Route>
 			<Route path="/meeting/:id/absence" let:params >
 				<AbsenceManagement meetingId="{params.id}" />

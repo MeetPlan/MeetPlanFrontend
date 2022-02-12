@@ -15,6 +15,7 @@
     "@smui/button": "^6.0.0-beta.13",
     "@smui/common": "^6.0.0-beta.13",
     "@smui/data-table": "^6.0.0-beta.13",
+    "@smui/dialog": "^6.0.0-beta.13",
     "@smui/drawer": "^6.0.0-beta.13",
     "@smui/list": "^6.0.0-beta.13",
     "@smui/ripple": "^6.0.0-beta.13",

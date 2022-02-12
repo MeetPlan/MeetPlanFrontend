@@ -150,6 +150,14 @@
                         <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                         <Text>Prisotnost</Text>
                     </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate(`/meeting/${meetingActive}/grading`)}
+                            activated={active === 'grading'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
+                        <Text>Ocene</Text>
+                    </Item>
                 {/if}
             </List>
         </Content>
