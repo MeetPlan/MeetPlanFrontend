@@ -27,9 +27,20 @@
     let isTest = false;
 
     let items = [];
+    let subjects = [];
     let classId = "";
+    let subjectId = "";
 
     export let editId;
+
+    function getSubjects() {
+        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    subjects = json["data"];
+                },
+            );
+    }
 
     function fmtDate(date: Date): string {
         let dd = date.getDate().toString()
@@ -107,6 +118,7 @@
     }
 
     loadThings();
+    getSubjects();
     if (editId !== undefined) {
         getMeetingData();
     }
@@ -115,14 +127,27 @@
 <Drawer active="novosrecanje" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Select bind:classId label="Izberite razred" variant="outlined">
-            <Option value="" on:click={() => classId = ""}/>
-            {#each items as c}
-                <Option on:click={async () => {
-                    classId = c["ID"];
-                }} value={c["ID"]}>{c["Name"]}</Option>
-            {/each}
-        </Select>
+        {#if classId === ""}
+            <Select bind:subjectId label="Izberite predmet" variant="outlined">
+                <Option value="" on:click={() => subjectId = ""}/>
+                {#each subjects as c}
+                    <Option on:click={async () => {
+                        subjectId = c["ID"];
+                    }} value={c["ID"]}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+        {/if}
+        <p/>
+        {#if subjectId === ""}
+            <Select bind:classId label="Izberite razred" variant="outlined">
+                <Option value="" on:click={() => classId = ""}/>
+                {#each items as c}
+                    <Option on:click={async () => {
+                        classId = c["ID"];
+                    }} value={c["ID"]}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+        {/if}
         <p/>
         <Textfield bind:value={date} label="Datum srečanja" type="date" required on:click={() => date = ""}>
             <Icon class="material-icons" slot="leadingIcon">event</Icon>

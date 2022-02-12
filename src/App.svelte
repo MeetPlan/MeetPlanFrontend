@@ -10,7 +10,9 @@
 	import Class from "./Class.svelte";
 	import NewMeeting from "./NewMeeting.svelte";
 	import Meeting from "./Meeting.svelte";
-	import AbsenceManagement from "./AbsenceManagement.svelte"
+	import AbsenceManagement from "./AbsenceManagement.svelte";
+	import Subjects from "./Subjects.svelte";
+	import Subject from "./Subject.svelte";
 
 	export let url = "";
 </script>
@@ -38,6 +40,10 @@
 			<Route path="/class/:id" let:params >
 				<Class id="{params.id}" />
 			</Route>
+			<Route path="/subject/:id" let:params >
+				<Subject id="{params.id}" />
+			</Route>
+			<Route path="/subjects" component="{Subjects}" />
 			<Route path="/classes" component="{Classes}" />
 			<Route path="/"><Home /></Route>
 		</div>

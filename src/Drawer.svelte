@@ -117,6 +117,14 @@
                         </Item>
                         <Item
                                 href="javascript:void(0)"
+                                on:click={() => navigate('/subjects')}
+                                activated={active === 'subjects'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">subject</Graphic>
+                            <Text>Vsi predmeti</Text>
+                        </Item>
+                        <Item
+                                href="javascript:void(0)"
                                 on:click={() => navigate('/classes')}
                                 activated={active === 'classes'}
                         >
