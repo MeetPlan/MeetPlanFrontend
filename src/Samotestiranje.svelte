@@ -76,17 +76,15 @@
         <br>
         <main class="main-content">
             <div>
-                <div class="columns margins" style="justify-content: flex-start; width: 100px;">
-                    <Select bind:classId label="Izberite razred" variant="outlined">
-                        <Option value="" on:click={() => options = undefined}/>
-                        {#each classes as c}
-                            <Option on:click={async () => {
-                                await makeRequest(c["ID"]);
-                                classId = c["ID"];
-                            }} value={c["ID"]}>{c["Name"]}</Option>
-                        {/each}
-                    </Select>
-                </div>
+                <Select bind:classId label="Izberite razred">
+                    <Option value="" on:click={() => options = undefined}/>
+                    {#each classes as c}
+                        <Option on:click={async () => {
+                            await makeRequest(c["ID"]);
+                            classId = c["ID"];
+                        }} value={c["ID"]}>{c["Name"]}</Option>
+                    {/each}
+                </Select>
                 {#if options !== undefined}
                     <List
                             twoLine
