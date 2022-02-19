@@ -14,6 +14,7 @@
 	import Subjects from "./Subjects.svelte";
 	import Subject from "./Subject.svelte";
 	import SubjectGrades from "./SubjectGrades.svelte";
+	import Homework from "./Homework.svelte";
 
 	export let url = "";
 </script>
@@ -37,6 +38,9 @@
 			</Route>
 			<Route path="/meeting/:id/absence" let:params >
 				<AbsenceManagement meetingId="{params.id}" />
+			</Route>
+			<Route path="/meeting/:id/homework" let:params >
+				<Homework meetingId="{params.id}" />
 			</Route>
 			<Route path="/meeting/:id" let:params >
 				<Meeting meetingId="{params.id}" />

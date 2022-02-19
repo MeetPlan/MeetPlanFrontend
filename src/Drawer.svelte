@@ -135,6 +135,14 @@
                         <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
                         <Text>Ocene</Text>
                     </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate(`/meeting/${meetingActive}/homework`)}
+                            activated={active === 'homework'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">assignment</Graphic>
+                        <Text>Domača naloga</Text>
+                    </Item>
                 {/if}
             </List>
         </Content>

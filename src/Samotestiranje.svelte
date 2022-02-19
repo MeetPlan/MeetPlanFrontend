@@ -17,6 +17,8 @@
 
     import Select, {Option} from "@smui/select";
 
+    import Avatar from "svelte-avatar";
+
     import SamotestiranjeUcenec from "./Samotestiranje/PogledUcenec.svelte";
 
     import Tipi from "./Samotestiranje/Tipi.svelte";
@@ -93,9 +95,7 @@
                     >
                         {#each options as item}
                             <Item>
-                                <Graphic
-                                        style="background-image: url(https://place-hold.it/40x40?text={item['UserName'].split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
-                                />
+                                <Avatar name={item["UserName"]}/><div style="width: 15px;"/>
                                 <Text>
                                     <PrimaryText>{item["UserName"]}</PrimaryText>
                                     <SecondaryText>{item["IsDone"] ? "Je opravil testiranje" : "Ni opravil testiranja"}</SecondaryText>

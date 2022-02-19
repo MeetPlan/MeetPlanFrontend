@@ -7,6 +7,8 @@
 
     import Select, {Option} from "@smui/select";
 
+    import Avatar from "svelte-avatar";
+
     import {baseurl} from "./constants";
 
     let myClasses;
@@ -59,9 +61,7 @@
             <h2>Učitelj:</h2>
             <List class="demo-list" twoLine avatarList>
                 <Item>
-                    <Graphic
-                            style="background-image: url(https://place-hold.it/40x40?text={students.TeacherName.split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
-                    />
+                    <Avatar name={students.TeacherName}/><div style="width: 15px;"/>
                     <TextList>
                         <PrimaryText>{students.TeacherName}</PrimaryText>
                     </TextList>
@@ -71,9 +71,7 @@
             <List class="demo-list" twoLine avatarList>
                 {#each students.User as item}
                     <Item>
-                        <Graphic
-                                style="background-image: url(https://place-hold.it/40x40?text={item.Name.split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
-                        />
+                        <Avatar name={item.Name}/><div style="width: 15px;"/>
                         <TextList>
                             <PrimaryText>{item.Name}</PrimaryText>
                         </TextList>

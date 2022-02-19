@@ -11,6 +11,8 @@
         SecondaryText,
     } from '@smui/list';
 
+    import Avatar from "svelte-avatar";
+
     import {baseurl} from "./constants";
 
     import SegmentedButton, {Segment} from "@smui/segmented-button";
@@ -49,9 +51,7 @@
             >
                 {#each absences as item}
                     <Item>
-                        <Graphic
-                                style="background-image: url(https://place-hold.it/40x40?text={item['UserName'].split(' ').map((val) => val.substring(0, 1)).join('')}&fontsize=16);"
-                        />
+                        <Avatar name={item["UserName"]}/><div style="width: 15px;"/>
                         <Text>
                             <PrimaryText>{item["UserName"]}</PrimaryText>
                             <SecondaryText>Vpisal {item["TeacherName"]}</SecondaryText>

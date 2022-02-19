@@ -6,6 +6,7 @@
 
 <script lang="ts">
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
+    import {Meta} from "@smui/list";
     import {baseurl} from "../constants";
 
     import Dialog, { Title, Content, Actions } from '@smui/dialog';
@@ -165,6 +166,7 @@
                         <Cell on:click={() => {
                             selectedPeriod = i + 1;
                             userId = user.ID;
+                            toPatch = undefined;
                             open = true;
                         }}>
                             <div class="sameline">
@@ -180,6 +182,7 @@
                                     }}>{grade.Grade}</div>
                                     <div style="display:inline-block; width: 5px;"/>
                                 {/each}
+                                <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
                             </div>
                         </Cell>
                     {/each}

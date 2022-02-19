@@ -7,12 +7,12 @@
     import Timetable from "./Widgets/Timetable.svelte";
     import Select, {Option} from "@smui/select";
 
-    import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
-        navigate("/login");
+        localStorage.clear();
+        window.location.href = "/login";
     }
 
     let items = [];
@@ -22,11 +22,21 @@
 
     function loadThings() {
         fetch(`${baseurl}/${(decoded["role"] === "student" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => {
+                if (response.ok) {
+                    return response
+                }
+                throw Error("invalid request")
+            })
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
                 },
-            );
+            ).catch((e) => {
+                console.log(e)
+                localStorage.clear();
+                window.location.href = "/login";
+        });
     }
 
     loadThings()
