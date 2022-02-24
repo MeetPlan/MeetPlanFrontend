@@ -44,14 +44,15 @@
     import {baseurl} from "../constants";
 
     export let date: Date = new Date();
+    let currentDate = new Date(date);
     export let hour = -1;
 
-    let start: Date = startOfWeek(date, {weekStartsOn: 1})
-    let end: Date = endOfWeek(date, {weekStartsOn: 1})
+    let start: Date = startOfWeek(currentDate, {weekStartsOn: 1})
+    let end: Date = endOfWeek(currentDate, {weekStartsOn: 1})
 
     function remakeCalendar() {
-        start = startOfWeek(date, {weekStartsOn: 1})
-        end = endOfWeek(date, {weekStartsOn: 1})
+        start = startOfWeek(currentDate, {weekStartsOn: 1})
+        end = endOfWeek(currentDate, {weekStartsOn: 1})
         fmtStart = fmtDate(start);
         fmtEnd = fmtDate(end);
     }
@@ -72,10 +73,11 @@
     let fmtEnd: string = fmtDate(end);
 
     export let classId: number;
+    export let subjectId: number;
 
     function getTimetable() {
         console.log(fmtStart, fmtEnd)
-        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&classId=${classId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? `classId=${classId}` : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
                 mon = r["data"][0]["meetings"];
@@ -84,13 +86,12 @@
                 thu = r["data"][3]["meetings"];
                 fri = r["data"][4]["meetings"];
                 sat = r["data"][5]["meetings"];
-                let d = [];
+                dates = [];
                 for (let i in r["data"]) {
                     i = r["data"][i]
-                    d.push(i["date"])
+                    dates.push(i["date"])
                 }
-                console.log(d)
-                dates = d;
+                console.log(dates)
             });
     }
     const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -106,12 +107,12 @@
 </script>
 
 <IconButton class="material-icons" on:click={() => {
-    date.setDate(date.getDate() - 7);
+    currentDate.setDate(currentDate.getDate() - 7);
     remakeCalendar();
     getTimetable();
 }}>arrow_back</IconButton>
 <IconButton class="material-icons" on:click={() => {
-    date.setDate(date.getDate() + 7);
+    currentDate.setDate(currentDate.getDate() + 7);
     remakeCalendar();
     getTimetable();
 }}>arrow_forward</IconButton>

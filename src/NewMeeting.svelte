@@ -136,21 +136,18 @@
                 }}>{h}.</Option>
             {/each}
         </Select>
-        <!--
-        Commented out until I resolve thing with migration to Subjects
         <p/>
-        {#if classId !== ""}
+        {#if subjectId !== ""}
             {#if date !== ""}
                 {#if hour !== undefined}
-                    <Timetable classId={classId} date={new Date(date)} hour={hour} />
+                    <Timetable subjectId={subjectId} date={new Date(date)} hour={hour} />
                 {:else}
-                    <Timetable classId={classId} date={new Date(date)} />
+                    <Timetable subjectId={subjectId} date={new Date(date)} />
                 {/if}
             {:else}
-                <Timetable classId={classId} />
+                <Timetable subjectId={subjectId} />
             {/if}
         {/if}
-        -->
         <p/>
         <Textfield bind:value={name} label="Ime srečanja" required style="width: 100%;" helperLine$style="width: 100%;">
             <HelperText slot="helper">Izberite poljubno ime srečanja</HelperText>

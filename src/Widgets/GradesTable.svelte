@@ -161,7 +161,10 @@
         {#if grades !== null}
             {#each grades["Users"] as user}
                 <Row>
-                    <Cell>{user.Name}</Cell>
+                    <Cell class="sameline">
+                        <div style="display:inline-block;">{user.Name}</div>
+                        <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{user.Average.toFixed(2)}</div>
+                    </Cell>
                     {#each user.Periods as period, i}
                         <Cell on:click={() => {
                             selectedPeriod = i + 1;
