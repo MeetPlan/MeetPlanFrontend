@@ -15,6 +15,7 @@
 	import Subject from "./Subject.svelte";
 	import SubjectGrades from "./SubjectGrades.svelte";
 	import Homework from "./Homework.svelte";
+	import MyGrades from "./MyGrades.svelte";
 
 	export let url = "";
 </script>
@@ -27,6 +28,7 @@
 			<Route path="/register" component="{Register}" />
 			<Route path="/users" component="{Users}" />
 			<Route path="/new/meeting" component="{NewMeeting}" />
+			<Route path="/my/grades" component="{MyGrades}" />
 			<Route path="/user/:id" let:params >
 				<User id="{params.id}" />
 			</Route>

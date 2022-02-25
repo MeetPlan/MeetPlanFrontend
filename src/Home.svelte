@@ -51,10 +51,14 @@
         <b>Vaša dovoljenja: {decoded["role"]}</b>
         <hr />
         <Select bind:classId label="Izberite razred" variant="outlined">
-            <Option value="" on:click={() => classId = ""}/>
+            <Option value="" on:click={() => {
+                classId = undefined;
+                setTimeout(() => classId = "", 100)
+            }}>Moja srečanja</Option>
             {#each items as c}
                 <Option on:click={async () => {
-                    classId = "";
+                    classId = undefined;
+                    // We timeout to get effect of changing
                     setTimeout(() => {
                         classId = c["ID"];
                     }, 100);
@@ -62,7 +66,7 @@
             {/each}
         </Select>
         <p/>
-        {#if classId !== ""}
+        {#if classId !== undefined}
             <Timetable classId={classId} />
         {/if}
     </main>

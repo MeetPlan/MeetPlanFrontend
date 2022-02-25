@@ -4,8 +4,9 @@
         Header,
         Title,
     } from '@smui/drawer';
-    import List, { Item, Text, Graphic } from '@smui/list';
+    import List, { Item, Text, Graphic, Meta } from '@smui/list';
     import { navigate } from "svelte-routing";
+    import IconButton from "@smui/icon-button";
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
 
@@ -25,8 +26,14 @@
     <!-- Don't include fixed={false} if this is a page wide drawer.
           It adds a style for absolute positioning. -->
     <Drawer variant="dismissible" fixed={true} bind:open>
-        <Header>
-            <Title>MeetPlan</Title>
+        <Header class="sameline">
+            <Title style="display:inline-block;">MeetPlan</Title>
+            <div style="display:inline-block; float:right;">
+                <IconButton class="material-icons" aria-hidden="true" on:click={() => {
+                    localStorage.clear()
+                    navigate("/login")
+                }}>logout</IconButton>
+            </div>
         </Header>
         <Content>
             <List>
@@ -47,6 +54,16 @@
                         <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                         <Text>Samotestiranje</Text>
                     </Item>
+                    {#if decoded["role"] === "student"}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/my/grades')}
+                                activated={active === 'myGrades'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
+                            <Text>Moje ocene</Text>
+                        </Item>
+                    {/if}
                     {#if decoded["role"] === "teacher" || decoded["role"] === "admin"}
                         <Item
                                 href="javascript:void(0)"
@@ -149,6 +166,10 @@
     </Drawer>
 
 <style>
+    .sameline {
+        white-space: nowrap;
+    }
+
     /* These classes are only needed because the
       drawer is in a container on the page. */
     .drawer-container {

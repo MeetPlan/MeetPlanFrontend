@@ -21,6 +21,7 @@
     let toPatch;
     let selectedPeriod;
     let userId;
+    let finalize = false;
 
     function getGrades() {
         fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -36,6 +37,7 @@
         fd.append("grade", selectedGrade);
         fd.append("user_id", userId);
         fd.append("period", selectedPeriod);
+        fd.append("is_final", finalize.toString());
         fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
@@ -103,7 +105,15 @@
         {/if}
     </Title>
     <Content id="simple-content">
-        Za {selectedPeriod}. ocenjevalno obdobje
+        {#if finalize === false}
+            Za {selectedPeriod}. ocenjevalno obdobje
+        {:else}
+            Zaključi oceno.
+            Ko enkrat zaključite oceno, je ne morete popraviti.
+            Prav tako ne morete popravljati ocen v nazaj.
+            Razmislite, preden vpišete oceno.
+            Kasneje vam lahko pomaga samo še strežniški administrator, ki ima dostop do podatkovne baze.
+        {/if}
         <p/>
         {#each gradesNumbers as option}
             <FormField>
@@ -115,10 +125,12 @@
             </FormField>
             <br>
         {/each}
-        <FormField>
-            <Switch bind:checked={isWritten} />
-            <span slot="label">Pisna ocena</span>
-        </FormField>
+        {#if finalize === false}
+            <FormField>
+                <Switch bind:checked={isWritten} />
+                <span slot="label">Pisna ocena</span>
+            </FormField>
+        {/if}
     </Content>
     <Actions>
         <Button on:click={() => {
@@ -167,21 +179,26 @@
                     </Cell>
                     {#each user.Periods as period, i}
                         <Cell on:click={() => {
-                            selectedPeriod = i + 1;
-                            userId = user.ID;
-                            toPatch = undefined;
-                            open = true;
+                            if (user.Final === 0) {
+                                selectedPeriod = i + 1;
+                                userId = user.ID;
+                                toPatch = undefined;
+                                finalize = false;
+                                open = true;
+                            }
                         }}>
                             <div class="sameline">
                                 <div style="display:inline-block; width: 5px;"/>
                                 {#each period.Grades as grade}
                                     <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;" on:click={(e) => {
                                         e.stopPropagation();
-                                        toPatch = grade.ID;
-                                        selectedGrade = grade.Grade;
-                                        selectedPeriod = i + 1;
-                                        isWritten = grade.IsWritten;
-                                        open = true;
+                                        if (user.Final === 0) {
+                                            toPatch = grade.ID;
+                                            selectedGrade = grade.Grade;
+                                            selectedPeriod = i + 1;
+                                            isWritten = grade.IsWritten;
+                                            open = true;
+                                        }
                                     }}>{grade.Grade}</div>
                                     <div style="display:inline-block; width: 5px;"/>
                                 {/each}
@@ -189,7 +206,21 @@
                             </div>
                         </Cell>
                     {/each}
-                    <Cell>TODO</Cell>
+                    <Cell on:click={() => {
+                        if (user.Final === 0) {
+                            selectedPeriod = -1;
+                            userId = user.ID;
+                            toPatch = undefined;
+                            finalize = true;
+                            open = true;
+                        }
+                    }}>
+                        {#if user.Final !== 0}
+                            <div style="color: {gradeColors[user.Final - 1]}; display:inline-block; font-size: 20px;">
+                                {user.Final}
+                            </div>
+                        {/if}
+                    </Cell>
                 </Row>
             {/each}
         {/if}
