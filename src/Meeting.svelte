@@ -6,21 +6,74 @@
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
     import {baseurl} from "./constants";
+    import FormField from "@smui/form-field";
+    import Switch from "@smui/switch";
+    import Select, {Option} from "@smui/select";
 
     export let meetingId: number;
 
     let meetingData;
 
+    function fmtDate(date: Date): string {
+        let dd = date.getDate().toString()
+        if (dd < 10) {
+            dd = `0${dd}`
+        }
+        let mm = date.getMonth().toString();
+        if (mm < 10) {
+            mm = `0${(date.getMonth() + 1).toString()}`
+        }
+        return `${dd}-${mm}-${date.getFullYear()}`
+    }
+
+    let teachers = [];
+    let isSubstitution = false;
+    let teacherId: number = undefined;
+
+    function getTeachers() {
+        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    teachers = json["data"];
+                },
+            );
+    }
+
+
     function getMeetingData() {
         fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
-            .then((r) => meetingData = r.data)
+            .then((r) => {
+                meetingData = r.data;
+                isSubstitution = meetingData.IsSubstitution;
+                teacherId = meetingData.TeacherID;
+            })
     }
 
     function deleteMeeting() {
         fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => navigate("/"))
+    }
+
+    function patchMeeting() {
+        let fd = new FormData()
+        fd.append("subjectId", meetingData.SubjectID);
+        fd.append("date", meetingData.Date);
+        fd.append("name", meetingData.MeetingName);
+        fd.append("details", meetingData.Details);
+        fd.append("url", meetingData.URL);
+        fd.append("hour", meetingData.Hour)
+        fd.append("is_mandatory", meetingData.IsMandatory)
+        fd.append("is_grading", meetingData.IsGrading)
+        fd.append("is_written_assessment", meetingData.IsWrittenAssessment)
+        fd.append("is_test", meetingData.IsTest)
+        fd.append("is_substitution", isSubstitution.toString())
+        fd.append("teacherId", teacherId.toString());
+        fetch(`${baseurl}/meetings/new/${meetingId}`,
+            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "PATCH"})
+            .then((r) => r.json())
+            .then((r) => getMeetingData())
     }
 
     getMeetingData();
@@ -34,6 +87,10 @@
     let classId = "";
 
     const decoded = jwt_decode<JwtPayload>(token);
+
+    if (decoded["role"] === "admin") {
+        getTeachers();
+    }
 </script>
 
 <Drawer active="srecanje" meetingActive={meetingId} />
@@ -50,6 +107,7 @@
                 <p>Je pisno ocenjevanje znanja: <b>{meetingData.IsWrittenAssessment}</b></p>
             {/if}
             <p>Je preverjanje znanja: <b>{meetingData.IsTest ? "Ja" : "Ne"}</b></p>
+            <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>
             <pre>
                 {meetingData.Details}
             </pre>
@@ -64,6 +122,32 @@
                     <Icon class="material-icons">delete</Icon>
                     <Label>Izbriši</Label>
                 </Button>
+            {/if}
+            {#if decoded["role"] === "admin"}
+                <p/>
+                <FormField>
+                    <Switch bind:checked={isSubstitution} on:click={() => {
+                        // Wait for the component to set new state
+                        setTimeout(() => {
+                            if (!isSubstitution) {
+                                patchMeeting();
+                            }
+                        }, 200);
+                    }} />
+                    Je nadomeščanje
+                </FormField>
+                {#if isSubstitution}
+                    <p/>
+                    <Select bind:selected={meetingData.TeacherID} label="Izberite učitelja za nadomeščanje" variant="outlined" style="width: 100%;">
+                        <Option value="" on:click={() => teacherId = undefined}/>
+                        {#each teachers as c}
+                            <Option on:click={async () => {
+                                teacherId = c.ID;
+                                patchMeeting();
+                            }} value={c.ID}>{c["Name"]}</Option>
+                        {/each}
+                    </Select>
+                {/if}
             {/if}
         {/if}
     </main>

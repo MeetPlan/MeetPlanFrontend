@@ -61,7 +61,7 @@
                     name = json["data"]["MeetingName"];
                     description = json["data"]["Details"];
                     url = json["data"]["URL"];
-                    hour = json["data"]["Hour"];
+                    hour = json["data"].Hour;
                     isMandatory = json["data"]["IsMandatory"];
                     isWrittenAssessment = json["data"]["IsWrittenAssessment"];
                     isGrading = json["data"]["IsGrading"];
@@ -115,12 +115,12 @@
 <Drawer active="novosrecanje" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Select bind:subjectId label="Izberite predmet" variant="outlined">
+        <Select bind:selected={subjectId} label="Izberite predmet" variant="outlined">
             <Option value="" on:click={() => subjectId = ""}/>
             {#each subjects as c}
                 <Option on:click={async () => {
-                    subjectId = c["ID"];
-                }} value={c["ID"]}>{c["Name"]}</Option>
+                    subjectId = c.ID;
+                }} value={c.ID}>{c["Name"]}</Option>
             {/each}
         </Select>
         <p/>

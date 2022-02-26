@@ -133,9 +133,15 @@
         <td>
             <div class="{hour === i && dates[0] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(mon[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
@@ -145,9 +151,15 @@
         <td>
             <div class="{hour === i && dates[1] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(tue[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
@@ -157,9 +169,15 @@
         <td>
             <div class="{hour === i && dates[2] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(wed[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
@@ -169,9 +187,15 @@
         <td>
             <div class="{hour === i && dates[3] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(thu[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
@@ -181,9 +205,15 @@
         <td>
             <div class="{hour === i && dates[4] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(fri[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
@@ -193,9 +223,15 @@
         <td>
             <div class="{hour === i && dates[5] === fmtDate(date) ? 'yellow' : 'tdtable'}">
                 {#each Array(sat[i]) as m}
+                    <div style="height: 5px;"/>
                     {#if m}
                         {#each m as n}
-                            <Link to="/meeting/{n.ID}">{n.MeetingName}</Link>
+                            <Link to="/meeting/{n.ID}">
+                                {#if n.IsSubstitution}
+                                    [N]
+                                {/if}
+                                {n.MeetingName}
+                            </Link>
                             <br>
                         {/each}
                     {/if}
