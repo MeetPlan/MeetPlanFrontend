@@ -29,7 +29,7 @@
     export let meetingId;
 
     let choices = ["UNMANAGED", "ABSENT", "LATE", "PRESENT", "PRESENT ONLINE"];
-    let c = {
+    const c = {
         "UNMANAGED": "Še ne urejeno",
         "ABSENT": "Odsoten",
         "PRESENT": "Prisoten",

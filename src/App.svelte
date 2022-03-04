@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { Router, Route } from "svelte-routing";
 	import Samotestiranje from "./Samotestiranje.svelte";
 	import Home from "./Home.svelte";
@@ -16,6 +16,8 @@
 	import SubjectGrades from "./SubjectGrades.svelte";
 	import Homework from "./Homework.svelte";
 	import MyGrades from "./MyGrades.svelte";
+	import MyClass from "./MyClass.svelte";
+	import ClassUser from "./ClassUser.svelte";
 
 	export let url = "";
 </script>
@@ -29,8 +31,12 @@
 			<Route path="/users" component="{Users}" />
 			<Route path="/new/meeting" component="{NewMeeting}" />
 			<Route path="/my/grades" component="{MyGrades}" />
+			<Route path="/my/class" component="{MyClass}" />
 			<Route path="/user/:id" let:params >
 				<User id="{params.id}" />
+			</Route>
+			<Route path="/class/user/:id" let:params >
+				<ClassUser studentId="{params.id}" />
 			</Route>
 			<Route path="/edit/:id" let:params >
 				<NewMeeting editId="{params.id}" />

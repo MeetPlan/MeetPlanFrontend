@@ -4,11 +4,13 @@
         Header,
         Title,
     } from '@smui/drawer';
-    import List, { Item, Text, Graphic, Meta } from '@smui/list';
+    import List, { Item, Text, Graphic } from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
+
+    import {baseurl} from "./constants";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -16,6 +18,19 @@
     }
 
     const decoded = jwt_decode<JwtPayload>(token);
+
+    let hasClass = false;
+
+    if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+        fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    if (json.data === "true" || json.data === true) {
+                        hasClass = true;
+                    }
+                },
+            );
+    }
 
     let open: boolean = true;
 
@@ -75,15 +90,15 @@
                         </Item>
                     {/if}
                     {#if decoded["role"] === "teacher"}
-                        <!--<Item
+                        <Item
                                 href="javascript:void(0)"
-                                on:click={() => navigate('/mojrazred')}
-                                activated={active === 'mojrazred'}
+                                on:click={() => navigate('/my/class')}
+                                activated={active === 'myclass'}
                         >
                             <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                             <Text>Moj razred</Text>
                         </Item>
-                        <Item
+                        <!--<Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/mojipredmeti')}
                                 activated={active === 'mojipredmeti'}

@@ -13,7 +13,7 @@
 
     import {baseurl} from "./constants";
 
-    import IconButton from "@smui/button";
+    import IconButton from "@smui/icon-button";
 
     import Select, {Option} from "@smui/select";
 
