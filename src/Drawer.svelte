@@ -69,6 +69,14 @@
                         <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                         <Text>Samotestiranje</Text>
                     </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/communication')}
+                            activated={active === "communication"}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
+                        <Text>Komunikacija</Text>
+                    </Item>
                     {#if decoded["role"] === "student"}
                         <Item
                                 href="javascript:void(0)"
