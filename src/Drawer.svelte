@@ -71,7 +71,7 @@
                     </Item>
                     <Item
                             href="javascript:void(0)"
-                            on:click={() => navigate('/communication')}
+                            on:click={() => navigate('/communication/view')}
                             activated={active === "communication"}
                     >
                         <Graphic class="material-icons" aria-hidden="true">chat</Graphic>

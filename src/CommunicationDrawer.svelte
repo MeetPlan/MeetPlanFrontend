@@ -31,8 +31,11 @@
 
     let open: boolean = true;
 
+    let newActive = false;
+
     export let active: string;
     export let communicationActive: string;
+    export let openDialog;
 
     getCommunications();
 </script>
@@ -60,17 +63,26 @@
             </Item>
             <Item
                     href="javascript:void(0)"
-                    on:click={() => navigate('/communication')}
+                    on:click={() => window.location.href ='/communication/view'}
                     activated={active === "communicationview"}
             >
                 <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
                 <Text>Komunikacija</Text>
             </Item>
             <Separator />
+            <Item
+                    href="javascript:void(0)"
+                    on:click={() => {
+                        openDialog();
+                    }}
+            >
+                <Graphic class="material-icons" aria-hidden="true">add</Graphic>
+                <Text>Nov pogovor</Text>
+            </Item>
             {#each communications as communication}
                 <Item
                         href="javascript:void(0)"
-                        on:click={() => navigate(`/communication/${communication.ID}`)}
+                        on:click={() => window.location.href = `/communication/${communication.ID}`}
                         activated={active === 'communication' + communication.ID}
                 >
                     <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
