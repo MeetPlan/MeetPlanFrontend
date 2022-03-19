@@ -19,6 +19,7 @@
 	import MyClass from "./MyClass.svelte";
 	import ClassUser from "./ClassUser.svelte";
 	import Communication from "./Communication.svelte";
+	import Meals from "./Meals.svelte";
 
 	export let url = "";
 </script>
@@ -64,6 +65,7 @@
 				<Subject id="{params.id}" />
 			</Route>
 			<Route path="/subjects" component="{Subjects}" />
+			<Route path="/meals" component="{Meals}" />
 			<Route path="/classes" component="{Classes}" />
 			<Route path="/"><Home /></Route>
 		</div>

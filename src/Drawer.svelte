@@ -80,6 +80,14 @@
                     </Item>
                     <Item
                             href="javascript:void(0)"
+                            on:click={() => navigate('/meals')}
+                            activated={active === 'meals'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
+                        <Text>Prehrana</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
                             on:click={() => navigate('/communication/view')}
                             activated={active === "communication"}
                             style="position: relative;"
