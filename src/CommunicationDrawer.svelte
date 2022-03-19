@@ -7,6 +7,7 @@
     import List, { Item, Text, Graphic, Separator } from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
+    import Badge from '@smui-extra/badge';
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
 
@@ -25,6 +26,27 @@
             });
     }
 
+    let communicationUnread = {};
+    let unreadMessages;
+
+    function getUnread() {
+        fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    unreadMessages = json.data;
+                    communicationUnread = {};
+                    for (let i in unreadMessages) {
+                        let message = unreadMessages[i];
+                        if (communicationUnread[message.CommunicationID]) {
+                            communicationUnread[message.CommunicationID] = communicationUnread[message.CommunicationID] + 1;
+                        } else {
+                            communicationUnread[message.CommunicationID] = 1;
+                        }
+                    }
+                },
+            );
+    }
+
     const decoded = jwt_decode<JwtPayload>(token);
 
     let communications = [];
@@ -38,6 +60,9 @@
     export let openDialog;
 
     getCommunications();
+    getUnread();
+
+    setInterval(getUnread, 10000);
 </script>
 
 <!-- Don't include fixed={false} if this is a page wide drawer.
@@ -67,7 +92,12 @@
                     activated={active === "communicationview"}
             >
                 <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
-                <Text>Komunikacija</Text>
+                <Text>
+                    Komunikacija
+                    {#if unreadMessages && unreadMessages.length !== 0}
+                        <Badge inset aria-label="new messages count" style="top: 20px; right: 20px;">{unreadMessages.length}</Badge>
+                    {/if}
+                </Text>
             </Item>
             <Separator />
             <Item
@@ -86,7 +116,12 @@
                         activated={active === 'communication' + communication.ID}
                 >
                     <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
-                    <Text>{communication.Title}</Text>
+                    <Text>
+                        {communication.Title}
+                        {#if communicationUnread[communication.ID]}
+                            <Badge inset aria-label="new messages count" style="top: 20px; right: 20px;">{communicationUnread[communication.ID]}</Badge>
+                        {/if}
+                    </Text>
                 </Item>
             {/each}
         </List>

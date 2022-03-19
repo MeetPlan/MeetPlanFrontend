@@ -7,6 +7,7 @@
     import List, { Item, Text, Graphic } from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
+    import Badge from '@smui-extra/badge';
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
 
@@ -20,6 +21,7 @@
     const decoded = jwt_decode<JwtPayload>(token);
 
     let hasClass = false;
+    let unreadMessages;
 
     if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
         fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -31,6 +33,13 @@
                 },
             );
     }
+
+    fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        .then((response) => response.json())
+        .then((json) => {
+                unreadMessages = json.data;
+            },
+        );
 
     let open: boolean = true;
 
@@ -73,9 +82,15 @@
                             href="javascript:void(0)"
                             on:click={() => navigate('/communication/view')}
                             activated={active === "communication"}
+                            style="position: relative;"
                     >
                         <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
-                        <Text>Komunikacija</Text>
+                        <Text>
+                            Komunikacija
+                            {#if unreadMessages && unreadMessages.length !== 0}
+                                <Badge inset aria-label="new messages count" style="top: 20px; right: 20px;">{unreadMessages.length}</Badge>
+                            {/if}
+                        </Text>
                     </Item>
                     {#if decoded["role"] === "student"}
                         <Item
