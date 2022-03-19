@@ -13,6 +13,7 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@smui-extra/accordion": "^6.0.0-beta.14",
+    "@smui-extra/badge": "^6.0.0-beta.15",
     "@smui/button": "^6.0.0-beta.13",
     "@smui/common": "^6.0.0-beta.13",
     "@smui/data-table": "^6.0.0-beta.13",

@@ -18,6 +18,7 @@
 	import MyGrades from "./MyGrades.svelte";
 	import MyClass from "./MyClass.svelte";
 	import ClassUser from "./ClassUser.svelte";
+	import Communication from "./Communication.svelte";
 
 	export let url = "";
 </script>
@@ -32,6 +33,9 @@
 			<Route path="/new/meeting" component="{NewMeeting}" />
 			<Route path="/my/grades" component="{MyGrades}" />
 			<Route path="/my/class" component="{MyClass}" />
+			<Route path="/communication/:id" let:params >
+				<Communication id="{params.id}" />
+			</Route>
 			<Route path="/user/:id" let:params >
 				<User id="{params.id}" />
 			</Route>
