@@ -247,7 +247,7 @@
                             <p/>
                             Cena: {meal.Price.toFixed(2)}€
                             <p/>
-                            {#if !meal.BlockOrders}
+                            {#if !meal.BlockOrders && !meal.IsLimitReached}
                                 {#if !meal.HasOrdered}
                                     <Button on:click={() => order(meal.ID)}>
                                         <Icon class="material-icons">add</Icon>
@@ -260,7 +260,11 @@
                                     </Button>
                                 {/if}
                             {:else}
-                                Naročila so blokirana. Obrnite se na sistemskega administratorja.
+                                {#if meal.IsLimitReached}
+                                    Prekoračeno je bilo maksimalno število naročil.
+                                {:else}
+                                    Naročila so blokirana. Obrnite se na sistemskega administratorja.
+                                {/if}
                                 <p/>
                             {/if}
                             {#if decoded.role === "admin"}
