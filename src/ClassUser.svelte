@@ -9,6 +9,7 @@
     import IconButton, { Icon } from '@smui/icon-button';
 
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
+    import jwt_decode, { JwtPayload } from "jwt-decode";
 
     import List, {
         Item,
@@ -34,6 +35,7 @@
     export let studentId: number;
 
     let absenceList = [];
+    let homework = [];
 
     function getUserData() {
         fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -58,6 +60,14 @@
             });
     }
 
+    function getHomework() {
+        fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((r) => r.json())
+            .then((r) => {
+                homework = r["data"];
+            });
+    }
+
     function getGrades() {
         fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
@@ -79,9 +89,19 @@
         navigate("/login");
     }
 
+    const decoded = jwt_decode<JwtPayload>(token);
+
+    const translatedSegments = {
+        "DONE": "NAREJENO",
+        "ABSENT": "MANJKAL",
+        "INCOMPLETE": "NEPOPOLNO",
+        "NOT MANAGED": "NI VPISANO"
+    }
+
     getGrades();
     getUserData();
     getAbsences();
+    getHomework();
 </script>
 
 <Drawer active="student" />
@@ -166,5 +186,21 @@
                 </Panel>
             {/each}
         </Accordion>
+        <h1>Domača naloga</h1>
+        {#each homework as item, i}
+            <h2>{item.Date}</h2>
+            {#each item.Homework as homework, n}
+                <h3>{homework.SubjectName} - {homework.Name}</h3>
+                Datum vpisa naloge: {homework.FromDate}
+                <br>
+                Rok oddaje: {homework.ToDate}
+                <br>
+                Status: {translatedSegments[homework.Status]}
+                <br>
+                {homework.Description}
+
+            {/each}
+            <p/>
+        {/each}
     </main>
 </AppContent>

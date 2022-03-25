@@ -103,11 +103,11 @@
                     {#if decoded["role"] === "student"}
                         <Item
                                 href="javascript:void(0)"
-                                on:click={() => navigate('/my/grades')}
-                                activated={active === 'myGrades'}
+                                on:click={() => navigate('/class/user/me')}
+                                activated={active === 'student'}
                         >
                             <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
-                            <Text>Moje ocene</Text>
+                            <Text>Moj pregled</Text>
                         </Item>
                     {/if}
                     {#if decoded["role"] === "teacher" || decoded["role"] === "admin"}

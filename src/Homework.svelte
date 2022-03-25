@@ -41,6 +41,7 @@
         let fd = new FormData();
         fd.append("name", name);
         fd.append("description", description);
+        fd.append("to_date", date);
         fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
@@ -50,6 +51,7 @@
 
     let description = "";
     let name = "";
+    let date = "";
 
     let panels = [];
 
@@ -57,7 +59,8 @@
     const translatedSegments = {
         "DONE": "NAREJENO",
         "ABSENT": "MANJKA",
-        "INCOMPLETE": "NEPOPOLNO"
+        "INCOMPLETE": "NEPOPOLNO",
+        "NOT MANAGED": "NI VPISANO"
     }
 
     export let meetingId;
@@ -73,6 +76,10 @@
                 <HelperText slot="helper">Ime naloge</HelperText>
             </Textfield>
             <Textfield bind:value={description} label="Opis naloge" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
+            <Textfield bind:value={date} label="Rok oddaje naloge" type="date" required on:click={() => date = ""}>
+                <Icon class="material-icons" slot="leadingIcon">event</Icon>
+                <HelperText slot="helper">Izberite prosim rok oddaje naloge</HelperText>
+            </Textfield>
             <Button on:click={() => newHomework()}>
                 <Icon class="material-icons">add</Icon>
                 <Label>Dodaj</Label>
@@ -93,6 +100,9 @@
                             {#if p.Description !== ""}
                                 <hr/>
                             {/if}
+                            Naloga vpisana dne: {p.FromDate}
+                            <br>
+                            Rok oddaje: {p.ToDate}
                             <List
                                     twoLine
                                     avatarList

@@ -54,7 +54,11 @@
                 <Icon class="material-icons" slot="leadingIcon">alternate_email</Icon>
             </Textfield>
             <p />
-            <Textfield on:submit={async () => await login()} type="password" bind:value={password} label="Geslo">
+            <Textfield on:keypress={(key) => {
+                if (key.key === "Enter") {
+                    login();
+                }
+            }} type="password" bind:value={password} label="Geslo">
                 <Icon class="material-icons" slot="leadingIcon">password</Icon>
             </Textfield>
             <p />

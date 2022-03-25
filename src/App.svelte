@@ -32,7 +32,7 @@
 			<Route path="/register" component="{Register}" />
 			<Route path="/users" component="{Users}" />
 			<Route path="/new/meeting" component="{NewMeeting}" />
-			<Route path="/my/grades" component="{MyGrades}" />
+			<!--<Route path="/my/grades" component="{MyGrades}" />-->
 			<Route path="/my/class" component="{MyClass}" />
 			<Route path="/communication/:id" let:params >
 				<Communication id="{params.id}" />
