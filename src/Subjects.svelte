@@ -57,12 +57,14 @@
     let nclass = "";
     let teacherId = "";
     let classId = "";
+    let longName = "";
 
     function newSubject() {
         let fd = new FormData();
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
         fd.append("class_id", classId);
+        fd.append("long_name", longName)
         fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
@@ -85,7 +87,10 @@
 <AppContent class="app-content">
     <main class="main-content">
         <Textfield label="Nov predmet" bind:value={nclass}>
-            <HelperText slot="helper">Vpišite prosimo ime novega predmeta</HelperText>
+            <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
+        </Textfield>
+        <Textfield label="Dolgo ime predmeta" bind:value={longName} style="width: 100%;">
+            <HelperText slot="helper">Vpišite prosimo ime novega predmeta - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - slovenščina, matematika)</HelperText>
         </Textfield>
         <p/>
         <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
@@ -108,7 +113,7 @@
         <List class="demo-list">
             {#each subjects as item}
                 <Item on:SMUI:action={() => navigate("/subject/" + item["ID"])}>
-                    <Text>{item["Name"]}</Text>
+                    <Text>{item["Name"]} - {item["LongName"]}</Text>
                     <Meta><IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         deleteSubject(item["ID"])

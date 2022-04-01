@@ -152,6 +152,18 @@
             {/if}
             </Body>
         </DataTable>
+        {#if decoded.role === "teacher" || decoded.role === "admin"}
+            <IconButton class="material-icons" on:click={() => {
+                fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                      var _url = window.URL.createObjectURL(blob);
+                      window.open(_url, "_blank").focus();
+                  }).catch((err) => {
+                    console.log(err);
+                  });
+            }}>download</IconButton>
+        {/if}
         <h1>Odsotnost</h1>
         <Accordion>
             {#each absences as item, i}

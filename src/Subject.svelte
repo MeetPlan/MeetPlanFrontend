@@ -5,6 +5,9 @@
     import List, {Item, Text as TextList, Meta, Graphic, PrimaryText} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
+    import Textfield from "@smui/textfield";
+    import HelperText from '@smui/textfield/helper-text';
+
     import Select, {Option} from "@smui/select";
 
     import Avatar from "svelte-avatar";
@@ -15,19 +18,31 @@
     let students;
     let studentsToAdd = [];
     let classId = "";
+    let longName = "";
 
     export let id: number;
 
     function getSubject() {
         fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
-            .then((r) => students = r["data"]);
+            .then((r) => {
+                longName = r.data.LongName;
+                students = r.data;
+            });
+    }
+
+    function patchSubjectName() {
+        let fd = new FormData();
+        fd.append("long_name", longName)
+        fetch(`${baseurl}/subject/get/${id}/long_name`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+            .then((response) => response.json())
+            .then((r) => getSubject());
     }
 
     function getStudents() {
         fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
-            .then((r) => studentsToAdd = r["data"]);
+            .then((r) => studentsToAdd = r.data);
     }
 
     function assignToSubject(cid: string) {
@@ -50,6 +65,9 @@
 <AppContent class="app-content">
     <main class="main-content">
         {#if students !== undefined}
+            <Textfield label="Dolgo ime predmeta" bind:value={longName} style="width: 100%;" on:change={() => patchSubjectName()}>
+                <HelperText slot="helper">Vpišite prosimo ime novega predmeta - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - slovenščina, matematika)</HelperText>
+            </Textfield>
             {#if !students.InheritsClass}
                 <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">
                     <Option value="" on:click={() => classId = ""}/>
