@@ -12,6 +12,7 @@
     import {baseurl} from "./constants";
 
     import {navigate} from "svelte-routing";
+    import * as marked from 'marked';
 
     let date = "";
     let name = "";
@@ -153,6 +154,10 @@
             <HelperText slot="helper">Izberite poljubno ime srečanja</HelperText>
         </Textfield>
         <Textfield bind:value={description} label="Opis srečanja" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
+        {#if description !== ""}
+            <h2>Predogled:</h2>
+            {@html marked.marked(description)}
+        {/if}
         <Textfield bind:value={url} label="URL do srečanja" style="width: 100%;" helperLine$style="width: 100%;">
             <HelperText slot="helper">Vpišite URL do srečanja</HelperText>
         </Textfield>

@@ -21,7 +21,7 @@
     const decoded = jwt_decode<JwtPayload>(token);
 
     function loadThings() {
-        fetch(`${baseurl}/${(decoded["role"] === "student" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/${(decoded["role"] === "student" || decoded.role === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => {
                 if (response.ok) {
                     return response

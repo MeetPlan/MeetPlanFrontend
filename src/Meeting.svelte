@@ -9,6 +9,7 @@
     import FormField from "@smui/form-field";
     import Switch from "@smui/switch";
     import Select, {Option} from "@smui/select";
+    import * as marked from 'marked';
 
     export let meetingId: number;
 
@@ -108,9 +109,10 @@
             {/if}
             <p>Je preverjanje znanja: <b>{meetingData.IsTest ? "Ja" : "Ne"}</b></p>
             <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>
-            <pre>
-                {meetingData.Details}
-            </pre>
+            {#if meetingData.Details !== ""}
+                <h4>Opis srečanja:</h4>
+                {@html marked.marked(meetingData.Details)}
+            {/if}
             <a href="{meetingData.URL}">Povezava do srečanja</a>
             {#if decoded["role"] === "admin" || decoded["user_id"] === meetingData.TeacherID}
                 <p/>

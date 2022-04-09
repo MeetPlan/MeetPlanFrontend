@@ -3,6 +3,8 @@
     import {AppContent} from "@smui/drawer";
     import {navigate} from "svelte-routing";
 
+    import Button from "@smui/button";
+
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {baseurl} from "./constants";
 
@@ -13,11 +15,7 @@
 
     import List, {
         Item,
-        Graphic,
         Meta,
-        Text,
-        PrimaryText,
-        SecondaryText,
     } from '@smui/list';
 
     let grades;
@@ -153,7 +151,8 @@
             </Body>
         </DataTable>
         {#if decoded.role === "teacher" || decoded.role === "admin"}
-            <IconButton class="material-icons" on:click={() => {
+            <p/>
+            <Button on:click={() => {
                 fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
                     .then((blob) => {
@@ -162,7 +161,10 @@
                   }).catch((err) => {
                     console.log(err);
                   });
-            }}>download</IconButton>
+            }}>
+                <Icon class="material-icons">download</Icon>
+                Prenesi končno spričevalo
+            </Button>
         {/if}
         <h1>Odsotnost</h1>
         <Accordion>

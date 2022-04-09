@@ -7,13 +7,15 @@
 
     import Avatar from "svelte-avatar";
 
-    import {onMount} from "svelte";
-
     import {baseurl} from "./constants";
+
+    import Textfield from "@smui/textfield";
+    import HelperText from '@smui/textfield/helper-text';
 
     let myClasses;
     let students;
     let classId = "";
+    let classYear = "";
 
     export let id: number;
 
@@ -21,29 +23,39 @@
         let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         let r = await response.json();
         students = r["data"];
+        classYear = students["ClassYear"];
     }
 
     function assignToClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
 
     function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
 
-    onMount(async () => {
-        await getClass();
-    })
+    function patchClass() {
+        let fd = new FormData();
+        fd.append("class_year", classYear);
+        fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+            .then((response) => response.json())
+            .then((r) => getClass());
+    }
+
+    getClass()
 </script>
 
 <Drawer active="user" />
 <AppContent class="app-content">
     <main class="main-content">
         {#if students !== undefined}
+            <Textfield label="Šolsko leto" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
+                <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
+            </Textfield>
             <h2>Učitelj:</h2>
             <List class="demo-list" twoLine avatarList>
                 <Item>

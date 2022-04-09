@@ -24,7 +24,7 @@
             );
     }
 
-    let choices = ["student", "teacher", "admin"];
+    let choices = ["student", "parent", "teacher", "admin"];
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import { navigate } from "svelte-routing";

@@ -45,11 +45,13 @@
 
     let nclass = "";
     let teacherId = "";
+    let classYear = "";
 
     function newClass() {
         let fd = new FormData();
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
+        fd.append("class_year", classYear);
         fetch(`${baseurl}/class/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
@@ -72,7 +74,10 @@
 <AppContent class="app-content">
     <main class="main-content">
         <Textfield label="Nov razred" bind:value={nclass}>
-            <HelperText slot="helper">Vpišite prosimo, ime novega razreda</HelperText>
+            <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
+        </Textfield>
+        <Textfield label="Dolgo ime predmeta" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
+            <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
         </Textfield>
         <Select bind:teacherId label="Izberite razrednika" variant="outlined">
             <Option value=""/>
