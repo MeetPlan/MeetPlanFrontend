@@ -117,19 +117,21 @@
 <Drawer active="user" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
-            <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
-        </Textfield>
-        <Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
-            <Icon class="material-icons" slot="leadingIcon">event</Icon>
-            <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni</HelperText>
-        </Textfield>
-        <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
-            <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
-        </Textfield>
-        <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={() => patchUser()}>
-            <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
-        </Textfield>
+        {#if role === "student"}
+            <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
+                <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
+            </Textfield>
+            <Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
+                <Icon class="material-icons" slot="leadingIcon">event</Icon>
+                <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni</HelperText>
+            </Textfield>
+            <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+                <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
+            </Textfield>
+            <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+                <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
+            </Textfield>
+        {/if}
         <Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={() => patchUser()}>
             <HelperText slot="helper">Vpišite ime in priimek - bodite zelo pozorni</HelperText>
         </Textfield>
@@ -167,7 +169,7 @@
                 {#each myStudents as item}
                     <Item>
                         <TextList>{item["Name"]}</TextList>
-                        <Meta><IconButton class="material-icons" on:click={() => removeUserFromParent(item["ID"])} title="Remove from class">delete</IconButton></Meta>
+                        <Meta><IconButton class="material-icons" on:click={() => removeUserFromParent(item["ID"])} title="Remove user from parent">delete</IconButton></Meta>
                     </Item>
                 {/each}
             </List>

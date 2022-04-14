@@ -53,16 +53,34 @@
         return `${dd}-${mm}-${date.getFullYear()}`
     }
 
+    function fmtDateReverse(date: Date): string {
+        let dd = date.getDate().toString()
+        if (dd < 10) {
+            dd = `0${dd}`
+        }
+        let mm = date.getMonth().toString();
+        if (mm < 10) {
+            mm = `0${(date.getMonth() + 1).toString()}`
+        }
+        return `${date.getFullYear()}-${mm}-${dd}`
+    }
+
+    function reverseFmtDate(date: string): string {
+        let pieces = date.split("-");
+        return `${pieces[2]}-${pieces[1]}-${pieces[0]}`
+    }
+
     function getMeetingData() {
         fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
-                    date = json["data"]["Date"];
+                    date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
+                    console.log(date)
                     subjectId = json["data"]["SubjectID"];
                     name = json["data"]["MeetingName"];
                     description = json["data"]["Details"];
                     url = json["data"]["URL"];
-                    hour = json["data"].Hour;
+                    hour = json["data"]["Hour"];
                     isMandatory = json["data"]["IsMandatory"];
                     isWrittenAssessment = json["data"]["IsWrittenAssessment"];
                     isGrading = json["data"]["IsGrading"];
@@ -116,7 +134,8 @@
 <Drawer active="novosrecanje" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Select bind:selected={subjectId} label="Izberite predmet" variant="outlined">
+        Izberite predmet:
+        <Select bind:value={subjectId} variant="outlined">
             <Option value="" on:click={() => subjectId = ""}/>
             {#each subjects as c}
                 <Option on:click={async () => {
@@ -129,7 +148,8 @@
             <Icon class="material-icons" slot="leadingIcon">event</Icon>
             <HelperText slot="helper">Izberite prosim datum srečanja</HelperText>
         </Textfield>
-        <Select bind:hour label="Ura" required>
+        Izberite uro:
+        <Select bind:value={hour} required>
             {#each hours as h}
                 <Option value={h} on:click={() => {
                     console.log("H", h)

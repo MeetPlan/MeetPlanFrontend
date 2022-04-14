@@ -50,7 +50,7 @@
         <h3>MeetPlan je bil popolnoma prenovljen. Dobrodošli v verzijo 2.0</h3>
         <b>Vaša dovoljenja: {decoded["role"]}</b>
         <hr />
-        <Select bind:classId label="Izberite razred" variant="outlined">
+        <Select bind:classId variant="outlined">
             <Option value="" on:click={() => {
                 classId = undefined;
                 setTimeout(() => classId = "", 100)

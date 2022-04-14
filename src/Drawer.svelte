@@ -23,6 +23,8 @@
     let hasClass = false;
     let unreadMessages;
 
+    let children = [];
+
     if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
         fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
@@ -30,6 +32,13 @@
                     if (json.data === "true" || json.data === true) {
                         hasClass = true;
                     }
+                },
+            );
+    } else if (decoded["role"] === "parent") {
+        fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    children = json.data;
                 },
             );
     }
@@ -70,14 +79,16 @@
                     <Text>Pregled</Text>
                 </Item>
                 {#if meetingActive === -1}
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate('/samotestiranje')}
-                            activated={active === 'samotestiranje'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
-                        <Text>Samotestiranje</Text>
-                    </Item>
+                    {#if decoded.role === "admin" || decoded.role === "teacher" || decoded.role === "student"}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/samotestiranje')}
+                                activated={active === 'samotestiranje'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
+                            <Text>Samotestiranje</Text>
+                        </Item>
+                    {/if}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate('/meals')}
@@ -104,11 +115,23 @@
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/class/user/me')}
-                                activated={active === 'student'}
+                                activated={active === 'studentme'}
                         >
                             <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
                             <Text>Moj pregled</Text>
                         </Item>
+                    {/if}
+                    {#if decoded["role"] === "parent"}
+                        {#each children as child}
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate(`/class/user/${child.ID}`)}
+                                    activated={active === `student${child.ID}`}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
+                                <Text>{child.Name}</Text>
+                            </Item>
+                        {/each}
                     {/if}
                     {#if decoded["role"] === "teacher" || decoded["role"] === "admin"}
                         <Item

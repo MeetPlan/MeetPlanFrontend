@@ -102,7 +102,7 @@
     getHomework();
 </script>
 
-<Drawer active="student" />
+<Drawer active={`student${studentId}`} />
 <AppContent class="app-content">
     <main class="main-content">
         {#if userData}
@@ -187,11 +187,13 @@
                                 {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
                                 <Meta>
                                     <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
-                                            .then((r) => r.json())
-                                            .then((r) => {
-                                                getAbsences();
-                                            });
+                                        if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+                                            fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+                                                .then((r) => r.json())
+                                                .then((r) => {
+                                                    getAbsences();
+                                                });
+                                        }
                                     }}>task_alt</IconButton>
                                 </Meta>
                             </Item>
