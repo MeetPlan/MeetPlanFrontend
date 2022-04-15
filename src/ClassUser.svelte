@@ -35,6 +35,10 @@
     let absenceList = [];
     let homework = [];
 
+    let viewGrades = true;
+    let viewAbsences = true;
+    let viewHomework = true;
+
     function getUserData() {
         fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
@@ -74,6 +78,33 @@
             });
     }
 
+    function getParentConfig() {
+        if (decoded["role"] === "parent") {
+            fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                .then((r) => r.json())
+                .then((r) => {
+                    let data = r["data"];
+                    viewAbsences = data["parent_view_absences"];
+                    viewHomework = data["parent_view_homework"];
+                    viewGrades = data["parent_view_grades"];
+                    if (viewGrades) {
+                        getGrades();
+                    }
+                    if (viewHomework) {
+                        getHomework();
+                    }
+                    if (viewAbsences) {
+                        getAbsences();
+                    }
+                });
+        } else {
+            getGrades();
+            getUserData();
+            getAbsences();
+            getHomework();
+        }
+    }
+
     const gradeColors = [
         "#F44336",
         "#FF9800",
@@ -96,10 +127,7 @@
         "NOT MANAGED": "NI VPISANO"
     }
 
-    getGrades();
-    getUserData();
-    getAbsences();
-    getHomework();
+    getParentConfig();
 </script>
 
 <Drawer active={`student${studentId}`} />
@@ -109,47 +137,51 @@
             <h1>{userData.Name}</h1>
         {/if}
         <h1>Ocene</h1>
-        <DataTable table$aria-label="People list" style="width: 100%;">
-            <Head>
-                <Row>
-                    <Cell>Predmet</Cell>
-                    <Cell>1. ocenjevalno obdobje</Cell>
-                    <Cell>2. ocenjevalno obdobje</Cell>
-                    <Cell>Zaključeno</Cell>
-                </Row>
-            </Head>
-            <Body>
-            {#if grades}
-                {#each grades["Subjects"] as subject}
+        {#if viewGrades}
+            <DataTable table$aria-label="People list" style="width: 100%;">
+                <Head>
                     <Row>
-                        <Cell class="sameline">
-                            <div style="display:inline-block;">{subject.Name}</div>
-                            <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{subject.Average.toFixed(2)}</div>
-                        </Cell>
-                        {#each subject.Periods as period, i}
-                            <Cell>
-                                <div class="sameline">
-                                    <div style="display:inline-block; width: 5px;"/>
-                                    {#each period.Grades as grade}
-                                        <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</div>
-                                        <div style="display:inline-block; width: 5px;"/>
-                                    {/each}
-                                    <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
-                                </div>
-                            </Cell>
-                        {/each}
-                        <Cell>
-                            {#if subject.Final !== 0}
-                                <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
-                                    {subject.Final}
-                                </div>
-                            {/if}
-                        </Cell>
+                        <Cell>Predmet</Cell>
+                        <Cell>1. ocenjevalno obdobje</Cell>
+                        <Cell>2. ocenjevalno obdobje</Cell>
+                        <Cell>Zaključeno</Cell>
                     </Row>
-                {/each}
-            {/if}
-            </Body>
-        </DataTable>
+                </Head>
+                <Body>
+                {#if grades}
+                    {#each grades["Subjects"] as subject}
+                        <Row>
+                            <Cell class="sameline">
+                                <div style="display:inline-block;">{subject.Name}</div>
+                                <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{subject.Average.toFixed(2)}</div>
+                            </Cell>
+                            {#each subject.Periods as period, i}
+                                <Cell>
+                                    <div class="sameline">
+                                        <div style="display:inline-block; width: 5px;"/>
+                                        {#each period.Grades as grade}
+                                            <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</div>
+                                            <div style="display:inline-block; width: 5px;"/>
+                                        {/each}
+                                        <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
+                                    </div>
+                                </Cell>
+                            {/each}
+                            <Cell>
+                                {#if subject.Final !== 0}
+                                    <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
+                                        {subject.Final}
+                                    </div>
+                                {/if}
+                            </Cell>
+                        </Row>
+                    {/each}
+                {/if}
+                </Body>
+            </DataTable>
+        {:else}
+            Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
+        {/if}
         {#if decoded.role === "teacher" || decoded.role === "admin"}
             <p/>
             <Button on:click={() => {
@@ -167,56 +199,64 @@
             </Button>
         {/if}
         <h1>Odsotnost</h1>
-        <Accordion>
-            {#each absences as item, i}
-                <Panel bind:open={absenceList[i]}>
-                    <Header>
-                        {item["MeetingName"]}
-                        <IconButton slot="icon" toggle pressed={absenceList[i]}>
-                            <Icon class="material-icons" on>expand_less</Icon>
-                            <Icon class="material-icons">expand_more</Icon>
-                        </IconButton>
-                    </Header>
-                    <Content>
-                        <List
-                            twoLine
-                            avatarList
-                            singleSelection
-                        >
-                            <Item>
-                                {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
-                                <Meta>
-                                    <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                        if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
-                                            fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
-                                                .then((r) => r.json())
-                                                .then((r) => {
-                                                    getAbsences();
-                                                });
-                                        }
-                                    }}>task_alt</IconButton>
-                                </Meta>
-                            </Item>
-                        </List>
-                    </Content>
-                </Panel>
-            {/each}
-        </Accordion>
+        {#if viewAbsences}
+            <Accordion>
+                {#each absences as item, i}
+                    <Panel bind:open={absenceList[i]}>
+                        <Header>
+                            {item["MeetingName"]}
+                            <IconButton slot="icon" toggle pressed={absenceList[i]}>
+                                <Icon class="material-icons" on>expand_less</Icon>
+                                <Icon class="material-icons">expand_more</Icon>
+                            </IconButton>
+                        </Header>
+                        <Content>
+                            <List
+                                twoLine
+                                avatarList
+                                singleSelection
+                            >
+                                <Item>
+                                    {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
+                                    <Meta>
+                                        <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
+                                            if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+                                                fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+                                                    .then((r) => r.json())
+                                                    .then((r) => {
+                                                        getAbsences();
+                                                    });
+                                            }
+                                        }}>task_alt</IconButton>
+                                    </Meta>
+                                </Item>
+                            </List>
+                        </Content>
+                    </Panel>
+                {/each}
+            </Accordion>
+        {:else}
+            Sistemski administrator je izključil vpogled v izostanke otroka za vse starše.
+        {/if}
         <h1>Domača naloga</h1>
-        {#each homework as item, i}
-            <h2>{item.Date}</h2>
-            {#each item.Homework as homework, n}
-                <h3>{homework.SubjectName} - {homework.Name}</h3>
-                Datum vpisa naloge: {homework.FromDate}
-                <br>
-                Rok oddaje: {homework.ToDate}
-                <br>
-                Status: {translatedSegments[homework.Status]}
-                <br>
-                {homework.Description}
+        {#if viewHomework}
+            {#each homework as item, i}
+                <h2>{item.Date}</h2>
+                {#each item.Homework as homework, n}
+                    <h3>{homework.SubjectName} - {homework.Name}</h3>
+                    Datum vpisa naloge: {homework.FromDate}
+                    <br>
+                    Rok oddaje: {homework.ToDate}
+                    <br>
+                    Status: {translatedSegments[homework.Status]}
+                    <br>
+                    {homework.Description}
 
+                {/each}
+                <p/>
             {/each}
-            <p/>
-        {/each}
+        {:else}
+            Sistemski administrator je izključil vpogled v domače naloge otroka za vse starše.
+        {/if}
     </main>
 </AppContent>

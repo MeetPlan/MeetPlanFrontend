@@ -88,15 +88,15 @@
                             <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                             <Text>Samotestiranje</Text>
                         </Item>
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/meals')}
+                                activated={active === 'meals'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
+                            <Text>Prehrana</Text>
+                        </Item>
                     {/if}
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate('/meals')}
-                            activated={active === 'meals'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
-                        <Text>Prehrana</Text>
-                    </Item>
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate('/communication/view')}
@@ -128,7 +128,7 @@
                                     on:click={() => navigate(`/class/user/${child.ID}`)}
                                     activated={active === `student${child.ID}`}
                             >
-                                <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
+                                <Graphic class="material-icons" aria-hidden="true">account_circle</Graphic>
                                 <Text>{child.Name}</Text>
                             </Item>
                         {/each}
@@ -193,6 +193,14 @@
                         >
                             <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                             <Text>Vsi razredi</Text>
+                        </Item>
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/settings')}
+                                activated={active === 'settings'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">settings</Graphic>
+                            <Text>Nastavitve sistema</Text>
                         </Item>
                     {/if}
                 {/if}
