@@ -121,10 +121,6 @@
             <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
                 <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
             </Textfield>
-            <Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
-                <Icon class="material-icons" slot="leadingIcon">event</Icon>
-                <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni</HelperText>
-            </Textfield>
             <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
                 <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
             </Textfield>
@@ -132,6 +128,10 @@
                 <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
             </Textfield>
         {/if}
+        <Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
+            <Icon class="material-icons" slot="leadingIcon">event</Icon>
+            <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni (to se lahko uporabi za posebne funkcije ;-))</HelperText>
+        </Textfield>
         <Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={() => patchUser()}>
             <HelperText slot="helper">Vpišite ime in priimek - bodite zelo pozorni</HelperText>
         </Textfield>

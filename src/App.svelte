@@ -21,6 +21,7 @@
 	import Communication from "./Communication.svelte";
 	import Meals from "./Meals.svelte";
 	import Settings from "./Settings.svelte";
+	import Notifications from "./Notifications.svelte";
 
 	export let url = "";
 </script>
@@ -69,6 +70,7 @@
 			<Route path="/meals" component="{Meals}" />
 			<Route path="/classes" component="{Classes}" />
 			<Route path="/settings" component="{Settings}" />
+			<Route path="/notifications" component="{Notifications}" />
 			<Route path="/"><Home /></Route>
 		</div>
 	</Router>
