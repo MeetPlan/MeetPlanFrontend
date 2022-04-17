@@ -11,6 +11,7 @@
 
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
+    import {navigate} from "svelte-routing";
 
     let myClasses;
     let students;
@@ -100,12 +101,15 @@
             <h2>Učenci:</h2>
             <List class="demo-list" twoLine avatarList>
                 {#each students.Students as item}
-                    <Item>
+                    <Item on:click={() => navigate(`/class/user/${item.ID}`)}>
                         <Avatar name={item.Name}/><div style="width: 15px;"/>
                         <TextList>
                             <PrimaryText>{item.Name}</PrimaryText>
                         </TextList>
-                        <Meta><IconButton class="material-icons" on:click={() => deleteFromClass(item.ID)} title="Remove from class">delete</IconButton></Meta>
+                        <Meta><IconButton class="material-icons" on:click={(e) => {
+                            e.stopPropagation()
+                            deleteFromClass(item.ID)
+                        }} title="Remove from class">delete</IconButton></Meta>
                     </Item>
                 {/each}
             </List>

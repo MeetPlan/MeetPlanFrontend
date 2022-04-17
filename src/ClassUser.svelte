@@ -98,7 +98,9 @@
                     }
                 });
         } else {
-            getGrades();
+            if (decoded["role"] !== "admin") {
+                getGrades();
+            }
             getUserData();
             getAbsences();
             getHomework();
@@ -135,6 +137,21 @@
     <main class="main-content">
         {#if userData}
             <h1>{userData.Name}</h1>
+        {/if}
+        {#if decoded.role === "admin"}
+            <Button on:click={() => {
+                fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                      var _url = window.URL.createObjectURL(blob);
+                      window.open(_url, "_blank").focus();
+                  }).catch((err) => {
+                    console.log(err);
+                  });
+            }}>
+                <Icon class="material-icons">download</Icon>
+                Prenesi potrdilo o šolanju
+            </Button>
         {/if}
         <h1>Ocene</h1>
         {#if viewGrades}
