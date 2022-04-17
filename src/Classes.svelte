@@ -76,7 +76,7 @@
         <Textfield label="Nov razred" bind:value={nclass}>
             <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
         </Textfield>
-        <Textfield label="Dolgo ime predmeta" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
+        <Textfield label="Šolsko leto" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
             <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
         </Textfield>
         <Select bind:teacherId label="Izberite razrednika" variant="outlined">

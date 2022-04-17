@@ -144,7 +144,7 @@
 <Drawer active="meals" />
 <AppContent class="app-content">
     <main class="main-content">
-        {#if decoded.role === "admin"}
+        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "food organizer"}
             <h1>Dodaj nov meni</h1>
             <Textfield bind:value={date} label="Datum menija" type="date" required on:click={() => date = ""}>
                 <Icon class="material-icons" slot="leadingIcon">event</Icon>
@@ -267,7 +267,7 @@
                                 {/if}
                                 <p/>
                             {/if}
-                            {#if decoded.role === "admin"}
+                            {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "food organizer"}
                                 <Button on:click={() => {
                                     mealDescription = meal.Meals;
                                     date = meal.Date;

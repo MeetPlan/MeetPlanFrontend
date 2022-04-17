@@ -74,7 +74,9 @@
         fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
-                grades = r["data"];
+                if (grades.data !== "Forbidden") {
+                    grades = r["data"];
+                }
             });
     }
 
@@ -138,7 +140,7 @@
         {#if userData}
             <h1>{userData.Name}</h1>
         {/if}
-        {#if decoded.role === "admin"}
+        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "school psychologist"}
             <Button on:click={() => {
                 fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
@@ -199,7 +201,7 @@
         {:else}
             Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
         {/if}
-        {#if decoded.role === "teacher" || decoded.role === "admin"}
+        {#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
             <p/>
             <Button on:click={() => {
                 fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})

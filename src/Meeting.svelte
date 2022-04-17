@@ -89,7 +89,7 @@
 
     const decoded = jwt_decode<JwtPayload>(token);
 
-    if (decoded["role"] === "admin") {
+    if (decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") {
         getTeachers();
     }
 </script>
@@ -125,7 +125,7 @@
                     <Label>Izbriši</Label>
                 </Button>
             {/if}
-            {#if decoded["role"] === "admin"}
+            {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
                 <p/>
                 <FormField>
                     <Switch bind:checked={isSubstitution} on:click={() => {

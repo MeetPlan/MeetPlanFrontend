@@ -63,7 +63,7 @@
 </script>
 
 <Drawer active="samotestiranje" />
-{#if decoded.role === "teacher" || decoded.role === "admin"}
+{#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
     <AppContent class="app-content">
         <div
                 tabindex="0"

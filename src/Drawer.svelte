@@ -79,7 +79,7 @@
                     <Text>Pregled</Text>
                 </Item>
                 {#if meetingActive === -1}
-                    {#if decoded.role === "admin" || decoded.role === "teacher" || decoded.role === "student"}
+                    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/samotestiranje')}
@@ -133,7 +133,7 @@
                             </Item>
                         {/each}
                     {/if}
-                    {#if decoded["role"] === "teacher" || decoded["role"] === "admin"}
+                    {#if decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "admin"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/new/meeting')}
@@ -169,7 +169,7 @@
                             <Text>Redovalnica</Text>
                         </Item>-->
                     {/if}
-                    {#if decoded["role"] === "admin"}
+                    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/users')}
@@ -212,7 +212,7 @@
                         </Item>
                     {/if}
                 {/if}
-                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher")}
+                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant")}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate(`/meeting/${meetingActive}`)}

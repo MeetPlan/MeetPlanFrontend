@@ -10,6 +10,8 @@
     let loaded: boolean = false;
     let items = [];
 
+    let principalId = undefined;
+
     loadThings();
 
     function loadThings() {
@@ -20,11 +22,18 @@
             .then((json) => {
                     items = json["data"];
                     loaded = true;
+                    for (let i in items) {
+                        let item = items[i]
+                        if (item.Role === "principal") {
+                            principalId = item.ID;
+                            break
+                        }
+                    }
                 },
             );
     }
 
-    let choices = ["student", "parent", "teacher", "admin"];
+    let choices = ["student", "parent", "teacher", "principal assistant", "principal"];
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import { navigate } from "svelte-routing";
@@ -58,13 +67,15 @@
                     <Cell>{item["Name"]}</Cell>
                     <Cell>{item["Email"]}</Cell>
                     <Cell>
-                        {#if decoded["email"] !== item["Email"]}
+                        {#if decoded["user_id"] !== item["ID"]}
                             <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
                                 e.stopPropagation();
                                 console.log(e);
 
                                 let fd = new FormData();
                                 fd.append("role", e.detail.segmentId);
+
+                                principalId = undefined;
 
                                 fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
                                     headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
@@ -77,10 +88,15 @@
                                         },
                                     );
                             }} bind:selected="{item['Role']}">
-                                <!-- Note: the `segment` property is required! -->
-                                <Segment {segment}>
-                                    <Label>{segment}</Label>
-                                </Segment>
+                                {#if
+                                    (decoded["role"] !== "principal assistant" && segment !== "principal") ||
+                                    (decoded["role"] !== "principal assistant" && segment !== "principal assistant")}
+                                    {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
+                                        <Segment {segment}>
+                                            <Label>{segment}</Label>
+                                        </Segment>
+                                    {/if}
+                                {/if}
                             </SegmentedButton>
                         {/if}
                     </Cell>
