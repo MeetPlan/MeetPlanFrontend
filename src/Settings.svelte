@@ -17,6 +17,7 @@
     let parentViewGrades = false;
     let parentViewAbsences = false;
     let parentViewHomework = false;
+    let parentViewGradings = false;
 
     function getConfiguration() {
         fetch(`${baseurl}/admin/config/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -31,6 +32,7 @@
                     parentViewGrades = config["parent_view_grades"];
                     parentViewHomework = config["parent_view_homework"];
                     parentViewAbsences = config["parent_view_absences"];
+                    parentViewGradings = config["parent_view_gradings"];
                 },
             );
     }
@@ -45,6 +47,7 @@
         fd.append("parent_view_grades", parentViewGrades.toString());
         fd.append("parent_view_homework", parentViewHomework.toString());
         fd.append("parent_view_absences", parentViewAbsences.toString());
+        fd.append("parent_view_gradings", parentViewGradings.toString());
         fetch(`${baseurl}/admin/config/get`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "PATCH"})
             .then((r) => r.json())
@@ -87,6 +90,11 @@
         <FormField>
             <Switch bind:checked={parentViewGrades} on:SMUISwitch:change={() => updateConfig()} />
             Dovoli pregled nad učenčevimi ocenami
+        </FormField>
+        <br>
+        <FormField>
+            <Switch bind:checked={parentViewGradings} on:SMUISwitch:change={() => updateConfig()} />
+            Dovoli pregled nad učenčevimi ocenjevanji znanj
         </FormField>
     </main>
 </AppContent>
