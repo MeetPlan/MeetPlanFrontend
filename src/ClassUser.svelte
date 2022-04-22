@@ -34,10 +34,12 @@
 
     let absenceList = [];
     let homework = [];
+    let gradings = [];
 
     let viewGrades = true;
     let viewAbsences = true;
     let viewHomework = true;
+    let viewGradings = true;
 
     function getUserData() {
         fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -54,11 +56,18 @@
                 absences = r["data"];
                 let al = [];
                 for (let absence in absences) {
-                    let a = absences[absence];
-                    al.push(!a["IsExcused"])
+                    al = [...al, !(absences[absence].IsExcused)]
                 }
                 console.log(al);
                 absenceList = al;
+            });
+    }
+
+    function getUserGradings() {
+        fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((r) => r.json())
+            .then((r) => {
+                gradings = r["data"];
             });
     }
 
@@ -74,8 +83,8 @@
         fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
-                if (grades.data !== "Forbidden") {
-                    grades = r["data"];
+                if (r.data !== "Forbidden") {
+                    grades = r.data;
                 }
             });
     }
@@ -89,6 +98,7 @@
                     viewAbsences = data["parent_view_absences"];
                     viewHomework = data["parent_view_homework"];
                     viewGrades = data["parent_view_grades"];
+                    viewGradings = data["parent_view_gradings"];
                     if (viewGrades) {
                         getGrades();
                     }
@@ -98,6 +108,9 @@
                     if (viewAbsences) {
                         getAbsences();
                     }
+                    if (viewGradings) {
+                        getUserGradings();
+                    }
                 });
         } else {
             if (decoded["role"] !== "admin") {
@@ -106,6 +119,7 @@
             getUserData();
             getAbsences();
             getHomework();
+            getUserGradings();
         }
     }
 
@@ -179,7 +193,11 @@
                                     <div class="sameline">
                                         <div style="display:inline-block; width: 5px;"/>
                                         {#each period.Grades as grade}
-                                            <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</div>
+                                            <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
+                                                <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
+{grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">{grade.Grade}
+                                                </span>
+                                            </div>
                                             <div style="display:inline-block; width: 5px;"/>
                                         {/each}
                                         <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
@@ -219,7 +237,7 @@
         {/if}
         <h1>Odsotnost</h1>
         {#if viewAbsences}
-            <Accordion>
+            <Accordion multiple>
                 {#each absences as item, i}
                     <Panel bind:open={absenceList[i]}>
                         <Header>
@@ -267,10 +285,34 @@
                     <br>
                     Rok oddaje: {homework.ToDate}
                     <br>
-                    Status: {translatedSegments[homework.Status]}
+                    Status: {translatedSegments[homework.Status] === undefined ? "ŠE NE UREJENO" : translatedSegments[homework.Status]}
                     <br>
                     {homework.Description}
 
+                {/each}
+                <p/>
+            {/each}
+        {:else}
+            Sistemski administrator je izključil vpogled v domače naloge otroka za vse starše.
+        {/if}
+
+        <h1>Ocenjevanja in preverjanja znanj</h1>
+        {#if viewGradings}
+            {#each gradings as item}
+                <h2>{item.Date}</h2>
+                {#each item.Gradings as grading, n}
+                    <h3>{grading.MeetingName}</h3>
+                    {#if grading.IsTest}
+                        Preverjanje znanja
+                    {:else}
+                        {#if grading.IsWrittenAssessment}
+                            Pisno ocenjevanje
+                        {:else}
+                            Ocenjevanje
+                        {/if}
+                    {/if}
+                    <br>
+                    <a on:click={() => navigate(`/meeting/${grading.ID}`)}>Pojdi na srečanje</a>
                 {/each}
                 <p/>
             {/each}

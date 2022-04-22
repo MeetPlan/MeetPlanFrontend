@@ -22,6 +22,7 @@
     let selectedPeriod;
     let userId;
     let finalize = false;
+    let canPatch = true;
 
     function getGrades() {
         fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -38,6 +39,7 @@
         fd.append("user_id", userId);
         fd.append("period", selectedPeriod);
         fd.append("is_final", finalize.toString());
+        fd.append("can_patch", canPatch.toString())
         fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
@@ -130,6 +132,13 @@
                 <Switch bind:checked={isWritten} />
                 <span slot="label">Pisna ocena</span>
             </FormField>
+            {#if toPatch === undefined}
+                <br>
+                <FormField>
+                    <Switch bind:checked={canPatch} />
+                    <span slot="label">Se lahko popravlja</span>
+                </FormField>
+            {/if}
         {/if}
     </Content>
     <Actions>
@@ -192,14 +201,19 @@
                                 {#each period.Grades as grade}
                                     <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;" on:click={(e) => {
                                         e.stopPropagation();
-                                        if (user.Final === 0) {
+                                        if (user.Final === 0 && grade.CanPatch === true) {
                                             toPatch = grade.ID;
                                             selectedGrade = grade.Grade;
                                             selectedPeriod = i + 1;
                                             isWritten = grade.IsWritten;
                                             open = true;
                                         }
-                                    }}>{grade.Grade}</div>
+                                    }}>
+                                        <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
+{grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">
+                                            {grade.Grade}
+                                        </span>
+                                    </div>
                                     <div style="display:inline-block; width: 5px;"/>
                                 {/each}
                                 <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
