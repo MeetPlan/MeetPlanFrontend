@@ -14,6 +14,9 @@
     import HelperText from '@smui/textfield/helper-text';
     import Button, {Label} from "@smui/button";
 
+    import Autocomplete from '@smui-extra/autocomplete';
+    import {subjects as subjectsList} from "./Constants/consts";
+
     import Select, {Option} from "@smui/select";
 
     import { navigate } from "svelte-routing";
@@ -89,9 +92,7 @@
         <Textfield label="Nov predmet" bind:value={nclass}>
             <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
         </Textfield>
-        <Textfield label="Dolgo ime predmeta" bind:value={longName} style="width: 100%;">
-            <HelperText slot="helper">Vpišite prosimo ime novega predmeta - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - slovenščina, matematika)</HelperText>
-        </Textfield>
+        <Autocomplete combobox options={subjectsList} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" />
         <p/>
         <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
             <Option value="" on:click={() => classId = ""}>Bom ročno dodal uporabnike (ne uporabi razreda)</Option>

@@ -21,6 +21,7 @@
     const decoded = jwt_decode<JwtPayload>(token);
 
     let hasClass = false;
+    let mealsBlocked = true;
     let unreadMessages;
 
     let children = [];
@@ -47,6 +48,13 @@
         .then((response) => response.json())
         .then((json) => {
                 unreadMessages = json.data;
+            },
+        );
+
+    fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        .then((response) => response.json())
+        .then((json) => {
+                mealsBlocked = json.data;
             },
         );
 
@@ -88,14 +96,16 @@
                             <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
                             <Text>Samotestiranje</Text>
                         </Item>
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/meals')}
-                                activated={active === 'meals'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
-                            <Text>Prehrana</Text>
-                        </Item>
+                        {#if !mealsBlocked}
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate('/meals')}
+                                    activated={active === 'meals'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
+                                <Text>Prehrana</Text>
+                            </Item>
+                        {/if}
                     {/if}
                     <Item
                             href="javascript:void(0)"

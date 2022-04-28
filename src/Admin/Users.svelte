@@ -7,6 +7,9 @@
     import IconButton from "@smui/icon-button";
     import {baseurl} from "../constants";
 
+    import Icon from '@smui/textfield/icon';
+    import Button from "@smui/button";
+
     let loaded: boolean = false;
     let items = [];
 
@@ -33,7 +36,7 @@
             );
     }
 
-    let choices = ["student", "parent", "teacher", "principal assistant", "principal"];
+    let choices = ["unverified", "student", "parent", "teacher", "principal assistant", "principal"];
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import { navigate } from "svelte-routing";
@@ -133,5 +136,10 @@
                     slot="progress"
             />
         </DataTable>
+        <p/>
+        <Button on:click={() => navigate("/register")}>
+            <Icon class="material-icons">group_add</Icon>
+            <Label>Registriraj novega uporabnika brez izpisa</Label>
+        </Button>
     </main>
 </AppContent>

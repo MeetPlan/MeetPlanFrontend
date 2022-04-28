@@ -67,6 +67,10 @@
             </Button>
             <p />
             <Link to="/register">REGISTER</Link>
+            <p/>
+            {#if localStorage.getItem("key") !== "" && localStorage.getItem("key") !== undefined && localStorage.getItem("key") !== null}
+                <Link to="/">POJDITE NEPOSREDNO V SISTEM</Link>
+            {/if}
         </Paper>
     </div>
 </main>

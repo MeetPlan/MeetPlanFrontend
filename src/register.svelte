@@ -21,7 +21,7 @@
         fd.append("pass", password);
         fd.append("name", name);
         try {
-            let r = await fetch(`${baseurl}/user/new`, {body: fd, method: "POST"})
+            let r = await fetch(`${baseurl}/user/new`, {body: fd, method: "POST", headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             let response = await r.json();
             if (response["success"] === true) {
                 navigate("/login")

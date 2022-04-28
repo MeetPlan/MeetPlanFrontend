@@ -8,11 +8,13 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
 
-    import Select, {Option} from "@smui/select";
+    import {subjects} from "./Constants/consts";
 
     import Avatar from "svelte-avatar";
 
+    import Autocomplete from '@smui-extra/autocomplete';
     import {baseurl} from "./constants";
+    import Select, {Option} from "@smui/select";
 
     let myClasses;
     let students;
@@ -65,9 +67,8 @@
 <AppContent class="app-content">
     <main class="main-content">
         {#if students !== undefined}
-            <Textfield label="Dolgo ime predmeta" bind:value={longName} style="width: 100%;" on:change={() => patchSubjectName()}>
-                <HelperText slot="helper">Vpišite prosimo ime novega predmeta - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - slovenščina, matematika)</HelperText>
-            </Textfield>
+            <Autocomplete combobox options={subjects} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 500)} />
+            <p/>
             {#if !students.InheritsClass}
                 <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">
                     <Option value="" on:click={() => classId = ""}/>
