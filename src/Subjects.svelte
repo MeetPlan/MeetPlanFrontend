@@ -61,6 +61,7 @@
     let teacherId = "";
     let classId = "";
     let longName = "";
+    let realization: number = 60.0;
 
     function newSubject() {
         let fd = new FormData();
@@ -68,6 +69,7 @@
         fd.append("name", nclass);
         fd.append("class_id", classId);
         fd.append("long_name", longName)
+        fd.append("realization", realization.toString());
         fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
@@ -107,6 +109,10 @@
                 <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
             {/each}
         </Select>
+        <p/>
+        <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5">
+            <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
+        </Textfield>
         <p/>
         <Button on:click={() => newSubject()} variant="raised">
             <Label>OK</Label>

@@ -22,6 +22,8 @@
     let classId = "";
     let longName = "";
 
+    let realization: number = 60.0;
+
     export let id: number;
 
     function getSubject() {
@@ -30,13 +32,15 @@
             .then((r) => {
                 longName = r.data.LongName;
                 students = r.data;
+                realization = r.data.Realization;
             });
     }
 
     function patchSubjectName() {
         let fd = new FormData();
         fd.append("long_name", longName)
-        fetch(`${baseurl}/subject/get/${id}/long_name`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fd.append("realization", realization.toString());
+        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getSubject());
     }
@@ -68,6 +72,9 @@
     <main class="main-content">
         {#if students !== undefined}
             <Autocomplete combobox options={subjects} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 500)} />
+            <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5" on:change={() => setTimeout(patchSubjectName, 500)}>
+                <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
+            </Textfield>
             <p/>
             {#if !students.InheritsClass}
                 <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">

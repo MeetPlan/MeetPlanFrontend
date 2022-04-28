@@ -11,9 +11,15 @@
     import Select, {Option} from "@smui/select";
     import * as marked from 'marked';
 
+    import { chart } from "svelte-apexcharts";
+    let options;
+
     export let meetingId: number;
 
     let meetingData;
+
+    let realization = 0;
+    let realizationDone = 0;
 
     function fmtDate(date: Date): string {
         let dd = date.getDate().toString()
@@ -48,6 +54,17 @@
                 meetingData = r.data;
                 isSubstitution = meetingData.IsSubstitution;
                 teacherId = meetingData.TeacherID;
+                realizationDone = meetingData.Subject.RealizationDone;
+                realization = meetingData.Subject.Realization;
+                options = {
+                    chart: {
+                        type: "donut",
+                        width: "25%",
+                        offsetX: 0,
+                    },
+                    series: [realizationDone, realization-realizationDone],
+                    labels: ["Trenutna realizacija", "Realizacija"],
+                };
             })
     }
 
@@ -151,6 +168,7 @@
                     </Select>
                 {/if}
             {/if}
+            <div use:chart={options}/>
         {/if}
     </main>
 </AppContent>
