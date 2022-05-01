@@ -36,12 +36,22 @@
     let teachers = [];
     let isSubstitution = false;
     let teacherId: number = undefined;
+    let protonRatings = [];
 
     function getTeachers() {
         fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((json) => {
                     teachers = json["data"];
+                },
+            );
+    }
+
+    function getProtonSubstitutionRatings() {
+        fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    protonRatings = json["data"];
                 },
             );
     }
@@ -108,6 +118,7 @@
 
     if (decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") {
         getTeachers();
+        getProtonSubstitutionRatings();
     }
 </script>
 
@@ -166,8 +177,17 @@
                             }} value={c.ID}>{c["Name"]}</Option>
                         {/each}
                     </Select>
+                    {#if protonRatings.length == 0}
+                        Proton ni uspel oceniti najboljše možne zamenjave. <p/>
+                    {:else}
+                        Proton je sestavil lestvico najboljših možnih zamenjav: <p/>
+                        {#each protonRatings as p}
+                            {p.Name} je dobil(a) {p.Tier} točk na Proton lestvici <br>
+                        {/each}
+                    {/if}
                 {/if}
             {/if}
+            <p/>
             <div use:chart={options}/>
         {/if}
     </main>
