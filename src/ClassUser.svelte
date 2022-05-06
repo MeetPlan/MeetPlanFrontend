@@ -8,6 +8,9 @@
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {baseurl} from "./constants";
 
+    import FormField from '@smui/form-field';
+    import Switch from '@smui/switch';
+
     import IconButton, { Icon } from '@smui/icon-button';
 
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
@@ -41,11 +44,14 @@
     let viewHomework = true;
     let viewGradings = true;
 
+    let isPassing = true;
+
     function getUserData() {
         fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
                 userData = r["data"];
+                isPassing = userData.IsPassing;
             });
     }
 
@@ -113,9 +119,7 @@
                     }
                 });
         } else {
-            if (decoded["role"] !== "admin") {
-                getGrades();
-            }
+            getGrades();
             getUserData();
             getAbsences();
             getHomework();
@@ -221,6 +225,19 @@
         {/if}
         {#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
             <p/>
+            <FormField>
+                <Switch bind:checked={isPassing} on:click={() => {
+                    setTimeout(() => {
+                        let fd = new FormData();
+                        fd.append("is_passing", isPassing.toString());
+                        fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+                            .then((response) => response.json())
+                            .then((r) => getUserData());
+                    }, 200);
+                }}/>
+                Bo opravil razred?
+            </FormField>
+            <p/>
             <Button on:click={() => {
                 fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
@@ -232,7 +249,7 @@
                   });
             }}>
                 <Icon class="material-icons">download</Icon>
-                Prenesi končno spričevalo
+                Prenesi spričevalo
             </Button>
         {/if}
         <h1>Odsotnost</h1>
@@ -317,7 +334,7 @@
                 <p/>
             {/each}
         {:else}
-            Sistemski administrator je izključil vpogled v domače naloge otroka za vse starše.
+            Sistemski administrator je izključil vpogled v ocenjevanja otroka za vse starše.
         {/if}
     </main>
 </AppContent>
