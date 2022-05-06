@@ -12,6 +12,7 @@
     import * as marked from 'marked';
 
     import { chart } from "svelte-apexcharts";
+    import Timetable from "./Widgets/Timetable.svelte";
     let options;
 
     export let meetingId: number;
@@ -31,6 +32,11 @@
             mm = `0${(date.getMonth() + 1).toString()}`
         }
         return `${dd}-${mm}-${date.getFullYear()}`
+    }
+
+    function reverseFmtDate(date: string): string {
+        let pieces = date.split("-");
+        return `${pieces[2]}-${pieces[1]}-${pieces[0]}`
     }
 
     let teachers = [];
@@ -153,6 +159,8 @@
                     <Label>Izbriši</Label>
                 </Button>
             {/if}
+            <p/>
+            <div use:chart={options}/>
             {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
                 <p/>
                 <FormField>
@@ -177,18 +185,37 @@
                             }} value={c.ID}>{c["Name"]}</Option>
                         {/each}
                     </Select>
-                    {#if protonRatings.length == 0}
+                    <p/>
+                    {#if protonRatings.length === 0}
                         Proton ni uspel oceniti najboljše možne zamenjave. <p/>
                     {:else}
                         Proton je sestavil lestvico najboljših možnih zamenjav: <p/>
                         {#each protonRatings as p}
-                            {p.Name} je dobil(a) {p.Tier} točk na Proton lestvici <br>
+                            <h2>{p.Name}</h2>
+                            {p.Name} je dobil(a) <b>{p.Tier}</b> točk na Proton lestvici, ker: <br>
+                            <ul>
+                                {#if p.GradingList.TeachesSameSubject}
+                                    <li>Uči isti predmet - 5 točk</li>
+                                {/if}
+                                {#if p.GradingList.HasMeetingBefore}
+                                    <li>Ima učno uro prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
+                                {/if}
+                                {#if p.GradingList.HasMeetingLater}
+                                    <li>Ima učno uro pozneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
+                                {/if}
+                                {#if p.GradingList.HasMeeting2HBefore}
+                                    <li>Ima učno uro dve uri prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
+                                {/if}
+                                {#if p.GradingList.HasMeeting2HLater}
+                                    <li>Ima učno uro dve uri kasneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
+                                {/if}
+                            </ul>
+                            <h3>Urnik učitelja:</h3>
+                            <Timetable teacherId="{p.TeacherID}" date={new Date(reverseFmtDate(meetingData.Date))} hour={meetingData.Hour} />
                         {/each}
                     {/if}
                 {/if}
             {/if}
-            <p/>
-            <div use:chart={options}/>
         {/if}
     </main>
 </AppContent>

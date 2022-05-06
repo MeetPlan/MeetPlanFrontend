@@ -74,10 +74,14 @@
 
     export let classId: number;
     export let subjectId: number;
+    export let teacherId: number;
 
     function getTimetable() {
         console.log(fmtStart, fmtEnd)
-        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? `classId=${classId}` : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+
+        console.log(classId, teacherId, subjectId)
+
+        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
                 mon = r["data"][0]["meetings"];
