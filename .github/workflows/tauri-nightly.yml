@@ -23,10 +23,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: app-v${{ env.PACKAGE_VERSION }}
-          release_name: "Desktop app v${{ env.PACKAGE_VERSION }}"
+          release_name: "Prerelease ${{ github.sha }}"
           body: "See the assets to download this version and install."
           draft: true
-          prerelease: false
+          prerelease: true
   build-tauri:
     needs: create-release
     strategy:
@@ -55,6 +55,7 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI: true
         with:
           releaseId: ${{ github.sha }}
           prerelease: true

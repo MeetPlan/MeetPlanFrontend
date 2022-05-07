@@ -7,7 +7,9 @@
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear -s",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tauri-build": "TAURI=true tauri build",
+    "tauri-dev": "TAURI=true tauri build dev"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
