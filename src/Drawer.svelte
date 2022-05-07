@@ -71,7 +71,7 @@
             <Title style="display:inline-block;">MeetPlan</Title>
             <div style="display:inline-block; float:right;">
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    localStorage.clear()
+                    localStorage.removeItem("key")
                     navigate("/login")
                 }}>logout</IconButton>
             </div>

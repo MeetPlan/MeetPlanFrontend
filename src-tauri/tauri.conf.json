@@ -1,0 +1,65 @@
+{
+  "package": {
+    "productName": "MeetPlan",
+    "version": "0.1.0"
+  },
+  "build": {
+    "distDir": "../public",
+    "devPath": "http://localhost:8080",
+    "beforeDevCommand": "TAURI=true npm run dev",
+    "beforeBuildCommand": "TAURI=true npm run build"
+  },
+  "tauri": {
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "io.github.meetplan",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "resources": [],
+      "externalBin": [],
+      "copyright": "Mitja Ševerkar, MeetPlan Team",
+      "category": "Educational & schools",
+      "shortDescription": "MeetPlan is a Student Information System for Slovenian schools.",
+      "longDescription": "",
+      "deb": {
+        "depends": []
+      },
+      "macOS": {
+        "frameworks": [],
+        "exceptionDomain": "",
+        "signingIdentity": null,
+        "providerShortName": null,
+        "entitlements": null
+      },
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": ""
+      }
+    },
+    "updater": {
+      "active": false
+    },
+    "allowlist": {
+      "all": true
+    },
+    "windows": [
+      {
+        "title": "MeetPlan",
+        "width": 800,
+        "height": 600,
+        "resizable": true,
+        "maximized": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  }
+}

@@ -9,6 +9,7 @@ import css from 'rollup-plugin-css-only';
 import replace from "@rollup/plugin-replace";
 
 const production = !process.env.ROLLUP_WATCH;
+const tauri = process.env.TAURI;
 
 function serve() {
 	let server;
@@ -42,6 +43,7 @@ export default {
 	plugins: [
 		replace({
 			isProduction: production,
+			isTauriApp: tauri === "true",
 		}),
 		svelte({
 			preprocess: sveltePreprocess({ sourceMap: !production }),

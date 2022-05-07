@@ -5,7 +5,7 @@
     import Textfield from "@smui/textfield";
     import "@smui/textfield/bare.css";
 
-    import {baseurl} from "./constants";
+    import * as constants from "./constants";
 
     import Icon from '@smui/textfield/icon';
     import Button, {Label} from "@smui/button";
@@ -20,7 +20,7 @@
         fd.append("email", email);
         fd.append("pass", password);
         try {
-            let r = await fetch(`${baseurl}/user/login`, {body: fd, method: "POST"})
+            let r = await fetch(`${constants.baseurl}/user/login`, {body: fd, method: "POST"})
             let response = await r.json();
             if (response["success"] === true) {
                 localStorage.setItem("key", response["data"]);
@@ -32,6 +32,8 @@
             snackbarWithClose.open();
         }
     }
+
+    let url = localStorage.getItem("baseurl")
 
     let email = "";
     let password = "";
@@ -68,6 +70,16 @@
             <p />
             <Link to="/register">REGISTER</Link>
             <p/>
+            {#if constants.isTauri}
+                <Textfield on:change={() => {
+                    setTimeout(() => {
+                        localStorage.setItem("baseurl", url);
+                        constants.baseurl = url;
+                    }, 200)
+                }} type="url" bind:value={url} label="Povezava do strežnika">
+                    <Icon class="material-icons" slot="leadingIcon">link</Icon>
+                </Textfield>
+            {/if}
             {#if localStorage.getItem("key") !== "" && localStorage.getItem("key") !== undefined && localStorage.getItem("key") !== null}
                 <Link to="/">POJDITE NEPOSREDNO V SISTEM</Link>
             {/if}

@@ -6,7 +6,8 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear -s",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "tauri": "tauri"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
@@ -23,6 +24,7 @@
     "@smui/list": "^6.0.0-beta.13",
     "@smui/ripple": "^6.0.0-beta.13",
     "@smui/select": "^6.0.0-beta.13",
+    "@tauri-apps/cli": "^1.0.0-rc.9",
     "@tsconfig/svelte": "^2.0.1",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
