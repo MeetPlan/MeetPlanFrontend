@@ -6,7 +6,7 @@
     import Button from "@smui/button";
 
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
-    import {baseurl} from "./constants";
+    import {baseurl, isTauri, saveBlob} from "./constants";
 
     import FormField from '@smui/form-field';
     import Switch from '@smui/switch';
@@ -20,6 +20,8 @@
         Item,
         Meta,
     } from '@smui/list';
+    import * as fs from "@tauri-apps/api/fs";
+    import * as dialog from "@tauri-apps/api/dialog";
 
     let grades;
     let userData;
@@ -162,10 +164,8 @@
             <Button on:click={() => {
                 fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
-                    .then((blob) => {
-                      var _url = window.URL.createObjectURL(blob);
-                      window.open(_url, "_blank").focus();
-                  }).catch((err) => {
+                    .then((blob) => saveBlob(blob))
+                .catch((err) => {
                     console.log(err);
                   });
             }}>
@@ -241,10 +241,8 @@
             <Button on:click={() => {
                 fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
-                    .then((blob) => {
-                      var _url = window.URL.createObjectURL(blob);
-                      window.open(_url, "_blank").focus();
-                  }).catch((err) => {
+                    .then((blob) => saveBlob(blob))
+                    .catch((err) => {
                     console.log(err);
                   });
             }}>

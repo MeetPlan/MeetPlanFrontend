@@ -11,7 +11,7 @@
         SecondaryText,
     } from '@smui/list';
 
-    import {baseurl} from "./constants";
+    import {baseurl, saveBlob} from "./constants";
 
     import IconButton from "@smui/icon-button";
 
@@ -108,10 +108,8 @@
                                         <IconButton class="material-icons" on:click={() => {
                                             fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                                                 .then((response) => response.blob())
-                                                .then((blob) => {
-                                                  var _url = window.URL.createObjectURL(blob);
-                                                  window.open(_url, "_blank").focus();
-                                              }).catch((err) => {
+                                                .then((blob) => saveBlob(blob))
+                                                .catch((err) => {
                                                 console.log(err);
                                               });
                                         }}>download</IconButton>

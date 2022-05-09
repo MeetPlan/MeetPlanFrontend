@@ -3,7 +3,7 @@
     import {AppContent} from "@smui/drawer";
 
     import Button, {Icon, Label} from "@smui/button";
-    import {baseurl} from "../constants";
+    import {baseurl, saveBlob} from "../constants";
 
     import {onMount} from "svelte";
 
@@ -37,10 +37,8 @@
             <Button on:click={() => {
                 fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
-                    .then((blob) => {
-                      var _url = window.URL.createObjectURL(blob);
-                      window.open(_url, "_blank").focus();
-                  }).catch((err) => {
+                    .then((blob) => saveBlob(blob))
+                    .catch((err) => {
                     console.log(err);
                   });
             }}>

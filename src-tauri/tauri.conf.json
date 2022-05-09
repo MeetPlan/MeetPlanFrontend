@@ -47,7 +47,15 @@
       "active": false
     },
     "allowlist": {
-      "all": true
+      "fs": {
+        "writeFile": true
+      },
+      "dialog": {
+        "save": true
+      },
+      "http": {
+        "request": true
+      }
     },
     "windows": [
       {
