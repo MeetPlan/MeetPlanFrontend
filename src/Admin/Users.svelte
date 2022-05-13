@@ -5,7 +5,7 @@
     import LinearProgress from '@smui/linear-progress';
     import SegmentedButton, {Segment, Label} from "@smui/segmented-button";
     import IconButton from "@smui/icon-button";
-    import {baseurl} from "../constants";
+    import {baseurl, saveBlob} from "../constants";
 
     import Icon from '@smui/textfield/icon';
     import Button from "@smui/button";
@@ -59,6 +59,7 @@
                     <Cell style="width: 100%;">Name</Cell>
                     <Cell>Email</Cell>
                     <Cell>Change role</Cell>
+                    <Cell>Reset password</Cell>
                     <Cell>Delete user</Cell>
                     <Cell>View</Cell>
                 </Row>
@@ -101,6 +102,19 @@
                                     {/if}
                                 {/if}
                             </SegmentedButton>
+                        {/if}
+                    </Cell>
+                    <Cell>
+                        {#if decoded["email"] !== item["Email"]}
+                            <IconButton class="material-icons" on:click={(e) => {
+                                e.stopPropagation();
+                                fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                                    .then((response) => response.blob())
+                                    .then((blob) => saveBlob(blob))
+                                    .catch((err) => {
+                                    console.log(err);
+                                  });
+                            }}>download</IconButton>
                         {/if}
                     </Cell>
                     <Cell>

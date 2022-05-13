@@ -22,6 +22,7 @@
 	import Meals from "./Meals.svelte";
 	import Settings from "./Settings.svelte";
 	import Notifications from "./Notifications.svelte";
+	import UserSettings from "./UserSettings.svelte";
 
 	export let url = "";
 </script>
@@ -71,6 +72,7 @@
 			<Route path="/classes" component="{Classes}" />
 			<Route path="/settings" component="{Settings}" />
 			<Route path="/notifications" component="{Notifications}" />
+			<Route path="/settings/user" component="{UserSettings}" />
 			<Route path="/"><Home /></Route>
 		</div>
 	</Router>
