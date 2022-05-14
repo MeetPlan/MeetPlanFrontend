@@ -75,7 +75,7 @@
                 options = {
                     chart: {
                         type: "donut",
-                        width: "25%",
+                        width: "400px",
                         offsetX: 0,
                     },
                     series: [realizationDone, realization-realizationDone],
@@ -92,7 +92,7 @@
 
     function patchMeeting() {
         let fd = new FormData()
-        fd.append("subjectId", meetingData.SubjectID);
+        fd.append("subjectId", meetingData.Subject.ID);
         fd.append("date", meetingData.Date);
         fd.append("name", meetingData.MeetingName);
         fd.append("details", meetingData.Details);
@@ -148,7 +148,7 @@
                 {@html marked.marked(meetingData.Details)}
             {/if}
             <a href="{meetingData.URL}">Povezava do srečanja</a>
-            {#if decoded["role"] === "admin" || decoded["user_id"] === meetingData.TeacherID}
+            {#if decoded["role"] === "admin" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
                 <p/>
                 <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
                     <Icon class="material-icons">edit</Icon>

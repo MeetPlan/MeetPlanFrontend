@@ -15,9 +15,12 @@
     import * as marked from 'marked';
 
     let date = "";
+    let lastDate = "";
     let name = "";
     let description = "";
     let url = "";
+
+    let repeatCycle = 1;
 
     let hour: number;
     let hours = [0, 1, 2, 3, 4, 5, 6, 7, 8];
@@ -26,6 +29,7 @@
     let isGrading = false;
     let isWrittenAssessment = false;
     let isTest = false;
+    let isRepetitive = false;
 
     let subjects = [];
     let subjectId = "";
@@ -118,6 +122,8 @@
         fd.append("is_grading", isGrading ? "true" : "false")
         fd.append("is_written_assessment", isWrittenAssessment ? "true" : "false")
         fd.append("is_test", isTest ? "true" : "false")
+        fd.append("repeat_cycle", repeatCycle.toString())
+        fd.append("last_date", fmtDate(new Date(lastDate)))
         fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
             .then((r) => r.json())
@@ -205,6 +211,23 @@
                 <Switch bind:checked={isTest} />
                 Je preverjanje znanja
             </FormField>
+        {/if}
+        <p/>
+        <FormField>
+            <Switch bind:checked={isRepetitive} />
+            Je ponavljajoče
+        </FormField>
+        {#if isRepetitive}
+            <p/>
+            <Textfield bind:value={lastDate} label="Datum zadnjega srečanja" type="date" on:click={() => lastDate = ""}>
+                <Icon class="material-icons" slot="leadingIcon">event</Icon>
+                <HelperText slot="helper">Izberite prosim zadnji datum srečanja</HelperText>
+            </Textfield>
+            <p/>
+            <Textfield bind:value={repeatCycle} label="Cikel ponavljanja" type="number">
+                <Icon class="material-icons" slot="leadingIcon">replay</Icon>
+                <HelperText slot="helper">Vpišite na koliko tednov se srečanje ponovi</HelperText>
+            </Textfield>
         {/if}
         <p/><hr><p/>
         <Button on:click={() => createNew()}>
