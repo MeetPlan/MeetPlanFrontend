@@ -4,7 +4,7 @@
         Header,
         Title,
     } from '@smui/drawer';
-    import List, { Item, Text, Graphic } from '@smui/list';
+    import List, {Item, Text, Graphic, Subheader, Group, Meta} from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
@@ -12,6 +12,13 @@
     import jwt_decode, { JwtPayload } from "jwt-decode";
 
     import {baseurl} from "./constants";
+    import Dialog, {Actions} from "@smui/dialog";
+    import Textfield from "@smui/textfield";
+    import Button, {Label} from "@smui/button";
+    import FormField from '@smui/form-field';
+    import Select, {Option} from "@smui/select";
+
+    import * as marked from 'marked';
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -24,7 +31,13 @@
     let mealsBlocked = true;
     let unreadMessages;
 
+    let improvementBody = "";
+    let improvementDialog = false;
+    let studentId = 0;
+
     let children = [];
+    let users = [];
+    let user = 0
 
     if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
         fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -62,7 +75,69 @@
 
     export let active: string;
     export let meetingActive: number = -1;
+
+    if ((decoded["role"] === "teacher" || decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") && meetingActive !== -1) {
+        fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.json())
+            .then((json) => {
+                    users = json.data;
+                },
+            );
+    }
 </script>
+
+{#if improvementDialog}
+    <Dialog
+            bind:open
+            aria-labelledby="simple-title"
+            aria-describedby="simple-content"
+    >
+        <Title id="simple-title">
+            <Select bind:value={user} variant="outlined" style="width: 100%;" label="Izberite učenca">
+                <Option value="" on:click={() => user = -1}/>
+                {#each users as c}
+                    <Option on:click={async () => {
+                        user = c.ID;
+                    }} value={c.ID}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+            <p/>
+        </Title>
+        <Content id="simple-content">
+            <p/>
+            <FormField>
+                <Textfield
+                        bind:value={improvementBody}
+                        style="width: 100%;"
+                        textarea
+                        label="Vpišite obvestilo. Podpira Markdown."
+                        input$rows={5}
+                        input$cols={48}
+                />
+            </FormField>
+            {#if improvementBody !== ""}
+                <p/>
+                Predogled:
+                {@html marked.marked(improvementBody)}
+            {/if}
+        </Content>
+        <Actions>
+            <Button on:click={() => {
+                let fd = new FormData();
+                fd.append("message", improvementBody);
+                fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+                    .then((r) => r.json())
+                    .then((r) => {
+                        improvementBody = "";
+                    });
+            }}>
+                <Label>
+                    POŠLJI
+                </Label>
+            </Button>
+        </Actions>
+    </Dialog>
+{/if}
 
     <!-- Don't include fixed={false} if this is a page wide drawer.
           It adds a style for absolute positioning. -->
@@ -255,6 +330,14 @@
                     >
                         <Graphic class="material-icons" aria-hidden="true">assignment</Graphic>
                         <Text>Domača naloga</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => improvementDialog = true}
+                            activated={active === 'improvements'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">feedback</Graphic>
+                        <Text>Izboljšave (vpisi)</Text>
                     </Item>
                 {/if}
             </List>

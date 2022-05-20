@@ -16,12 +16,12 @@
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import jwt_decode, { JwtPayload } from "jwt-decode";
 
+    import * as marked from 'marked';
+
     import List, {
         Item,
         Meta,
     } from '@smui/list';
-    import * as fs from "@tauri-apps/api/fs";
-    import * as dialog from "@tauri-apps/api/dialog";
 
     let grades;
     let userData;
@@ -40,6 +40,7 @@
     let absenceList = [];
     let homework = [];
     let gradings = [];
+    let improvements = [];
 
     let viewGrades = true;
     let viewAbsences = true;
@@ -54,6 +55,14 @@
             .then((r) => {
                 userData = r["data"];
                 isPassing = userData.IsPassing;
+            });
+    }
+
+    function getImprovements() {
+        fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((r) => r.json())
+            .then((r) => {
+                improvements = r.data;
             });
     }
 
@@ -127,6 +136,7 @@
             getHomework();
             getUserGradings();
         }
+        getImprovements();
     }
 
     const gradeColors = [
@@ -334,5 +344,13 @@
         {:else}
             Sistemski administrator je izključil vpogled v ocenjevanja otroka za vse starše.
         {/if}
+
+        <h1>Izboljšave in pohvale - vpisi</h1>
+        {#each improvements as improvement}
+            <h2>{improvement.MeetingName}</h2>
+            Vpisal {improvement.TeacherName}
+            {@html marked.marked(improvement.Message)}
+        {/each}
+        <p/>
     </main>
 </AppContent>
