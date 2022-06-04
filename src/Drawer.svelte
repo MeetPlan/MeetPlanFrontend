@@ -163,7 +163,7 @@
                     <Text>Pregled</Text>
                 </Item>
                 {#if meetingActive === -1}
-                    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student"}
+                    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student" || decoded.role === "school psychologist" || decoded.role === "food organizer"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/samotestiranje')}
@@ -255,15 +255,17 @@
                             <Text>Redovalnica</Text>
                         </Item>-->
                     {/if}
-                    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/users')}
-                                activated={active === 'users'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">people</Graphic>
-                            <Text>Vsi uporabniki</Text>
-                        </Item>
+                    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist"}
+                        {#if decoded["role"] !== "school psychologist"}
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate('/users')}
+                                    activated={active === 'users'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">people</Graphic>
+                                <Text>Vsi uporabniki</Text>
+                            </Item>
+                        {/if}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/subjects')}
@@ -280,25 +282,27 @@
                             <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                             <Text>Vsi razredi</Text>
                         </Item>
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/settings')}
-                                activated={active === 'settings'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">settings</Graphic>
-                            <Text>Nastavitve sistema</Text>
-                        </Item>
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/notifications')}
-                                activated={active === 'notifications'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">info</Graphic>
-                            <Text>Obvestila</Text>
-                        </Item>
+                        {#if decoded["role"] !== "school psychologist"}
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate('/settings')}
+                                    activated={active === 'settings'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">settings</Graphic>
+                                <Text>Nastavitve sistema</Text>
+                            </Item>
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate('/notifications')}
+                                    activated={active === 'notifications'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">info</Graphic>
+                                <Text>Obvestila</Text>
+                            </Item>
+                        {/if}
                     {/if}
                 {/if}
-                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant")}
+                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist")}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate(`/meeting/${meetingActive}`)}

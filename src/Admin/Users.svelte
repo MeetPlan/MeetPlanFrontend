@@ -36,7 +36,7 @@
             );
     }
 
-    let choices = ["unverified", "student", "parent", "teacher", "principal assistant", "principal"];
+    let choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
     import jwt_decode, { JwtPayload } from "jwt-decode";
     import { navigate } from "svelte-routing";

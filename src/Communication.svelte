@@ -56,6 +56,10 @@
 
     let teachers = [];
     let admins = [];
+    let principal = [];
+    let principalAssistant = [];
+    let foodOrganizer = [];
+    let schoolPsychologist = [];
 
     function getUsers() {
         fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -65,9 +69,17 @@
                     for (let i in users) {
                         let user = users[i];
                         if (user["Role"] === "admin") {
-                            admins = [...admins, user]
+                            admins = [...admins, user];
                         } else if (user["Role"] === "teacher") {
-                            teachers = [...teachers, user]
+                            teachers = [...teachers, user];
+                        } else if (user["Role"] === "school psychologist") {
+                            schoolPsychologist = [...schoolPsychologist, user];
+                        } else if (user["Role"] === "principal") {
+                            principal = [...principal, user];
+                        } else if (user["Role"] === "principal assistant") {
+                            principalAssistant = [...principalAssistant, user];
+                        } else if (user["Role"] === "food organizer") {
+                            foodOrganizer = [...foodOrganizer, user];
                         }
                     }
                 },
@@ -122,6 +134,50 @@
             <Subheader>Administratorji</Subheader>
             <List checkList style="max-width: 600px; border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
                 {#each admins as h}
+                    <Item required>
+                        <Label>{h.Name}</Label>
+                        <Meta>
+                            <Checkbox bind:group={selected} value={h.ID} />
+                        </Meta>
+                    </Item>
+                {/each}
+            </List>
+            <Subheader>Ravnatelji</Subheader>
+            <List checkList style="max-width: 600px; border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+                {#each principal as h}
+                    <Item required>
+                        <Label>{h.Name}</Label>
+                        <Meta>
+                            <Checkbox bind:group={selected} value={h.ID} />
+                        </Meta>
+                    </Item>
+                {/each}
+            </List>
+            <Subheader>Pomočniki ravnatelja</Subheader>
+            <List checkList style="max-width: 600px; border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+                {#each principalAssistant as h}
+                    <Item required>
+                        <Label>{h.Name}</Label>
+                        <Meta>
+                            <Checkbox bind:group={selected} value={h.ID} />
+                        </Meta>
+                    </Item>
+                {/each}
+            </List>
+            <Subheader>Šolski psihologi (svetovalni delavci)</Subheader>
+            <List checkList style="max-width: 600px; border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+                {#each schoolPsychologist as h}
+                    <Item required>
+                        <Label>{h.Name}</Label>
+                        <Meta>
+                            <Checkbox bind:group={selected} value={h.ID} />
+                        </Meta>
+                    </Item>
+                {/each}
+            </List>
+            <Subheader>Organizator šolske prehrane</Subheader>
+            <List checkList style="max-width: 600px; border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+                {#each foodOrganizer as h}
                     <Item required>
                         <Label>{h.Name}</Label>
                         <Meta>
