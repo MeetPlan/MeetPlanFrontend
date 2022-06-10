@@ -12,6 +12,14 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-routing";
+    import jwt_decode, {JwtPayload} from "jwt-decode";
+
+    const token = localStorage.getItem("key");
+    if (token === null || token === undefined) {
+        navigate("/login");
+    }
+
+    const decoded = jwt_decode<JwtPayload>(token);
 
     let myClasses;
     let students;
@@ -106,10 +114,12 @@
                         <TextList>
                             <PrimaryText>{item.Name}</PrimaryText>
                         </TextList>
-                        <Meta><IconButton class="material-icons" on:click={(e) => {
-                            e.stopPropagation()
-                            deleteFromClass(item.ID)
-                        }} title="Remove from class">delete</IconButton></Meta>
+                        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+                            <Meta><IconButton class="material-icons" on:click={(e) => {
+                                e.stopPropagation()
+                                deleteFromClass(item.ID)
+                            }} title="Remove from class">delete</IconButton></Meta>
+                        {/if}
                     </Item>
                 {/each}
             </List>

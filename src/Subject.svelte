@@ -15,6 +15,8 @@
     import Autocomplete from '@smui-extra/autocomplete';
     import {baseurl} from "./constants";
     import Select, {Option} from "@smui/select";
+    import {navigate} from "svelte-routing";
+    import jwt_decode, {JwtPayload} from "jwt-decode";
 
     let myClasses;
     let students;
@@ -25,6 +27,13 @@
     let realization: number = 60.0;
 
     export let id: number;
+
+    const token = localStorage.getItem("key");
+    if (token === null || token === undefined) {
+        navigate("/login");
+    }
+
+    const decoded = jwt_decode<JwtPayload>(token);
 
     function getSubject() {
         fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -101,7 +110,9 @@
                         <TextList>
                             <PrimaryText>{item.Name}</PrimaryText>
                         </TextList>
-                        <Meta><IconButton class="material-icons" on:click={() => deleteFromSubject(item.ID)} title="Remove from class">delete</IconButton></Meta>
+                        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+                            <Meta><IconButton class="material-icons" on:click={() => deleteFromSubject(item.ID)} title="Remove from class">delete</IconButton></Meta>
+                        {/if}
                     </Item>
                 {/each}
             </List>

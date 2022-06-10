@@ -26,6 +26,7 @@
     "@smui/list": "^6.0.0-beta.13",
     "@smui/ripple": "^6.0.0-beta.13",
     "@smui/select": "^6.0.0-beta.13",
+    "@smui/tooltip": "^6.0.0-beta.16",
     "@tauri-apps/cli": "^1.0.0-rc.9",
     "@tsconfig/svelte": "^2.0.1",
     "rollup": "^2.3.4",

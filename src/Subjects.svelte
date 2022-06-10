@@ -21,10 +21,18 @@
 
     import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
+    import jwt_decode, {JwtPayload} from "jwt-decode";
 
     let items = [];
     let teachers = [];
     let subjects = [];
+
+    const token = localStorage.getItem("key");
+    if (token === null || token === undefined) {
+        navigate("/login");
+    }
+
+    const decoded = jwt_decode<JwtPayload>(token);
 
     function loadThings() {
         fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -91,32 +99,34 @@
 <Drawer active="subjects" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Textfield label="Nov predmet" bind:value={nclass}>
-            <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
-        </Textfield>
-        <Autocomplete combobox options={subjectsList} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" />
-        <p/>
-        <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
-            <Option value="" on:click={() => classId = ""}>Bom ročno dodal uporabnike (ne uporabi razreda)</Option>
-            {#each items as c}
-                <Option value={c["ID"]} on:click={() => classId = c["ID"]}>{c["Name"]}</Option>
-            {/each}
-        </Select>
-        <p/>
-        <Select bind:teacherId label="Izberite učitelja tega predmeta" variant="outlined" style="width: 100%;">
-            <Option value="" />
-            {#each teachers as c}
-                <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
-            {/each}
-        </Select>
-        <p/>
-        <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5">
-            <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
-        </Textfield>
-        <p/>
-        <Button on:click={() => newSubject()} variant="raised">
-            <Label>OK</Label>
-        </Button>
+        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+            <Textfield label="Nov predmet" bind:value={nclass}>
+                <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
+            </Textfield>
+            <Autocomplete combobox options={subjectsList} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" />
+            <p/>
+            <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
+                <Option value="" on:click={() => classId = ""}>Bom ročno dodal uporabnike (ne uporabi razreda)</Option>
+                {#each items as c}
+                    <Option value={c["ID"]} on:click={() => classId = c["ID"]}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+            <p/>
+            <Select bind:teacherId label="Izberite učitelja tega predmeta" variant="outlined" style="width: 100%;">
+                <Option value="" />
+                {#each teachers as c}
+                    <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+            <p/>
+            <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5">
+                <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
+            </Textfield>
+            <p/>
+            <Button on:click={() => newSubject()} variant="raised">
+                <Label>OK</Label>
+            </Button>
+        {/if}
         <List class="demo-list">
             {#each subjects as item}
                 <Item on:SMUI:action={() => navigate("/subject/" + item["ID"])}>

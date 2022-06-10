@@ -164,14 +164,16 @@
                 </Item>
                 {#if meetingActive === -1}
                     {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student" || decoded.role === "school psychologist" || decoded.role === "food organizer"}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/samotestiranje')}
-                                activated={active === 'samotestiranje'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
-                            <Text>Samotestiranje</Text>
-                        </Item>
+                        {#if decoded.role !== "food organizer"}
+                            <Item
+                                    href="javascript:void(0)"
+                                    on:click={() => navigate('/samotestiranje')}
+                                    activated={active === 'samotestiranje'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
+                                <Text>Samotestiranje</Text>
+                            </Item>
+                        {/if}
                         {#if !mealsBlocked}
                             <Item
                                     href="javascript:void(0)"

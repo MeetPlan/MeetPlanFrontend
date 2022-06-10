@@ -18,6 +18,14 @@
 
     import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
+    import jwt_decode, {JwtPayload} from "jwt-decode";
+
+    const token = localStorage.getItem("key");
+    if (token === null || token === undefined) {
+        navigate("/login");
+    }
+
+    const decoded = jwt_decode<JwtPayload>(token);
 
     let items = [];
     let teachers = [];
@@ -73,21 +81,23 @@
 <Drawer active="classes" />
 <AppContent class="app-content">
     <main class="main-content">
-        <Textfield label="Nov razred" bind:value={nclass}>
-            <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
-        </Textfield>
-        <Textfield label="Šolsko leto" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
-            <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
-        </Textfield>
-        <Select bind:teacherId label="Izberite razrednika" variant="outlined">
-            <Option value=""/>
-            {#each teachers as c}
-                <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
-            {/each}
-        </Select>
-        <Button on:click={() => newClass()} variant="raised">
-            <Label>OK</Label>
-        </Button>
+        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+            <Textfield label="Nov razred" bind:value={nclass}>
+                <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
+            </Textfield>
+            <Textfield label="Šolsko leto" bind:value={classYear} style="width: 100%;" on:change={() => patchClass()}>
+                <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
+            </Textfield>
+            <Select bind:teacherId label="Izberite razrednika" variant="outlined">
+                <Option value=""/>
+                {#each teachers as c}
+                    <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+            <Button on:click={() => newClass()} variant="raised">
+                <Label>OK</Label>
+            </Button>
+        {/if}
         <List class="demo-list">
             {#each items as item}
                 <Item on:SMUI:action={() => navigate("/class/" + item["ID"])}>
