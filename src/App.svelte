@@ -23,6 +23,8 @@
 	import Settings from "./Settings.svelte";
 	import Notifications from "./Notifications.svelte";
 	import UserSettings from "./UserSettings.svelte";
+	import ProtonSettings from "./ProtonSettings.svelte";
+	import ErrorPage from "./ErrorPage.svelte";
 
 	export let url = "";
 </script>
@@ -73,6 +75,8 @@
 			<Route path="/settings" component="{Settings}" />
 			<Route path="/notifications" component="{Notifications}" />
 			<Route path="/settings/user" component="{UserSettings}" />
+			<Route path="/proton/settings" component="{ProtonSettings}" />
+			<Route path="/napaka" component="{ErrorPage}" />
 			<Route path="/"><Home /></Route>
 		</div>
 	</Router>

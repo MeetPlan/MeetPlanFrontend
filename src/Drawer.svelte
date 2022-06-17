@@ -295,6 +295,14 @@
                             </Item>
                             <Item
                                     href="javascript:void(0)"
+                                    on:click={() => navigate('/proton/settings')}
+                                    activated={active === 'proton_settings'}
+                            >
+                                <Graphic class="material-icons" aria-hidden="true">hub</Graphic>
+                                <Text>Nastavitve Proton modula</Text>
+                            </Item>
+                            <Item
+                                    href="javascript:void(0)"
                                     on:click={() => navigate('/notifications')}
                                     activated={active === 'notifications'}
                             >
