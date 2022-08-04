@@ -3,15 +3,19 @@
         Content,
         Header,
         Title,
+        Scrim,
     } from '@smui/drawer';
     import List, { Item, Text, Graphic, Separator } from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     import {baseurl} from "./constants";
+    import isMobile from "is-mobile";
+    import Button, {Icon, Label} from "@smui/button";
+    import {onMount} from "svelte";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -47,11 +51,12 @@
             );
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     let communications = [];
 
-    let open: boolean = true;
+    const mobile = isMobile();
+    let open: boolean = !mobile;
 
     let newActive = false;
 
@@ -63,11 +68,13 @@
     getUnread();
 
     setInterval(getUnread, 10000);
+
+    onMount(() => {
+        open = active === "communicationview" ? true : open
+    })
 </script>
 
-<!-- Don't include fixed={false} if this is a page wide drawer.
-      It adds a style for absolute positioning. -->
-<Drawer variant="dismissible" fixed={true} bind:open>
+<Drawer variant={mobile ? "modal" : "dismissible"} fixed={false} bind:open>
     <Header class="sameline">
         <Title style="display:inline-block;">MeetPlan</Title>
         <div style="display:inline-block; float:right;">
@@ -127,6 +134,17 @@
         </List>
     </Content>
 </Drawer>
+{#if mobile}
+    <Scrim fixed={false} />
+    <Button on:click={() => open = !open}>
+        <Icon class="material-icons">menu_open</Icon>
+        {#if open}
+            <Label>Zapri navigacijo</Label>
+        {:else}
+            <Label>Odpri navigacijo</Label>
+        {/if}
+    </Button>
+{/if}
 
 <style>
     .sameline {

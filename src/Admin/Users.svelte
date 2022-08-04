@@ -38,7 +38,7 @@
 
     let choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
     import { navigate } from "svelte-routing";
 
     const token = localStorage.getItem("key");
@@ -46,7 +46,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 </script>
 
 <Drawer active="users" />

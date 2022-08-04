@@ -15,7 +15,7 @@
     import List, {Item, Text as TextList, Meta} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     let classes = [];
     let myClasses = [];

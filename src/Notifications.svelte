@@ -2,7 +2,7 @@
     import Drawer from "./Drawer.svelte";
     import {AppContent} from "@smui/drawer";
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     import { Icon } from '@smui/common';
 
@@ -12,6 +12,7 @@
 
     import {baseurl} from "./constants";
     import * as marked from 'marked';
+    import insane from "insane";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -26,7 +27,7 @@
 
     let systemNotifications = [];
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     function getSystemNotifications() {
         fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -65,7 +66,7 @@
                     tabindex="0"
                     style="background-color: #f57c00; padding: 10px;"
             >
-                {@html marked.marked(newBody)}
+                {@html insane(marked.marked(newBody))}
             </div>
             <Button on:click={() => newNotification()}>
                 <Icon class="material-icons">add</Icon>
@@ -78,7 +79,7 @@
                     tabindex="0"
                     style="background-color: #f57c00; padding: 10px;"
             >
-                {@html marked.marked(notification.Notification)}
+                {@html insane(marked.marked(notification.Notification))}
             </div>
             <Button on:click={() => deleteNotification(notification.ID)}>
                 <Icon class="material-icons">delete</Icon>

@@ -7,6 +7,7 @@
 
     import FormField from '@smui/form-field';
     import Switch from '@smui/switch';
+    import Slider from '@smui/slider';
     import List, {Item, Meta, Separator, Text} from "@smui/list";
     import Button, {Icon, Label} from "@smui/button";
     import Autocomplete from "@smui-extra/autocomplete";
@@ -15,16 +16,18 @@
 
     import {onMount} from "svelte";
     import Error from "./Widgets/Error.svelte";
-    import {navigate} from "svelte-routing";
+    import ProtonTimetable from "./Widgets/ProtonTimetable.svelte";
 
     let config = [];
+
+    let showNewTimetable = false;
 
     const moduleNames = [
         "Polni dnevi učitelja na šoli",
         "Ure učitelja na šoli",
         "Skupina predmetov",
         "Predmeti pred ali po pouku",
-        "Predmeti z blok urami"
+        "Predmeti z blok urami",
     ];
 
     const days = [
@@ -55,6 +58,7 @@
     let subjects = [];
 
     let teacherId: number = undefined;
+    let selectedHour: number = 1;
 
     let settingName: string = undefined;
 
@@ -82,6 +86,7 @@
         fd.append("hours", JSON.stringify(selectedHours));
         fd.append("subjects", JSON.stringify(selectedSubjects));
         fd.append("protonRuleId", moduleId.toString());
+        fd.append("selectedHours", selectedHour.toString());
         fetch(`${baseurl}/proton/rule/new`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "POST"})
             .then((r) => r.json())
@@ -107,6 +112,22 @@
         subjects = json["data"];
     }
 
+    async function migrateBetaMeetings() {
+        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+    }
+
+    async function deleteBetaMeetings() {
+        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+    }
+
+    async function deleteRule(ruleId: string) {
+        let fd = new FormData();
+        fd.append("ruleId", ruleId);
+        let response = await fetch(`${baseurl}/proton/rule/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE", body: fd})
+        let json = await response.json();
+        config = json["data"]["rules"];
+    }
+
     async function load() {
         await getTeachers();
         await getSubjects();
@@ -127,6 +148,16 @@
         <main class="main-content">
             <h1>Nastavitve Proton modula</h1>
             <h2>Nastavitve modula za nadomeščanja in zaposlitve</h2>
+
+            <h2>Beta srečanja</h2>
+            <Button on:click={async () => await deleteBetaMeetings()}>
+                <Icon class="material-icons">delete</Icon>
+                <Label>Izbrišite vsa beta srečanja</Label>
+            </Button>
+            <Button on:click={async () => await migrateBetaMeetings()}>
+                <Icon class="material-icons">meeting_room</Icon>
+                <Label>Spremenite beta srečanja v normalna srečanja</Label>
+            </Button>
 
             <h2>Nastavitve modula za ustvarjanje urnikov</h2>
 
@@ -248,7 +279,29 @@
                     {/if}
                     <br>
                 {/each}
+                <br>
+                <Button on:click={async () => await deleteRule(c.id)} variant="raised">
+                    <Label>Izbriši pravilo</Label>
+                </Button>
             {/each}
+            <p/>
+            <h2>Generiranje urnika</h2>
+            {#if !showNewTimetable}
+                <Button on:click={() => showNewTimetable = true} variant="raised">
+                    <Label>Generiraj urnik</Label>
+                </Button>
+            {:else}
+                <Button on:click={() => {
+                    showNewTimetable = false;
+                    setTimeout(() => showNewTimetable = true, 100);
+                }} variant="raised">
+                    <Label>Ponovno generiraj urnik</Label>
+                </Button>
+            {/if}
+            <p/>
+            {#if showNewTimetable}
+                <ProtonTimetable />
+            {/if}
             <p/>
         </main>
     {:catch error}
