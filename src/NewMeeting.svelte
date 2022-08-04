@@ -13,26 +13,29 @@
 
     import {navigate} from "svelte-routing";
     import * as marked from 'marked';
+    import insane from "insane";
+    import type {Subject} from "./typescript-definitions/tsdef";
 
-    let date = "";
-    let lastDate = "";
-    let name = "";
-    let description = "";
-    let url = "";
+    let date: string = "";
+    let lastDate: string = "";
+    let name: string = "";
+    let description: string = "";
+    let url: string = "";
+    let location: string = "";
 
-    let repeatCycle = 1;
+    let repeatCycle: number = 1;
 
     let hour: number;
     let hours = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
-    let isMandatory = true;
-    let isGrading = false;
-    let isWrittenAssessment = false;
-    let isTest = false;
-    let isRepetitive = false;
+    let isMandatory: boolean = true;
+    let isGrading: boolean = false;
+    let isWrittenAssessment: boolean = false;
+    let isTest: boolean = false;
+    let isRepetitive: boolean = false;
 
-    let subjects = [];
-    let subjectId = "";
+    let subjects: Subject[] = [];
+    let subjectId: number = undefined;
 
     export let editId;
 
@@ -80,15 +83,16 @@
             .then((json) => {
                     date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
                     console.log(date)
-                    subjectId = json["data"]["SubjectID"];
-                    name = json["data"]["MeetingName"];
-                    description = json["data"]["Details"];
-                    url = json["data"]["URL"];
-                    hour = json["data"]["Hour"];
-                    isMandatory = json["data"]["IsMandatory"];
-                    isWrittenAssessment = json["data"]["IsWrittenAssessment"];
-                    isGrading = json["data"]["IsGrading"];
-                    isTest = json["data"]["IsTest"];
+                    subjectId = json.data.SubjectID;
+                    name = json.data.MeetingName;
+                    description = json.data.Details;
+                    url = json.data.URL;
+                    hour = json.data.Hour;
+                    isMandatory = json.data.IsMandatory;
+                    isWrittenAssessment = json.data.IsWrittenAssessment;
+                    isGrading = json.data.IsGrading;
+                    isTest = json.data.IsTest;
+                    location = json.data.Location;
                 },
             );
     }
@@ -109,10 +113,14 @@
             hour = undefined
             return
         }
+        if (subjectId === undefined) {
+            console.log("Subject ID is undefined");
+            return
+        }
         console.log(hour)
         let fd = new FormData()
         console.log(fmtDate(new Date(date)));
-        fd.append("subjectId", subjectId);
+        fd.append("subjectId", subjectId.toString());
         fd.append("date", fmtDate(new Date(date)));
         fd.append("name", name);
         fd.append("details", description);
@@ -124,6 +132,7 @@
         fd.append("is_test", isTest ? "true" : "false")
         fd.append("repeat_cycle", repeatCycle.toString())
         fd.append("last_date", fmtDate(new Date(lastDate)))
+        fd.append("location", location);
         fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
             .then((r) => r.json())
@@ -142,10 +151,17 @@
     <main class="main-content">
         Izberite predmet:
         <Select bind:value={subjectId} variant="outlined">
-            <Option value="" on:click={() => subjectId = ""}/>
+            <Option value="" on:click={() => subjectId = undefined}/>
             {#each subjects as c}
                 <Option on:click={async () => {
                     subjectId = c.ID;
+                    for (let i in subjects) {
+                        let subject = subjects[i];
+                        if (subject.ID === subjectId) {
+                            console.log(subject, subjectId);
+                            location = subject.Location;
+                        }
+                    }
                 }} value={c.ID}>{c["Name"]}</Option>
             {/each}
         </Select>
@@ -182,8 +198,11 @@
         <Textfield bind:value={description} label="Opis srečanja" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
         {#if description !== ""}
             <h2>Predogled:</h2>
-            {@html marked.marked(description)}
+            {@html insane(marked.marked(description))}
         {/if}
+        <Textfield label="Učilnica/Lokacija" required style="width: 100%;" helperLine$style="width: 100%;" bind:value={location}>
+            <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
+        </Textfield>
         <Textfield bind:value={url} label="URL do srečanja" style="width: 100%;" helperLine$style="width: 100%;">
             <HelperText slot="helper">Vpišite URL do srečanja</HelperText>
         </Textfield>

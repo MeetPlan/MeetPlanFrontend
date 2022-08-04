@@ -2,7 +2,7 @@
     import Drawer from "./Drawer.svelte";
     import {AppContent} from "@smui/drawer";
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     import { Icon } from '@smui/common';
 
@@ -11,6 +11,8 @@
 
     import {baseurl} from "./constants";
     import * as marked from 'marked';
+    import isMobile from "is-mobile";
+    import insane from "insane";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -23,7 +25,9 @@
 
     let systemNotifications = [];
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const mobile = isMobile();
+
+    const decoded = jwt_decode(token);
 
     function loadThings() {
         fetch(`${baseurl}/${(decoded["role"] === "student" || decoded.role === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -62,12 +66,20 @@
                     tabindex="0"
                     style="background-color: #f57c00; padding: 10px;"
             >
-                {@html marked.marked(notification.Notification)}
+                {@html insane(marked.marked(notification.Notification))}
             </div>
         {/each}
-        <h1>Pozdravljeni</h1>
-        <h3>To je pregled po MeetPlan sistemu.</h3>
-        <h3>MeetPlan je bil popolnoma prenovljen. Dobrodošli v verzijo 2.0</h3>
+        {#if mobile && !(decoded.role === "student" || decoded.role === "parent")}
+            <p/>
+            <div
+                    tabindex="0"
+                    style="background-color: #f57c00; padding: 10px;"
+            >
+                Uporabniška izkušnja je na mobilnih napravah zelo okrnjena za delavce šole zaradi prikazovanja veliko podatkov na zaslonu.
+                Za čim boljšo uporabniško izkušnjo, razvijalci MeetPlan sistema priporočajo uporabo računalnikov (namiznih ali prenosnih).
+            </div>
+        {/if}
+        <h1>Pozdravljeni v MeetPlan sistemu</h1>
         <b>Vaša dovoljenja: {decoded["role"]}</b>
         <hr />
         <Select bind:classId variant="outlined">

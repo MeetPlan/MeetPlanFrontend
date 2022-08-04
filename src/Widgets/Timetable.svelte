@@ -1,5 +1,4 @@
 <style>
-
     .tdtable {
         background-color:white;
         color:black;
@@ -25,8 +24,9 @@
     }
 
     .coolTable {
-        border-spacing: 10px;
+        border-spacing: 5px;
         text-align: center;
+        width: 100%;
     }
 
     a:link {
@@ -40,8 +40,10 @@
         endOfWeek
     } from "date-fns";
     import IconButton from "@smui/icon-button";
-    import { Link } from "svelte-routing";
     import {baseurl} from "../constants";
+    import isMobile from "is-mobile";
+    import MeetingCard from "../MeetingCard.svelte";
+    import type {Meeting} from "../typescript-definitions/tsdef";
 
     export let date: Date = new Date();
     let currentDate = new Date(date);
@@ -49,6 +51,8 @@
 
     let start: Date = startOfWeek(currentDate, {weekStartsOn: 1})
     let end: Date = endOfWeek(currentDate, {weekStartsOn: 1})
+
+    const mobile: boolean = isMobile();
 
     function remakeCalendar() {
         start = startOfWeek(currentDate, {weekStartsOn: 1})
@@ -59,12 +63,14 @@
 
     function fmtDate(date: Date): string {
         let dd = date.getDate().toString()
-        if (dd < 10) {
+        if (dd.length == 1) {
             dd = `0${dd}`
         }
         let mm = date.getMonth().toString();
-        if (mm < 10) {
-            mm = `0${(date.getMonth() + 1).toString()}`
+        if (mm.length == 1 && (date.getMonth() + 1).toString().length == 1) {
+            mm = `0${(date.getMonth() + 1)}`
+        } else if ((date.getMonth() + 1).toString().length != 1) {
+            mm = (date.getMonth() + 1).toString();
         }
         return `${dd}-${mm}-${date.getFullYear()}`
     }
@@ -89,23 +95,23 @@
                 wed = r["data"][2]["meetings"];
                 thu = r["data"][3]["meetings"];
                 fri = r["data"][4]["meetings"];
-                sat = r["data"][5]["meetings"];
+                //sat = r["data"][5]["meetings"];
                 dates = [];
                 for (let i in r["data"]) {
                     i = r["data"][i]
-                    dates.push(i["date"])
+                    dates.push(i["date"].substring(0, 5))
                 }
                 console.log(dates)
             });
     }
-    const hours = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    let dates = ["", "", "", "", "", ""]
-    let mon = [];
-    let tue = [];
-    let wed = [];
-    let thu = [];
-    let fri = [];
-    let sat = [];
+    const hours: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    let dates: string[] = ["", "", "", "", "", ""]
+    let mon: Meeting[][] = [];
+    let tue: Meeting[][] = [];
+    let wed: Meeting[][] = [];
+    let thu: Meeting[][] = [];
+    let fri: Meeting[][] = [];
+    //let sat: Meeting[][] = [];
 
     getTimetable();
 </script>
@@ -124,124 +130,76 @@
 <table class="coolTable">
     <tr>
         <th>URA</th>
-        <th>PONEDELJEK {dates[0]}</th>
-        <th>TOREK {dates[1]}</th>
-        <th>SREDA {dates[2]}</th>
-        <th>ČETRTEK {dates[3]}</th>
-        <th>PETEK {dates[4]}</th>
-        <th>SOBOTA {dates[5]}</th>
+        <th>{mobile ? "PON" : "PONEDELJEK"} {dates[0]}</th>
+        <th>{mobile ? "TOR" : "TOREK"} {dates[1]}</th>
+        <th>{mobile ? "SRE" : "SREDA"} {dates[2]}</th>
+        <th>{mobile ? "ČET" : "ČETRTEK"} {dates[3]}</th>
+        <th>{mobile ? "PET" : "PETEK"} {dates[4]}</th>
+        <!--<th>{mobile ? "SOB" : "SOBOTA"} {dates[5]}</th>-->
     </tr>
     {#each hours as m, i}
     <tr>
         <th>{i}.</th>
         <td>
-            <div class="{hour === i && dates[0] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+            <div class="{hour === i && dates[0] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(mon[i]) as m}
-                    <div style="height: 5px;"/>
+                    <!--<div style="height: 5px;"/>-->
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[1] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+            <div class="{hour === i && dates[1] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(tue[i]) as m}
-                    <div style="height: 5px;"/>
+                    <!--<div style="height: 5px;"/>-->
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[2] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+            <div class="{hour === i && dates[2] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(wed[i]) as m}
-                    <div style="height: 5px;"/>
+                    <!--<div style="height: 5px;"/>-->
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[3] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+            <div class="{hour === i && dates[3] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(thu[i]) as m}
-                    <div style="height: 5px;"/>
+                    <!--<div style="height: 5px;"/>-->
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[4] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+            <div class="{hour === i && dates[4] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(fri[i]) as m}
-                    <div style="height: 5px;"/>
+                    <!--<div style="height: 5px;"/>-->
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
         </td>
-        <td>
-            <div class="{hour === i && dates[5] === fmtDate(date) ? 'yellow' : 'tdtable'}">
+        <!--<td>
+            <div class="{hour === i && dates[5] === fmtDate(date) ? 'yellow' : ''}">
                 {#each Array(sat[i]) as m}
                     <div style="height: 5px;"/>
                     {#if m}
-                        {#each m as n}
-                            <Link to="/meeting/{n.ID}">
-                                {#if n.IsSubstitution}
-                                    [N]
-                                {/if}
-                                {n.MeetingName}
-                            </Link>
-                            <br>
-                        {/each}
+                        {#each m as n, k}<MeetingCard n={n} lengthOfArray={m.length} i={k} />{/each}
                     {/if}
                 {/each}
             </div>
-        </td>
+        </td>-->
     </tr>
     {/each}
 </table>

@@ -1,9 +1,6 @@
 <script lang="ts">
     import Paper from "@smui/paper";
-    import "@smui/paper/bare.css";
-
     import Textfield from "@smui/textfield";
-    import "@smui/textfield/bare.css";
 
     import * as constants from "./constants";
 
@@ -13,7 +10,8 @@
 
     import { navigate, Link } from "svelte-routing";
 
-    import Snackbar, {Actions, SnackbarComponentDev} from "@smui/snackbar";
+    import Snackbar, {Actions} from "@smui/snackbar";
+    import type { SnackbarComponentDev } from '@smui/snackbar';
 
     async function login() {
         let fd = new FormData();
@@ -41,6 +39,18 @@
     let snackbarWithClose: SnackbarComponentDev;
 </script>
 
+<style>
+    .center {
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 35%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+</style>
 
 <main>
     <Snackbar bind:this={snackbarWithClose}>
@@ -86,16 +96,3 @@
         </Paper>
     </div>
 </main>
-
-<style>
-.center {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 35%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-</style>

@@ -16,13 +16,19 @@
     import {baseurl} from "./constants";
     import Select, {Option} from "@smui/select";
     import {navigate} from "svelte-routing";
-    import jwt_decode, {JwtPayload} from "jwt-decode";
+    import jwt_decode from "jwt-decode";
+    import Slider from "@smui/slider";
+    import FormField from '@smui/form-field';
+    import Button, {Icon} from "@smui/button";
+    import type {Subject} from "./typescript-definitions/tsdef";
 
     let myClasses;
-    let students;
+    let students: Subject;
     let studentsToAdd = [];
-    let classId = "";
-    let longName = "";
+    let classId: string = "";
+    let longName: string = "";
+    let selectedHour: number = 1;
+    let location: string = "";
 
     let realization: number = 60.0;
 
@@ -33,15 +39,18 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     function getSubject() {
         fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.json())
             .then((r) => {
-                longName = r.data.LongName;
-                students = r.data;
-                realization = r.data.Realization;
+                let data: Subject = r.data;
+                longName = data.LongName;
+                students = data;
+                realization = data.Realization;
+                selectedHour = data.SelectedHours;
+                location = data.Location;
             });
     }
 
@@ -49,6 +58,8 @@
         let fd = new FormData();
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
+        fd.append("selected_hours", selectedHour.toString());
+        fd.append("location", location);
         fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getSubject());
@@ -84,6 +95,18 @@
             <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5" on:change={() => setTimeout(patchSubjectName, 500)}>
                 <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
             </Textfield>
+            <Textfield label="Učilnica/Lokacija" bind:value={location} on:change={() => setTimeout(patchSubjectName, 500)}>
+                <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
+            </Textfield>
+            <p/>
+            <FormField align="end" style="display: flex;">
+                <Slider discrete style="flex-grow: 1;" bind:value={selectedHour} min={1} max={10} step={0.5} />
+                <span slot="label" style="padding-right: 12px; width: max-content; display: block;">Število ur na teden</span>
+            </FormField>
+            <Button on:click={patchSubjectName}>
+                <Icon class="material-icons">done</Icon>
+                Spremeni število ur na teden
+            </Button>
             <p/>
             {#if !students.InheritsClass}
                 <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">

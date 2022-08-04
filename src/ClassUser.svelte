@@ -14,7 +14,7 @@
     import IconButton, { Icon } from '@smui/icon-button';
 
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     import * as marked from 'marked';
 
@@ -22,6 +22,7 @@
         Item,
         Meta,
     } from '@smui/list';
+    import insane from "insane";
 
     let grades;
     let userData;
@@ -152,7 +153,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     const translatedSegments = {
         "DONE": "NAREJENO",
@@ -349,7 +350,7 @@
         {#each improvements as improvement}
             <h2>{improvement.MeetingName}</h2>
             Vpisal {improvement.TeacherName}
-            {@html marked.marked(improvement.Message)}
+            {@html insane(marked.marked(improvement.Message))}
         {/each}
         <p/>
     </main>

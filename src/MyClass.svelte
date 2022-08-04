@@ -2,7 +2,7 @@
     import Drawer from "./Drawer.svelte";
     import {AppContent} from "@smui/drawer";
     import {navigate} from "svelte-routing";
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
     import {baseurl} from "./constants";

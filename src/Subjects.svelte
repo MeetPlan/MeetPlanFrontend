@@ -21,7 +21,7 @@
 
     import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
-    import jwt_decode, {JwtPayload} from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     let items = [];
     let teachers = [];
@@ -32,7 +32,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     function loadThings() {
         fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})

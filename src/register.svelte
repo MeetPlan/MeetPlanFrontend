@@ -1,9 +1,6 @@
 <script lang="ts">
     import Paper from "@smui/paper";
-    import "@smui/paper/bare.css";
-
     import Textfield from "@smui/textfield";
-    import "@smui/textfield/bare.css";
 
     import {baseurl} from "./constants";
 
@@ -13,7 +10,8 @@
 
     import { navigate, Link } from "svelte-routing";
 
-    import Snackbar, {Actions, SnackbarComponentDev} from "@smui/snackbar";
+    import Snackbar, {Actions} from "@smui/snackbar";
+    import type { SnackbarComponentDev } from '@smui/snackbar';
 
     async function login() {
         let fd = new FormData();

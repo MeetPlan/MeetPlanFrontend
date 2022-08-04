@@ -2,7 +2,7 @@
     import Drawer from "./Drawer.svelte";
     import {AppContent} from "@smui/drawer";
     import {navigate} from "svelte-routing";
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
     import {baseurl} from "./constants";
@@ -13,6 +13,7 @@
 
     import { chart } from "svelte-apexcharts";
     import Timetable from "./Widgets/Timetable.svelte";
+    import insane from "insane";
     let options;
 
     export let meetingId: number;
@@ -104,6 +105,7 @@
         fd.append("is_test", meetingData.IsTest)
         fd.append("is_substitution", isSubstitution.toString())
         fd.append("teacherId", teacherId.toString());
+        fd.append("location", meetingData.Location);
         fetch(`${baseurl}/meetings/new/${meetingId}`,
             {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "PATCH"})
             .then((r) => r.json())
@@ -120,7 +122,7 @@
     let items = [];
     let classId = "";
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     if (decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") {
         getTeachers();
@@ -145,10 +147,10 @@
             <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>
             {#if meetingData.Details !== ""}
                 <h4>Opis srečanja:</h4>
-                {@html marked.marked(meetingData.Details)}
+                {@html insane(marked.marked(meetingData.Details))}
             {/if}
             <a href="{meetingData.URL}">Povezava do srečanja</a>
-            {#if decoded["role"] === "admin" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
+            {#if decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
                 <p/>
                 <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
                     <Icon class="material-icons">edit</Icon>

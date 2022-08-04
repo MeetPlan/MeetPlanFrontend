@@ -3,29 +3,32 @@
         Content,
         Header,
         Title,
+        Scrim,
     } from '@smui/drawer';
     import List, {Item, Text, Graphic, Subheader, Group, Meta} from '@smui/list';
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
 
-    import jwt_decode, { JwtPayload } from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     import {baseurl} from "./constants";
     import Dialog, {Actions} from "@smui/dialog";
     import Textfield from "@smui/textfield";
-    import Button, {Label} from "@smui/button";
+    import Button, {Icon, Label} from "@smui/button";
     import FormField from '@smui/form-field';
     import Select, {Option} from "@smui/select";
 
     import * as marked from 'marked';
+    import isMobile from "is-mobile";
+    import insane from "insane";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     let hasClass = false;
     let mealsBlocked = true;
@@ -37,7 +40,7 @@
 
     let children = [];
     let users = [];
-    let user = 0
+    let user = 0;
 
     if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
         fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -71,7 +74,8 @@
             },
         );
 
-    let open: boolean = true;
+    const mobile = isMobile();
+    let open: boolean = !mobile;
 
     export let active: string;
     export let meetingActive: number = -1;
@@ -86,277 +90,292 @@
     }
 </script>
 
-{#if improvementDialog}
-    <Dialog
-            bind:open
-            aria-labelledby="simple-title"
-            aria-describedby="simple-content"
-    >
-        <Title id="simple-title">
-            <Select bind:value={user} variant="outlined" style="width: 100%;" label="Izberite učenca">
-                <Option value="" on:click={() => user = -1}/>
-                {#each users as c}
-                    <Option on:click={async () => {
-                        user = c.ID;
-                    }} value={c.ID}>{c["Name"]}</Option>
-                {/each}
-            </Select>
+<Dialog
+        bind:open={improvementDialog}
+        aria-labelledby="simple-title"
+        aria-describedby="simple-content"
+>
+    <Title id="simple-title">
+        <Select bind:value={user} variant="outlined" style="width: 100%;" label="Izberite učenca">
+            <Option value="" on:click={() => user = -1}/>
+            {#each users as c}
+                <Option on:click={async () => {
+                    user = c.ID;
+                }} value={c.ID}>{c["Name"]}</Option>
+            {/each}
+        </Select>
+        <p/>
+    </Title>
+    <Content id="simple-content">
+        <p/>
+        <FormField>
+            <Textfield
+                    bind:value={improvementBody}
+                    style="width: 100%;"
+                    textarea
+                    label="Vpišite obvestilo. Podpira Markdown."
+                    input$rows={5}
+                    input$cols={48}
+            />
+        </FormField>
+        {#if improvementBody !== ""}
             <p/>
-        </Title>
-        <Content id="simple-content">
-            <p/>
-            <FormField>
-                <Textfield
-                        bind:value={improvementBody}
-                        style="width: 100%;"
-                        textarea
-                        label="Vpišite obvestilo. Podpira Markdown."
-                        input$rows={5}
-                        input$cols={48}
-                />
-            </FormField>
-            {#if improvementBody !== ""}
-                <p/>
-                Predogled:
-                {@html marked.marked(improvementBody)}
-            {/if}
-        </Content>
-        <Actions>
-            <Button on:click={() => {
-                let fd = new FormData();
-                fd.append("message", improvementBody);
-                fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
-                    .then((r) => r.json())
-                    .then((r) => {
-                        improvementBody = "";
-                    });
-            }}>
-                <Label>
-                    POŠLJI
-                </Label>
-            </Button>
-        </Actions>
-    </Dialog>
-{/if}
+            Predogled:
+            {@html insane(marked.marked(improvementBody))}
+        {/if}
+    </Content>
+    <Actions>
+        <Button on:click={() => {
+            let fd = new FormData();
+            fd.append("message", improvementBody);
+            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+                .then((r) => r.json())
+                .then((r) => {
+                    improvementBody = "";
+                });
+        }}>
+            <Label>
+                POŠLJI
+            </Label>
+        </Button>
+    </Actions>
+</Dialog>
 
-    <!-- Don't include fixed={false} if this is a page wide drawer.
-          It adds a style for absolute positioning. -->
-    <Drawer variant="dismissible" fixed={true} bind:open>
-        <Header class="sameline">
-            <Title style="display:inline-block;">MeetPlan</Title>
-            <div style="display:inline-block; float:right;">
-                <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
-                <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    localStorage.removeItem("key")
-                    navigate("/login")
-                }}>logout</IconButton>
-            </div>
-        </Header>
-        <Content>
-            <List>
+<Drawer variant={mobile ? "modal" : "dismissible"} fixed={false} style="position: absolute; top: 0;" bind:open>
+    <Header class="sameline">
+        <Title style="display:inline-block;">MeetPlan</Title>
+        <div style="display:inline-block; float:right;">
+            <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
+            <IconButton class="material-icons" aria-hidden="true" on:click={() => {
+                localStorage.removeItem("key")
+                navigate("/login")
+            }}>logout</IconButton>
+        </div>
+    </Header>
+    <Content>
+        <List>
+            <Item
+                    href="javascript:void(0)"
+                    on:click={() => navigate('/')}
+                    activated={active === 'pregled'}
+            >
+                <Graphic class="material-icons" aria-hidden="true">home</Graphic>
+                <Text>Pregled</Text>
+            </Item>
+            {#if meetingActive === -1}
+                {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student" || decoded.role === "school psychologist" || decoded.role === "food organizer"}
+                    {#if decoded.role !== "food organizer"}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/samotestiranje')}
+                                activated={active === 'samotestiranje'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
+                            <Text>Samotestiranje</Text>
+                        </Item>
+                    {/if}
+                    {#if !mealsBlocked}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/meals')}
+                                activated={active === 'meals'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
+                            <Text>Prehrana</Text>
+                        </Item>
+                    {/if}
+                {/if}
                 <Item
                         href="javascript:void(0)"
-                        on:click={() => navigate('/')}
-                        activated={active === 'pregled'}
+                        on:click={() => navigate('/communication/view')}
+                        activated={active === "communication"}
+                        style="position: relative;"
                 >
-                    <Graphic class="material-icons" aria-hidden="true">home</Graphic>
-                    <Text>Pregled</Text>
+                    <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
+                    <Text>
+                        Komunikacija
+                        {#if unreadMessages && unreadMessages.length !== 0}
+                            <Badge inset aria-label="new messages count" style="top: 20px; right: 20px;">{unreadMessages.length}</Badge>
+                        {/if}
+                    </Text>
                 </Item>
-                {#if meetingActive === -1}
-                    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student" || decoded.role === "school psychologist" || decoded.role === "food organizer"}
-                        {#if decoded.role !== "food organizer"}
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/samotestiranje')}
-                                    activated={active === 'samotestiranje'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">coronavirus</Graphic>
-                                <Text>Samotestiranje</Text>
-                            </Item>
-                        {/if}
-                        {#if !mealsBlocked}
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/meals')}
-                                    activated={active === 'meals'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">lunch_dining</Graphic>
-                                <Text>Prehrana</Text>
-                            </Item>
-                        {/if}
-                    {/if}
+                {#if decoded["role"] === "student"}
                     <Item
                             href="javascript:void(0)"
-                            on:click={() => navigate('/communication/view')}
-                            activated={active === "communication"}
-                            style="position: relative;"
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">chat</Graphic>
-                        <Text>
-                            Komunikacija
-                            {#if unreadMessages && unreadMessages.length !== 0}
-                                <Badge inset aria-label="new messages count" style="top: 20px; right: 20px;">{unreadMessages.length}</Badge>
-                            {/if}
-                        </Text>
-                    </Item>
-                    {#if decoded["role"] === "student"}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/class/user/me')}
-                                activated={active === 'studentme'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
-                            <Text>Moj pregled</Text>
-                        </Item>
-                    {/if}
-                    {#if decoded["role"] === "parent"}
-                        {#each children as child}
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate(`/class/user/${child.ID}`)}
-                                    activated={active === `student${child.ID}`}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">account_circle</Graphic>
-                                <Text>{child.Name}</Text>
-                            </Item>
-                        {/each}
-                    {/if}
-                    {#if decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "admin"}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/new/meeting')}
-                                activated={active === 'novosrecanje'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">add</Graphic>
-                            <Text>Dodaj srečanje</Text>
-                        </Item>
-                    {/if}
-                    {#if decoded["role"] === "teacher"}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/my/class')}
-                                activated={active === 'myclass'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">school</Graphic>
-                            <Text>Moj razred</Text>
-                        </Item>
-                        <!--<Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/mojipredmeti')}
-                                activated={active === 'mojipredmeti'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">library_books</Graphic>
-                            <Text>Moji predmeti</Text>
-                        </Item>
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/redovalnica')}
-                                activated={active === 'redovalnica'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
-                            <Text>Redovalnica</Text>
-                        </Item>-->
-                    {/if}
-                    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist"}
-                        {#if decoded["role"] !== "school psychologist"}
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/users')}
-                                    activated={active === 'users'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">people</Graphic>
-                                <Text>Vsi uporabniki</Text>
-                            </Item>
-                        {/if}
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/subjects')}
-                                activated={active === 'subjects'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">subject</Graphic>
-                            <Text>Vsi predmeti</Text>
-                        </Item>
-                        <Item
-                                href="javascript:void(0)"
-                                on:click={() => navigate('/classes')}
-                                activated={active === 'classes'}
-                        >
-                            <Graphic class="material-icons" aria-hidden="true">school</Graphic>
-                            <Text>Vsi razredi</Text>
-                        </Item>
-                        {#if decoded["role"] !== "school psychologist"}
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/settings')}
-                                    activated={active === 'settings'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">settings</Graphic>
-                                <Text>Nastavitve sistema</Text>
-                            </Item>
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/proton/settings')}
-                                    activated={active === 'proton_settings'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">hub</Graphic>
-                                <Text>Nastavitve Proton modula</Text>
-                            </Item>
-                            <Item
-                                    href="javascript:void(0)"
-                                    on:click={() => navigate('/notifications')}
-                                    activated={active === 'notifications'}
-                            >
-                                <Graphic class="material-icons" aria-hidden="true">info</Graphic>
-                                <Text>Obvestila</Text>
-                            </Item>
-                        {/if}
-                    {/if}
-                {/if}
-                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist")}
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate(`/meeting/${meetingActive}`)}
-                            activated={active === 'srecanje'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">meeting_room</Graphic>
-                        <Text>Srečanje</Text>
-                    </Item>
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate(`/meeting/${meetingActive}/absence`)}
-                            activated={active === 'absenceManagement'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">school</Graphic>
-                        <Text>Prisotnost</Text>
-                    </Item>
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate(`/meeting/${meetingActive}/grading`)}
-                            activated={active === 'grading'}
+                            on:click={() => navigate('/class/user/me')}
+                            activated={active === 'studentme'}
                     >
                         <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
-                        <Text>Ocene</Text>
-                    </Item>
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => navigate(`/meeting/${meetingActive}/homework`)}
-                            activated={active === 'homework'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">assignment</Graphic>
-                        <Text>Domača naloga</Text>
-                    </Item>
-                    <Item
-                            href="javascript:void(0)"
-                            on:click={() => improvementDialog = true}
-                            activated={active === 'improvements'}
-                    >
-                        <Graphic class="material-icons" aria-hidden="true">feedback</Graphic>
-                        <Text>Izboljšave (vpisi)</Text>
+                        <Text>Moj pregled</Text>
                     </Item>
                 {/if}
-            </List>
-        </Content>
-    </Drawer>
+                {#if decoded["role"] === "parent"}
+                    {#each children as child}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate(`/class/user/${child.ID}`)}
+                                activated={active === `student${child.ID}`}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">account_circle</Graphic>
+                            <Text>{child.Name}</Text>
+                        </Item>
+                    {/each}
+                {/if}
+                {#if decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "admin"}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/new/meeting')}
+                            activated={active === 'novosrecanje'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">add</Graphic>
+                        <Text>Dodaj srečanje</Text>
+                    </Item>
+                {/if}
+                {#if decoded["role"] === "teacher"}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/my/class')}
+                            activated={active === 'myclass'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                        <Text>Moj razred</Text>
+                    </Item>
+                    <!--<Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/mojipredmeti')}
+                            activated={active === 'mojipredmeti'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">library_books</Graphic>
+                        <Text>Moji predmeti</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/redovalnica')}
+                            activated={active === 'redovalnica'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
+                        <Text>Redovalnica</Text>
+                    </Item>-->
+                {/if}
+                {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist"}
+                    {#if decoded["role"] !== "school psychologist"}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/users')}
+                                activated={active === 'users'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">people</Graphic>
+                            <Text>Vsi uporabniki</Text>
+                        </Item>
+                    {/if}
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/subjects')}
+                            activated={active === 'subjects'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">subject</Graphic>
+                        <Text>Vsi predmeti</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate('/classes')}
+                            activated={active === 'classes'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                        <Text>Vsi razredi</Text>
+                    </Item>
+                    {#if decoded["role"] !== "school psychologist"}
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/settings')}
+                                activated={active === 'settings'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">settings</Graphic>
+                            <Text>Nastavitve sistema</Text>
+                        </Item>
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/proton/settings')}
+                                activated={active === 'proton_settings'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">hub</Graphic>
+                            <Text>Nastavitve Proton modula</Text>
+                        </Item>
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/documents')}
+                                activated={active === 'documents'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">description</Graphic>
+                            <Text>Dokumenti</Text>
+                        </Item>
+                        <Item
+                                href="javascript:void(0)"
+                                on:click={() => navigate('/notifications')}
+                                activated={active === 'notifications'}
+                        >
+                            <Graphic class="material-icons" aria-hidden="true">info</Graphic>
+                            <Text>Obvestila</Text>
+                        </Item>
+                    {/if}
+                {/if}
+            {/if}
+            {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist")}
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate(`/meeting/${meetingActive}`)}
+                        activated={active === 'srecanje'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">meeting_room</Graphic>
+                    <Text>Srečanje</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate(`/meeting/${meetingActive}/absence`)}
+                        activated={active === 'absenceManagement'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">school</Graphic>
+                    <Text>Prisotnost</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate(`/meeting/${meetingActive}/grading`)}
+                        activated={active === 'grading'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
+                    <Text>Ocene</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => navigate(`/meeting/${meetingActive}/homework`)}
+                        activated={active === 'homework'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">assignment</Graphic>
+                    <Text>Domača naloga</Text>
+                </Item>
+                <Item
+                        href="javascript:void(0)"
+                        on:click={() => improvementDialog = true}
+                        activated={active === 'improvements'}
+                >
+                    <Graphic class="material-icons" aria-hidden="true">feedback</Graphic>
+                    <Text>Izboljšave (vpisi)</Text>
+                </Item>
+            {/if}
+        </List>
+    </Content>
+</Drawer>
+{#if mobile}
+    <Scrim fixed={false} />
+    <Button on:click={() => open = !open}>
+        <Icon class="material-icons">menu_open</Icon>
+        {#if open}
+            <Label>Zapri navigacijo</Label>
+        {:else}
+            <Label>Odpri navigacijo</Label>
+        {/if}
+    </Button>
+{/if}
 
 <style>
     .sameline {

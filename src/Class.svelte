@@ -12,14 +12,14 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-routing";
-    import jwt_decode, {JwtPayload} from "jwt-decode";
+    import jwt_decode from "jwt-decode";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-    const decoded = jwt_decode<JwtPayload>(token);
+    const decoded = jwt_decode(token);
 
     let myClasses;
     let students;
