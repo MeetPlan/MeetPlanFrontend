@@ -13,6 +13,7 @@
     const documentTypes = {
         0: "Spričevalo",
         1: "Potrdilo o šolanju",
+        2: "Pristopna izjava (resetiranje gesla)",
     };
 
     async function getDocuments() {

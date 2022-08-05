@@ -49,6 +49,7 @@
     let viewGradings = true;
 
     let isPassing = true;
+    let printTemplate = false;
 
     function getUserData() {
         fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -249,8 +250,13 @@
                 Bo opravil razred?
             </FormField>
             <p/>
+            <FormField>
+                <Switch bind:checked={printTemplate} />
+                Natisni predlogo
+            </FormField>
+            <p/>
             <Button on:click={() => {
-                fetch(`${baseurl}/user/get/ending_certificate/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                     .then((response) => response.blob())
                     .then((blob) => saveBlob(blob))
                     .catch((err) => {
