@@ -70,7 +70,7 @@
 					</Route>
 					<Route path="/class/user/:id" let:params >
 						{#await import('./ClassUser.svelte') then ClassUser}
-							<ClassUser.default id="{params.id}" />
+							<ClassUser.default studentId="{params.id}" />
 						{:catch e}
 							<Error err={e} />
 						{/await}
