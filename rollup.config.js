@@ -51,7 +51,7 @@ export default {
 			"public/build/*.css.gz",
 		]}),
 
-		gzipPlugin(),
+		gzipPlugin({additionalFiles: ["public/build/smui.css", "public/build/smui-dark.css"]}),
 
 		replace({
 			isProduction: production,
