@@ -7,6 +7,8 @@ import sveltePreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
 import css from 'rollup-plugin-css-only';
 import replace from "@rollup/plugin-replace";
+import del from "rollup-plugin-delete";
+import gzipPlugin from 'rollup-plugin-gzip';
 
 const production = !process.env.ROLLUP_WATCH;
 const tauri = process.env.TAURI;
@@ -36,11 +38,21 @@ export default {
 	input: 'src/main.ts',
 	output: {
 		sourcemap: true,
-		format: 'iife',
+		format: 'esm',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		dir: 'public/build'
 	},
 	plugins: [
+		del({targets: [
+			"public/build/*.js",
+			"public/build/*.js.map",
+			"public/build/*.js.gz",
+			"public/build/bundle.css",
+			"public/build/*.css.gz",
+		]}),
+
+		gzipPlugin(),
+
 		replace({
 			isProduction: production,
 			isTauriApp: tauri === "true",
