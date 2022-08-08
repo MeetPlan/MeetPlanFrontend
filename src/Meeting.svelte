@@ -1,7 +1,5 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-    import {navigate} from "svelte-routing";
+    import {navigate} from "svelte-navigator";
     import jwt_decode from "jwt-decode";
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
@@ -130,94 +128,89 @@
     }
 </script>
 
-<Drawer active="srecanje" meetingActive={meetingId} />
-<AppContent class="app-content">
-    <main class="main-content">
-        {#if meetingData !== undefined}
-            <h1>{meetingData.MeetingName}</h1>
-            <p>Učitelj: <b>{meetingData.TeacherName}</b></p>
-            <p>Datum: <b>{meetingData.Date}</b></p>
-            <p>Ura: <b>{meetingData.Hour}.</b></p>
-            <p>Je obvezno: <b>{meetingData.IsMandatory ? "Ja" : "Ne"}</b></p>
-            <p>Je ocenjevanje znanja: <b>{meetingData.IsGrading ? "Ja" : "Ne"}</b></p>
-            {#if meetingData.IsGrading}
-                <p>Je pisno ocenjevanje znanja: <b>{meetingData.IsWrittenAssessment}</b></p>
-            {/if}
-            <p>Je preverjanje znanja: <b>{meetingData.IsTest ? "Ja" : "Ne"}</b></p>
-            <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>
-            {#if meetingData.Details !== ""}
-                <h4>Opis srečanja:</h4>
-                {@html insane(marked.marked(meetingData.Details))}
-            {/if}
-            <a href="{meetingData.URL}">Povezava do srečanja</a>
-            {#if decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
-                <p/>
-                <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
-                    <Icon class="material-icons">edit</Icon>
-                    <Label>Uredi</Label>
-                </Button>
-                <Button on:click={() => deleteMeeting()}>
-                    <Icon class="material-icons">delete</Icon>
-                    <Label>Izbriši</Label>
-                </Button>
-            {/if}
+{#if meetingData !== undefined}
+    <h1>{meetingData.MeetingName}</h1>
+    <p>Učitelj: <b>{meetingData.TeacherName}</b></p>
+    <p>Datum: <b>{meetingData.Date}</b></p>
+    <p>Ura: <b>{meetingData.Hour}.</b></p>
+    <p>Je obvezno: <b>{meetingData.IsMandatory ? "Ja" : "Ne"}</b></p>
+    <p>Je ocenjevanje znanja: <b>{meetingData.IsGrading ? "Ja" : "Ne"}</b></p>
+    {#if meetingData.IsGrading}
+        <p>Je pisno ocenjevanje znanja: <b>{meetingData.IsWrittenAssessment}</b></p>
+    {/if}
+    <p>Je preverjanje znanja: <b>{meetingData.IsTest ? "Ja" : "Ne"}</b></p>
+    <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>
+    {#if meetingData.Details !== ""}
+        <h4>Opis srečanja:</h4>
+        {@html insane(marked.marked(meetingData.Details))}
+    {/if}
+    <a href="{meetingData.URL}">Povezava do srečanja</a>
+    {#if decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
+        <p/>
+        <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
+            <Icon class="material-icons">edit</Icon>
+            <Label>Uredi</Label>
+        </Button>
+        <Button on:click={() => deleteMeeting()}>
+            <Icon class="material-icons">delete</Icon>
+            <Label>Izbriši</Label>
+        </Button>
+    {/if}
+    <p/>
+    <div use:chart={options}/>
+    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+        <p/>
+        <FormField>
+            <Switch bind:checked={isSubstitution} on:click={() => {
+                // Wait for the component to set new state
+                setTimeout(() => {
+                    if (!isSubstitution) {
+                        patchMeeting();
+                    }
+                }, 200);
+            }} />
+            Je nadomeščanje
+        </FormField>
+        {#if isSubstitution}
             <p/>
-            <div use:chart={options}/>
-            {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
-                <p/>
-                <FormField>
-                    <Switch bind:checked={isSubstitution} on:click={() => {
-                        // Wait for the component to set new state
-                        setTimeout(() => {
-                            if (!isSubstitution) {
-                                patchMeeting();
-                            }
-                        }, 200);
-                    }} />
-                    Je nadomeščanje
-                </FormField>
-                {#if isSubstitution}
-                    <p/>
-                    <Select bind:selected={meetingData.TeacherID} label="Izberite učitelja za nadomeščanje" variant="outlined" style="width: 100%;">
-                        <Option value="" on:click={() => teacherId = undefined}/>
-                        {#each teachers as c}
-                            <Option on:click={async () => {
-                                teacherId = c.ID;
-                                patchMeeting();
-                            }} value={c.ID}>{c["Name"]}</Option>
-                        {/each}
-                    </Select>
-                    <p/>
-                    {#if protonRatings.length === 0}
-                        Proton ni uspel oceniti najboljše možne zamenjave. <p/>
-                    {:else}
-                        Proton je sestavil lestvico najboljših možnih zamenjav: <p/>
-                        {#each protonRatings as p}
-                            <h2>{p.Name}</h2>
-                            {p.Name} je dobil(a) <b>{p.Tier}</b> točk na Proton lestvici, ker: <br>
-                            <ul>
-                                {#if p.GradingList.TeachesSameSubject}
-                                    <li>Uči isti predmet - 5 točk</li>
-                                {/if}
-                                {#if p.GradingList.HasMeetingBefore}
-                                    <li>Ima učno uro prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
-                                {/if}
-                                {#if p.GradingList.HasMeetingLater}
-                                    <li>Ima učno uro pozneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
-                                {/if}
-                                {#if p.GradingList.HasMeeting2HBefore}
-                                    <li>Ima učno uro dve uri prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
-                                {/if}
-                                {#if p.GradingList.HasMeeting2HLater}
-                                    <li>Ima učno uro dve uri kasneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
-                                {/if}
-                            </ul>
-                            <h3>Urnik učitelja:</h3>
-                            <Timetable teacherId="{p.TeacherID}" date={new Date(reverseFmtDate(meetingData.Date))} hour={meetingData.Hour} />
-                        {/each}
-                    {/if}
-                {/if}
+            <Select bind:selected={meetingData.TeacherID} label="Izberite učitelja za nadomeščanje" variant="outlined" style="width: 100%;">
+                <Option value="" on:click={() => teacherId = undefined}/>
+                {#each teachers as c}
+                    <Option on:click={async () => {
+                        teacherId = c.ID;
+                        patchMeeting();
+                    }} value={c.ID}>{c["Name"]}</Option>
+                {/each}
+            </Select>
+            <p/>
+            {#if protonRatings.length === 0}
+                Proton ni uspel oceniti najboljše možne zamenjave. <p/>
+            {:else}
+                Proton je sestavil lestvico najboljših možnih zamenjav: <p/>
+                {#each protonRatings as p}
+                    <h2>{p.Name}</h2>
+                    {p.Name} je dobil(a) <b>{p.Tier}</b> točk na Proton lestvici, ker: <br>
+                    <ul>
+                        {#if p.GradingList.TeachesSameSubject}
+                            <li>Uči isti predmet - 5 točk</li>
+                        {/if}
+                        {#if p.GradingList.HasMeetingBefore}
+                            <li>Ima učno uro prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
+                        {/if}
+                        {#if p.GradingList.HasMeetingLater}
+                            <li>Ima učno uro pozneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 3 točke</li>
+                        {/if}
+                        {#if p.GradingList.HasMeeting2HBefore}
+                            <li>Ima učno uro dve uri prej (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
+                        {/if}
+                        {#if p.GradingList.HasMeeting2HLater}
+                            <li>Ima učno uro dve uri kasneje (tako zapolnimo možne luknje, ki bi bile neugodne učiteljem) - 1 točka</li>
+                        {/if}
+                    </ul>
+                    <h3>Urnik učitelja:</h3>
+                    <Timetable teacherId="{p.TeacherID}" date={new Date(reverseFmtDate(meetingData.Date))} hour={meetingData.Hour} />
+                {/each}
             {/if}
         {/if}
-    </main>
-</AppContent>
+    {/if}
+{/if}

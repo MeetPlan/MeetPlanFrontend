@@ -1,12 +1,10 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-    import {navigate} from "svelte-routing";
+    import {navigate} from "svelte-navigator";
 
     import Button from "@smui/button";
 
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
-    import {baseurl, isTauri, saveBlob} from "./constants";
+    import {baseurl, saveBlob} from "./constants";
 
     import FormField from '@smui/form-field';
     import Switch from '@smui/switch';
@@ -166,198 +164,193 @@
     getParentConfig();
 </script>
 
-<Drawer active={`student${studentId}`} />
-<AppContent class="app-content">
-    <main class="main-content">
-        {#if userData}
-            <h1>{userData.Name}</h1>
-        {/if}
-        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "school psychologist"}
-            <Button on:click={() => {
-                fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-                    .then((response) => response.blob())
-                    .then((blob) => saveBlob(blob))
-                .catch((err) => {
-                    console.log(err);
-                  });
-            }}>
-                <Icon class="material-icons">download</Icon>
-                Prenesi potrdilo o šolanju
-            </Button>
-        {/if}
-        <h1>Ocene</h1>
-        {#if viewGrades}
-            <DataTable table$aria-label="People list" style="width: 100%;">
-                <Head>
-                    <Row>
-                        <Cell>Predmet</Cell>
-                        <Cell>1. ocenjevalno obdobje</Cell>
-                        <Cell>2. ocenjevalno obdobje</Cell>
-                        <Cell>Zaključeno</Cell>
-                    </Row>
-                </Head>
-                <Body>
-                {#if grades}
-                    {#each grades["Subjects"] as subject}
-                        <Row>
-                            <Cell class="sameline">
-                                <div style="display:inline-block;">{subject.Name}</div>
-                                <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{subject.Average.toFixed(2)}</div>
-                            </Cell>
-                            {#each subject.Periods as period, i}
-                                <Cell>
-                                    <div class="sameline">
-                                        <div style="display:inline-block; width: 5px;"/>
-                                        {#each period.Grades as grade}
-                                            <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
-                                                <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
+{#if userData}
+    <h1>{userData.Name}</h1>
+{/if}
+{#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "school psychologist"}
+    <Button on:click={() => {
+        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.blob())
+            .then((blob) => saveBlob(blob))
+        .catch((err) => {
+            console.log(err);
+          });
+    }}>
+        <Icon class="material-icons">download</Icon>
+        Prenesi potrdilo o šolanju
+    </Button>
+{/if}
+<h1>Ocene</h1>
+{#if viewGrades}
+    <DataTable table$aria-label="People list" style="width: 100%;">
+        <Head>
+            <Row>
+                <Cell>Predmet</Cell>
+                <Cell>1. ocenjevalno obdobje</Cell>
+                <Cell>2. ocenjevalno obdobje</Cell>
+                <Cell>Zaključeno</Cell>
+            </Row>
+        </Head>
+        <Body>
+        {#if grades}
+            {#each grades["Subjects"] as subject}
+                <Row>
+                    <Cell class="sameline">
+                        <div style="display:inline-block;">{subject.Name}</div>
+                        <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{subject.Average.toFixed(2)}</div>
+                    </Cell>
+                    {#each subject.Periods as period, i}
+                        <Cell>
+                            <div class="sameline">
+                                <div style="display:inline-block; width: 5px;"/>
+                                {#each period.Grades as grade}
+                                    <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
+                                        <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
 {grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">{grade.Grade}
-                                                </span>
-                                            </div>
-                                            <div style="display:inline-block; width: 5px;"/>
-                                        {/each}
-                                        <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
+                                        </span>
                                     </div>
-                                </Cell>
-                            {/each}
-                            <Cell>
-                                {#if subject.Final !== 0}
-                                    <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
-                                        {subject.Final}
-                                    </div>
-                                {/if}
-                            </Cell>
-                        </Row>
+                                    <div style="display:inline-block; width: 5px;"/>
+                                {/each}
+                                <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
+                            </div>
+                        </Cell>
                     {/each}
-                {/if}
-                </Body>
-            </DataTable>
-        {:else}
-            Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
-        {/if}
-        {#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
-            <p/>
-            <FormField>
-                <Switch bind:checked={isPassing} on:click={() => {
-                    setTimeout(() => {
-                        let fd = new FormData();
-                        fd.append("is_passing", isPassing.toString());
-                        fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
-                            .then((response) => response.json())
-                            .then((r) => getUserData());
-                    }, 200);
-                }}/>
-                Bo opravil razred?
-            </FormField>
-            <p/>
-            <FormField>
-                <Switch bind:checked={printTemplate} />
-                Natisni predlogo
-            </FormField>
-            <p/>
-            <Button on:click={() => {
-                fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-                    .then((response) => response.blob())
-                    .then((blob) => saveBlob(blob))
-                    .catch((err) => {
-                    console.log(err);
-                  });
-            }}>
-                <Icon class="material-icons">download</Icon>
-                Prenesi spričevalo
-            </Button>
-        {/if}
-        <h1>Odsotnost</h1>
-        {#if viewAbsences}
-            <Accordion multiple>
-                {#each absences as item, i}
-                    <Panel bind:open={absenceList[i]}>
-                        <Header>
-                            {item["MeetingName"]}
-                            <IconButton slot="icon" toggle pressed={absenceList[i]}>
-                                <Icon class="material-icons" on>expand_less</Icon>
-                                <Icon class="material-icons">expand_more</Icon>
-                            </IconButton>
-                        </Header>
-                        <Content>
-                            <List
-                                twoLine
-                                avatarList
-                                singleSelection
-                            >
-                                <Item>
-                                    {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
-                                    <Meta>
-                                        <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                            if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
-                                                fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
-                                                    .then((r) => r.json())
-                                                    .then((r) => {
-                                                        getAbsences();
-                                                    });
-                                            }
-                                        }}>task_alt</IconButton>
-                                    </Meta>
-                                </Item>
-                            </List>
-                        </Content>
-                    </Panel>
-                {/each}
-            </Accordion>
-        {:else}
-            Sistemski administrator je izključil vpogled v izostanke otroka za vse starše.
-        {/if}
-        <h1>Domača naloga</h1>
-        {#if viewHomework}
-            {#each homework as item, i}
-                <h2>{item.Date}</h2>
-                {#each item.Homework as homework, n}
-                    <h3>{homework.SubjectName} - {homework.Name}</h3>
-                    Datum vpisa naloge: {homework.FromDate}
-                    <br>
-                    Rok oddaje: {homework.ToDate}
-                    <br>
-                    Status: {translatedSegments[homework.Status] === undefined ? "ŠE NE UREJENO" : translatedSegments[homework.Status]}
-                    <br>
-                    {homework.Description}
-
-                {/each}
-                <p/>
-            {/each}
-        {:else}
-            Sistemski administrator je izključil vpogled v domače naloge otroka za vse starše.
-        {/if}
-
-        <h1>Ocenjevanja in preverjanja znanj</h1>
-        {#if viewGradings}
-            {#each gradings as item}
-                <h2>{item.Date}</h2>
-                {#each item.Gradings as grading, n}
-                    <h3>{grading.MeetingName}</h3>
-                    {#if grading.IsTest}
-                        Preverjanje znanja
-                    {:else}
-                        {#if grading.IsWrittenAssessment}
-                            Pisno ocenjevanje
-                        {:else}
-                            Ocenjevanje
+                    <Cell>
+                        {#if subject.Final !== 0}
+                            <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
+                                {subject.Final}
+                            </div>
                         {/if}
-                    {/if}
-                    <br>
-                    <a on:click={() => navigate(`/meeting/${grading.ID}`)}>Pojdi na srečanje</a>
-                {/each}
-                <p/>
+                    </Cell>
+                </Row>
             {/each}
-        {:else}
-            Sistemski administrator je izključil vpogled v ocenjevanja otroka za vse starše.
         {/if}
+        </Body>
+    </DataTable>
+{:else}
+    Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
+{/if}
+{#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+    <p/>
+    <FormField>
+        <Switch bind:checked={isPassing} on:click={() => {
+            setTimeout(() => {
+                let fd = new FormData();
+                fd.append("is_passing", isPassing.toString());
+                fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+                    .then((response) => response.json())
+                    .then((r) => getUserData());
+            }, 200);
+        }}/>
+        Bo opravil razred?
+    </FormField>
+    <p/>
+    <FormField>
+        <Switch bind:checked={printTemplate} />
+        Natisni predlogo
+    </FormField>
+    <p/>
+    <Button on:click={() => {
+        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.blob())
+            .then((blob) => saveBlob(blob))
+            .catch((err) => {
+            console.log(err);
+          });
+    }}>
+        <Icon class="material-icons">download</Icon>
+        Prenesi spričevalo
+    </Button>
+{/if}
+<h1>Odsotnost</h1>
+{#if viewAbsences}
+    <Accordion multiple>
+        {#each absences as item, i}
+            <Panel bind:open={absenceList[i]}>
+                <Header>
+                    {item["MeetingName"]}
+                    <IconButton slot="icon" toggle pressed={absenceList[i]}>
+                        <Icon class="material-icons" on>expand_less</Icon>
+                        <Icon class="material-icons">expand_more</Icon>
+                    </IconButton>
+                </Header>
+                <Content>
+                    <List
+                        twoLine
+                        avatarList
+                        singleSelection
+                    >
+                        <Item>
+                            {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
+                            <Meta>
+                                <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
+                                    if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+                                            .then((r) => r.json())
+                                            .then((r) => {
+                                                getAbsences();
+                                            });
+                                    }
+                                }}>task_alt</IconButton>
+                            </Meta>
+                        </Item>
+                    </List>
+                </Content>
+            </Panel>
+        {/each}
+    </Accordion>
+{:else}
+    Sistemski administrator je izključil vpogled v izostanke otroka za vse starše.
+{/if}
+<h1>Domača naloga</h1>
+{#if viewHomework}
+    {#each homework as item, i}
+        <h2>{item.Date}</h2>
+        {#each item.Homework as homework, n}
+            <h3>{homework.SubjectName} - {homework.Name}</h3>
+            Datum vpisa naloge: {homework.FromDate}
+            <br>
+            Rok oddaje: {homework.ToDate}
+            <br>
+            Status: {translatedSegments[homework.Status] === undefined ? "ŠE NE UREJENO" : translatedSegments[homework.Status]}
+            <br>
+            {homework.Description}
 
-        <h1>Izboljšave in pohvale - vpisi</h1>
-        {#each improvements as improvement}
-            <h2>{improvement.MeetingName}</h2>
-            Vpisal {improvement.TeacherName}
-            {@html insane(marked.marked(improvement.Message))}
         {/each}
         <p/>
-    </main>
-</AppContent>
+    {/each}
+{:else}
+    Sistemski administrator je izključil vpogled v domače naloge otroka za vse starše.
+{/if}
+
+<h1>Ocenjevanja in preverjanja znanj</h1>
+{#if viewGradings}
+    {#each gradings as item}
+        <h2>{item.Date}</h2>
+        {#each item.Gradings as grading, n}
+            <h3>{grading.MeetingName}</h3>
+            {#if grading.IsTest}
+                Preverjanje znanja
+            {:else}
+                {#if grading.IsWrittenAssessment}
+                    Pisno ocenjevanje
+                {:else}
+                    Ocenjevanje
+                {/if}
+            {/if}
+            <br>
+            <a on:click={() => navigate(`/meeting/${grading.ID}`)}>Pojdi na srečanje</a>
+        {/each}
+        <p/>
+    {/each}
+{:else}
+    Sistemski administrator je izključil vpogled v ocenjevanja otroka za vse starše.
+{/if}
+
+<h1>Izboljšave in pohvale - vpisi</h1>
+{#each improvements as improvement}
+    <h2>{improvement.MeetingName}</h2>
+    Vpisal {improvement.TeacherName}
+    {@html insane(marked.marked(improvement.Message))}
+{/each}
+<p/>

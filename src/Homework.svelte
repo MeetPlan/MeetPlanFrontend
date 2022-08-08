@@ -1,7 +1,4 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import IconButton, { Icon } from '@smui/icon-button';
     import {baseurl} from "./constants.ts";
@@ -68,76 +65,71 @@
     getHomework();
 </script>
 
-<Drawer active="homework" meetingActive={meetingId} />
-<AppContent class="app-content">
-    <main class="main-content">
-        <div class="accordion-container">
-            <Textfield bind:value={name} label="Ime naloge" required style="width: 100%;" helperLine$style="width: 100%;">
-                <HelperText slot="helper">Ime naloge</HelperText>
-            </Textfield>
-            <Textfield bind:value={description} label="Opis naloge" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
-            <Textfield bind:value={date} label="Rok oddaje naloge" type="date" required on:click={() => date = ""}>
-                <Icon class="material-icons" slot="leadingIcon">event</Icon>
-                <HelperText slot="helper">Izberite prosim rok oddaje naloge</HelperText>
-            </Textfield>
-            <Button on:click={() => newHomework()}>
-                <Icon class="material-icons">add</Icon>
-                <Label>Dodaj</Label>
-            </Button>
-            <h1>Naloge:</h1>
-            <Accordion>
-                {#each homework as p, i}
-                    <Panel bind:open={panels[i]}>
-                        <Header>
-                            {p.Name}
-                            <IconButton slot="icon" toggle pressed={panels[i]}>
-                                <Icon class="material-icons" on>expand_less</Icon>
-                                <Icon class="material-icons">expand_more</Icon>
-                            </IconButton>
-                        </Header>
-                        <Content>
-                            {p.Description}
-                            {#if p.Description !== ""}
-                                <hr/>
-                            {/if}
-                            Naloga vpisana dne: {p.FromDate}
-                            <br>
-                            Rok oddaje: {p.ToDate}
-                            <List
-                                    twoLine
-                                    avatarList
-                                    singleSelection
-                            >
-                                {#each p.Students as student}
-                                    <Item>
-                                        <Avatar name={student.Name}/><div style="width: 15px;"/>
-                                        <Text>
-                                            <PrimaryText>{student.Name}</PrimaryText>
-                                        </Text>
-                                        <Meta>
-                                            <SegmentedButton segments={choices} let:segment singleSelect bind:selected={student.Status}>
-                                                <!-- Note: the `segment` property is required! -->
-                                                <Segment {segment} on:click={() => {
-                                                    let formData = new FormData();
-                                                    formData.append("status", segment)
+<div class="accordion-container">
+    <Textfield bind:value={name} label="Ime naloge" required style="width: 100%;" helperLine$style="width: 100%;">
+        <HelperText slot="helper">Ime naloge</HelperText>
+    </Textfield>
+    <Textfield bind:value={description} label="Opis naloge" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
+    <Textfield bind:value={date} label="Rok oddaje naloge" type="date" required on:click={() => date = ""}>
+        <Icon class="material-icons" slot="leadingIcon">event</Icon>
+        <HelperText slot="helper">Izberite prosim rok oddaje naloge</HelperText>
+    </Textfield>
+    <Button on:click={() => newHomework()}>
+        <Icon class="material-icons">add</Icon>
+        <Label>Dodaj</Label>
+    </Button>
+    <h1>Naloge:</h1>
+    <Accordion>
+        {#each homework as p, i}
+            <Panel bind:open={panels[i]}>
+                <Header>
+                    {p.Name}
+                    <IconButton slot="icon" toggle pressed={panels[i]}>
+                        <Icon class="material-icons" on>expand_less</Icon>
+                        <Icon class="material-icons">expand_more</Icon>
+                    </IconButton>
+                </Header>
+                <Content>
+                    {p.Description}
+                    {#if p.Description !== ""}
+                        <hr/>
+                    {/if}
+                    Naloga vpisana dne: {p.FromDate}
+                    <br>
+                    Rok oddaje: {p.ToDate}
+                    <List
+                            twoLine
+                            avatarList
+                            singleSelection
+                    >
+                        {#each p.Students as student}
+                            <Item>
+                                <Avatar name={student.Name}/><div style="width: 15px;"/>
+                                <Text>
+                                    <PrimaryText>{student.Name}</PrimaryText>
+                                </Text>
+                                <Meta>
+                                    <SegmentedButton segments={choices} let:segment singleSelect bind:selected={student.Status}>
+                                        <!-- Note: the `segment` property is required! -->
+                                        <Segment {segment} on:click={() => {
+                                            let formData = new FormData();
+                                            formData.append("status", segment)
 
-                                                    fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + localStorage.getItem("key")}}).then((response) => {
-                                                        return response.json()
-                                                    }).then((response) => {
-                                                        getHomework();
-                                                    })
-                                                }}>
-                                                    <Label>{translatedSegments[segment]}</Label>
-                                                </Segment>
-                                            </SegmentedButton>
-                                        </Meta>
-                                    </Item>
-                                {/each}
-                            </List>
-                        </Content>
-                    </Panel>
-                {/each}
-            </Accordion>
-        </div>
-    </main>
-</AppContent>
+                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + localStorage.getItem("key")}}).then((response) => {
+                                                return response.json()
+                                            }).then((response) => {
+                                                getHomework();
+                                            })
+                                        }}>
+                                            <Label>{translatedSegments[segment]}</Label>
+                                        </Segment>
+                                    </SegmentedButton>
+                                </Meta>
+                            </Item>
+                        {/each}
+                    </List>
+                </Content>
+            </Panel>
+        {/each}
+    </Accordion>
+</div>

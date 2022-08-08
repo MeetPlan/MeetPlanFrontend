@@ -1,7 +1,4 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import Icon from '@smui/textfield/icon';
@@ -114,65 +111,60 @@
     getMyChildren();
 </script>
 
-<Drawer active="user" />
-<AppContent class="app-content">
-    <main class="main-content">
-        {#if role === "student"}
-            <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
-                <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
-            </Textfield>
-            <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
-                <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
-            </Textfield>
-            <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={() => patchUser()}>
-                <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
-            </Textfield>
-        {/if}
-        <Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
-            <Icon class="material-icons" slot="leadingIcon">event</Icon>
-            <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni (to se lahko uporabi za posebne funkcije ;-))</HelperText>
-        </Textfield>
-        <Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={() => patchUser()}>
-            <HelperText slot="helper">Vpišite ime in priimek - bodite zelo pozorni</HelperText>
-        </Textfield>
-        <Textfield bind:value={email} label="Elektronski naslov" style="width: 100%;" required on:change={() => patchUser()}>
-            <HelperText slot="helper">Vpišite elektronski naslov - bodite zelo pozorni</HelperText>
-        </Textfield>
-        {#if role === "student"}
-            <h2>Dodaj učenca v razred:</h2>
-            <Select bind:classId label="Izberite razred" variant="outlined">
-                <Option value=""/>
-                {#each classes as c}
-                    <Option on:click={() => {assignToClass(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
-                {/each}
-            </Select>
-            <h2>Razredi, v katere je učenec dodan:</h2>
-            <List class="demo-list">
-                {#each myClasses as item}
-                    <Item>
-                        <TextList>{item["Name"]}</TextList>
-                        <Meta><IconButton class="material-icons" on:click={() => deleteFromClass(item["ID"])} title="Remove from class">delete</IconButton></Meta>
-                    </Item>
-                {/each}
-            </List>
-        {/if}
-        {#if role === "parent"}
-            <h2>Dodeli učenca staršu (poveži uporabniška računa):</h2>
-            <Select bind:classId label="Izberite razred" variant="outlined">
-                <Option value=""/>
-                {#each students as c}
-                    <Option on:click={() => {assignToParent(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
-                {/each}
-            </Select>
-            <h2>Učenci:</h2>
-            <List class="demo-list">
-                {#each myStudents as item}
-                    <Item>
-                        <TextList>{item["Name"]}</TextList>
-                        <Meta><IconButton class="material-icons" on:click={() => removeUserFromParent(item["ID"])} title="Remove user from parent">delete</IconButton></Meta>
-                    </Item>
-                {/each}
-            </List>
-        {/if}
-    </main>
-</AppContent>
+{#if role === "student"}
+    <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
+        <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+        <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+        <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
+    </Textfield>
+{/if}
+<Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
+    <Icon class="material-icons" slot="leadingIcon">event</Icon>
+    <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni (to se lahko uporabi za posebne funkcije ;-))</HelperText>
+</Textfield>
+<Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={() => patchUser()}>
+    <HelperText slot="helper">Vpišite ime in priimek - bodite zelo pozorni</HelperText>
+</Textfield>
+<Textfield bind:value={email} label="Elektronski naslov" style="width: 100%;" required on:change={() => patchUser()}>
+    <HelperText slot="helper">Vpišite elektronski naslov - bodite zelo pozorni</HelperText>
+</Textfield>
+{#if role === "student"}
+    <h2>Dodaj učenca v razred:</h2>
+    <Select bind:classId label="Izberite razred" variant="outlined">
+        <Option value=""/>
+        {#each classes as c}
+            <Option on:click={() => {assignToClass(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+        {/each}
+    </Select>
+    <h2>Razredi, v katere je učenec dodan:</h2>
+    <List class="demo-list">
+        {#each myClasses as item}
+            <Item>
+                <TextList>{item["Name"]}</TextList>
+                <Meta><IconButton class="material-icons" on:click={() => deleteFromClass(item["ID"])} title="Remove from class">delete</IconButton></Meta>
+            </Item>
+        {/each}
+    </List>
+{/if}
+{#if role === "parent"}
+    <h2>Dodeli učenca staršu (poveži uporabniška računa):</h2>
+    <Select bind:classId label="Izberite razred" variant="outlined">
+        <Option value=""/>
+        {#each students as c}
+            <Option on:click={() => {assignToParent(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+        {/each}
+    </Select>
+    <h2>Učenci:</h2>
+    <List class="demo-list">
+        {#each myStudents as item}
+            <Item>
+                <TextList>{item["Name"]}</TextList>
+                <Meta><IconButton class="material-icons" on:click={() => removeUserFromParent(item["ID"])} title="Remove user from parent">delete</IconButton></Meta>
+            </Item>
+        {/each}
+    </List>
+{/if}

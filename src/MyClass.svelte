@@ -1,22 +1,12 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-    import {navigate} from "svelte-routing";
-    import jwt_decode from "jwt-decode";
-    import Button, {Label} from "@smui/button";
-    import Icon from '@smui/textfield/icon';
+    import {navigate} from "svelte-navigator";
     import {baseurl} from "./constants";
-    import FormField from "@smui/form-field";
-    import Switch from "@smui/switch";
     import Select, {Option} from "@smui/select";
 
     import List, {
         Item,
-        Graphic,
-        Meta,
         Text,
         PrimaryText,
-        SecondaryText,
     } from '@smui/list';
 
     import Avatar from "svelte-avatar";
@@ -48,42 +38,37 @@
     getClasses();
 </script>
 
-<Drawer active="myclass" />
-<AppContent class="app-content">
-    <main class="main-content">
-        <Select bind:classId label="Izberite razred">
-            <Option value="" on:click={() => {
-                classId = undefined
-                className = undefined;
-                classDetails = undefined;
-            }}/>
-            {#each classes as c}
-                <Option on:click={() => {
-                    classId = c["ID"];
-                    className = c["Name"];
-                    getClass(classId);
-                }} value={c["ID"]}>{c["Name"]}</Option>
-            {/each}
-        </Select>
-        {#if classDetails}
-            <h1>{className}</h1>
-            <List
-                    twoLine
-                    avatarList
-                    singleSelection
-            >
-                {#each classDetails.Students as item}
-                    <Item on:click={() => {
-                        navigate(`/class/user/${item.ID}`)
-                    }}>
-                        <Avatar name={item["Name"]}/><div style="width: 15px;"/>
-                        <Text>
-                            <PrimaryText>{item["Name"]}</PrimaryText>
-                        </Text>
-                    </Item>
+<Select bind:classId label="Izberite razred">
+    <Option value="" on:click={() => {
+        classId = undefined
+        className = undefined;
+        classDetails = undefined;
+    }}/>
+    {#each classes as c}
+        <Option on:click={() => {
+            classId = c["ID"];
+            className = c["Name"];
+            getClass(classId);
+        }} value={c["ID"]}>{c["Name"]}</Option>
+    {/each}
+</Select>
+{#if classDetails}
+    <h1>{className}</h1>
+    <List
+            twoLine
+            avatarList
+            singleSelection
+    >
+        {#each classDetails.Students as item}
+            <Item on:click={() => {
+                navigate(`/class/user/${item.ID}`)
+            }}>
+                <Avatar name={item["Name"]}/><div style="width: 15px;"/>
+                <Text>
+                    <PrimaryText>{item["Name"]}</PrimaryText>
+                </Text>
+            </Item>
 
-                {/each}
-            </List>
-        {/if}
-    </main>
-</AppContent>
+        {/each}
+    </List>
+{/if}

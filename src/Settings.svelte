@@ -1,6 +1,4 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {baseurl} from "./constants";
@@ -71,74 +69,69 @@
     getConfiguration();
 </script>
 
-<Drawer active="settings" />
-<AppContent class="app-content">
-    <main class="main-content">
-        <h1>Sistem</h1>
-        <Textfield bind:value={schoolName} label="Uradno ime šole" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
-            <HelperText slot="helper">Vpišite uradno ime šole</HelperText>
-        </Textfield>
-        <Textfield bind:value={address} label="Naslov" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
-            <HelperText slot="helper">Vpišite naslov šole (primer - Zaloška cesta 1)</HelperText>
-        </Textfield>
-        <Textfield bind:value={postNumber} label="Poštna številka" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()} type="number">
-            <HelperText slot="helper">Vpišite poštno številko</HelperText>
-        </Textfield>
-        <Textfield bind:value={city} label="Mesto" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
-            <HelperText slot="helper">Vpišite mesto</HelperText>
-        </Textfield>
-        <Textfield bind:value={country} label="Država" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
-            <HelperText slot="helper">Vpišite državo</HelperText>
-        </Textfield>
-        <h1>Starši</h1>
-        <FormField>
-            <Switch bind:checked={parentViewHomework} on:SMUISwitch:change={() => updateConfig()} />
-            Dovoli pregled nad učenčevimi domačimi nalogami
-        </FormField>
-        <br>
-        <FormField>
-            <Switch bind:checked={parentViewAbsences} on:SMUISwitch:change={() => updateConfig()} />
-            Dovoli pregled nad učenčevimi izostanki
-        </FormField>
-        <br>
-        <FormField>
-            <Switch bind:checked={parentViewGrades} on:SMUISwitch:change={() => updateConfig()} />
-            Dovoli pregled nad učenčevimi ocenami
-        </FormField>
-        <br>
-        <FormField>
-            <Switch bind:checked={parentViewGradings} on:SMUISwitch:change={() => updateConfig()} />
-            Dovoli pregled nad učenčevimi ocenjevanji znanj
-        </FormField>
-        <h1>Uporabniki</h1>
-        <FormField>
-            <Switch bind:checked={blockRegistrations} on:SMUISwitch:change={() => updateConfig()} />
-            Blokiraj registracije
-        </FormField>
-        <h1>Sistem</h1>
-        <FormField>
-            <Switch bind:checked={blockMeals} on:SMUISwitch:change={() => updateConfig()} />
-            Blokiraj prehrano/malice
-        </FormField>
-        <h2>Šole prosti dnevi</h2>
-        <List class="demo-list">
-            {#each dates as date, i}
-                <Item on:SMUI:action={() => {
-                    dates.splice(i, 1);
-                    updateConfig();
-                }}><Text>{date}</Text></Item>
-            {/each}
-        </List>
-        <Textfield type="date" bind:value={date} on:click={() => date = ""} on:change={() => {
-            let d = new Date(date);
-            if (d.getFullYear() < 2000) {
-                return
-            }
-            dates = [...dates, date];
+<h1>Sistem</h1>
+<Textfield bind:value={schoolName} label="Uradno ime šole" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
+    <HelperText slot="helper">Vpišite uradno ime šole</HelperText>
+</Textfield>
+<Textfield bind:value={address} label="Naslov" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
+    <HelperText slot="helper">Vpišite naslov šole (primer - Zaloška cesta 1)</HelperText>
+</Textfield>
+<Textfield bind:value={postNumber} label="Poštna številka" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()} type="number">
+    <HelperText slot="helper">Vpišite poštno številko</HelperText>
+</Textfield>
+<Textfield bind:value={city} label="Mesto" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
+    <HelperText slot="helper">Vpišite mesto</HelperText>
+</Textfield>
+<Textfield bind:value={country} label="Država" required style="width: 100%;" helperLine$style="width: 100%;" on:change={() => updateConfig()}>
+    <HelperText slot="helper">Vpišite državo</HelperText>
+</Textfield>
+<h1>Starši</h1>
+<FormField>
+    <Switch bind:checked={parentViewHomework} on:SMUISwitch:change={() => updateConfig()} />
+    Dovoli pregled nad učenčevimi domačimi nalogami
+</FormField>
+<br>
+<FormField>
+    <Switch bind:checked={parentViewAbsences} on:SMUISwitch:change={() => updateConfig()} />
+    Dovoli pregled nad učenčevimi izostanki
+</FormField>
+<br>
+<FormField>
+    <Switch bind:checked={parentViewGrades} on:SMUISwitch:change={() => updateConfig()} />
+    Dovoli pregled nad učenčevimi ocenami
+</FormField>
+<br>
+<FormField>
+    <Switch bind:checked={parentViewGradings} on:SMUISwitch:change={() => updateConfig()} />
+    Dovoli pregled nad učenčevimi ocenjevanji znanj
+</FormField>
+<h1>Uporabniki</h1>
+<FormField>
+    <Switch bind:checked={blockRegistrations} on:SMUISwitch:change={() => updateConfig()} />
+    Blokiraj registracije
+</FormField>
+<h1>Sistem</h1>
+<FormField>
+    <Switch bind:checked={blockMeals} on:SMUISwitch:change={() => updateConfig()} />
+    Blokiraj prehrano/malice
+</FormField>
+<h2>Šole prosti dnevi</h2>
+<List class="demo-list">
+    {#each dates as date, i}
+        <Item on:SMUI:action={() => {
+            dates.splice(i, 1);
             updateConfig();
-        }} label="Datum">
-            <Icon class="material-icons" slot="leadingIcon">event</Icon>
-            <HelperText slot="helper">Izberite prosimo datum</HelperText>
-        </Textfield>
-    </main>
-</AppContent>
+        }}><Text>{date}</Text></Item>
+    {/each}
+</List>
+<Textfield type="date" bind:value={date} on:click={() => date = ""} on:change={() => {
+    let d = new Date(date);
+    if (d.getFullYear() < 2000) {
+        return
+    }
+    dates = [...dates, date];
+    updateConfig();
+}} label="Datum">
+    <Icon class="material-icons" slot="leadingIcon">event</Icon>
+    <HelperText slot="helper">Izberite prosimo datum</HelperText>
+</Textfield>

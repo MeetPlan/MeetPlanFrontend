@@ -65,7 +65,6 @@ button:focus {
 	position: relative;
 	display: flex;
 	height: 100%;
-	width: 600px;
 	border: 1px solid
 	var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));
 	overflow: hidden;
@@ -84,4 +83,8 @@ button:focus {
 	padding: 16px;
 	height: 100%;
 	box-sizing: border-box;
+}
+
+.sameline {
+	white-space: nowrap;
 }

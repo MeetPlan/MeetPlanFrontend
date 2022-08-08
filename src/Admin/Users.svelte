@@ -1,6 +1,4 @@
 <script lang="ts">
-    import Drawer from "../Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
     import DataTable, {Head, Row, Cell, Body} from "@smui/data-table";
     import LinearProgress from '@smui/linear-progress';
     import SegmentedButton, {Segment, Label} from "@smui/segmented-button";
@@ -39,7 +37,7 @@
     let choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
     import jwt_decode from "jwt-decode";
-    import { navigate } from "svelte-routing";
+    import { navigate } from "svelte-navigator";
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -49,111 +47,106 @@
     const decoded = jwt_decode(token);
 </script>
 
-<Drawer active="users" />
-<AppContent class="app-content">
-    <main class="main-content">
-        <DataTable table$aria-label="User list" style="width: 100%;">
-            <Head>
-                <Row>
-                    <Cell numeric>ID</Cell>
-                    <Cell style="width: 100%;">Name</Cell>
-                    <Cell>Email</Cell>
-                    <Cell>Change role</Cell>
-                    <Cell>Reset password</Cell>
-                    <Cell>Delete user</Cell>
-                    <Cell>View</Cell>
-                </Row>
-            </Head>
-            <Body>
-            {#each items as item}
-                <Row>
-                    <Cell numeric>{item["ID"]}</Cell>
-                    <Cell>{item["Name"]}</Cell>
-                    <Cell>{item["Email"]}</Cell>
-                    <Cell>
-                        {#if decoded["user_id"] !== item["ID"]}
-                            <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
-                                e.stopPropagation();
-                                console.log(e);
+<DataTable table$aria-label="User list" style="width: 100%;">
+    <Head>
+        <Row>
+            <Cell numeric>ID</Cell>
+            <Cell style="width: 100%;">Name</Cell>
+            <Cell>Email</Cell>
+            <Cell>Change role</Cell>
+            <Cell>Reset password</Cell>
+            <Cell>Delete user</Cell>
+            <Cell>View</Cell>
+        </Row>
+    </Head>
+    <Body>
+    {#each items as item}
+        <Row>
+            <Cell numeric>{item["ID"]}</Cell>
+            <Cell>{item["Name"]}</Cell>
+            <Cell>{item["Email"]}</Cell>
+            <Cell>
+                {#if decoded["user_id"] !== item["ID"]}
+                    <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
+                        e.stopPropagation();
+                        console.log(e);
 
-                                let fd = new FormData();
-                                fd.append("role", e.detail.segmentId);
+                        let fd = new FormData();
+                        fd.append("role", e.detail.segmentId);
 
-                                principalId = undefined;
+                        principalId = undefined;
 
-                                fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
-                                    headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
-                                    body: fd,
-                                    method: "PATCH"
-                                })
-                                    .then((response) => response.json())
-                                    .then((json) => {
-                                            loadThings()
-                                        },
-                                    );
-                            }} bind:selected="{item['Role']}">
-                                {#if
-                                    (decoded["role"] !== "principal assistant" && segment !== "principal") ||
-                                    (decoded["role"] !== "principal assistant" && segment !== "principal assistant")}
-                                    {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
-                                        <Segment {segment}>
-                                            <Label>{segment}</Label>
-                                        </Segment>
-                                    {/if}
-                                {/if}
-                            </SegmentedButton>
+                        fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
+                            headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
+                            body: fd,
+                            method: "PATCH"
+                        })
+                            .then((response) => response.json())
+                            .then((json) => {
+                                    loadThings()
+                                },
+                            );
+                    }} bind:selected="{item['Role']}">
+                        {#if
+                            (decoded["role"] !== "principal assistant" && segment !== "principal") ||
+                            (decoded["role"] !== "principal assistant" && segment !== "principal assistant")}
+                            {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
+                                <Segment {segment}>
+                                    <Label>{segment}</Label>
+                                </Segment>
+                            {/if}
                         {/if}
-                    </Cell>
-                    <Cell>
-                        {#if decoded["email"] !== item["Email"]}
-                            <IconButton class="material-icons" on:click={(e) => {
-                                e.stopPropagation();
-                                fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-                                    .then((response) => response.blob())
-                                    .then((blob) => saveBlob(blob))
-                                    .catch((err) => {
-                                    console.log(err);
-                                  });
-                            }}>download</IconButton>
-                        {/if}
-                    </Cell>
-                    <Cell>
-                        {#if decoded["email"] !== item["Email"]}
-                            <IconButton class="material-icons" on:click={(e) => {
-                                e.stopPropagation();
-                                fetch(`${baseurl}/user/delete/${item["ID"]}`, {
-                                    headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
-                                    method: "DELETE"
-                                })
-                                    .then((response) => response.json())
-                                    .then((json) => {
-                                            loadThings()
-                                        },
-                                    );
-                            }}>delete</IconButton>
-                        {/if}
-                    </Cell>
-                    <Cell>
-                        <IconButton class="material-icons" on:click={(e) => {
-                            e.stopPropagation();
-                            navigate(`/user/${item["ID"]}`)
-                        }}>info</IconButton>
-                    </Cell>
-                </Row>
-            {/each}
-            </Body>
+                    </SegmentedButton>
+                {/if}
+            </Cell>
+            <Cell>
+                {#if decoded["email"] !== item["Email"]}
+                    <IconButton class="material-icons" on:click={(e) => {
+                        e.stopPropagation();
+                        fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                            .then((response) => response.blob())
+                            .then((blob) => saveBlob(blob))
+                            .catch((err) => {
+                            console.log(err);
+                          });
+                    }}>download</IconButton>
+                {/if}
+            </Cell>
+            <Cell>
+                {#if decoded["email"] !== item["Email"]}
+                    <IconButton class="material-icons" on:click={(e) => {
+                        e.stopPropagation();
+                        fetch(`${baseurl}/user/delete/${item["ID"]}`, {
+                            headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
+                            method: "DELETE"
+                        })
+                            .then((response) => response.json())
+                            .then((json) => {
+                                    loadThings()
+                                },
+                            );
+                    }}>delete</IconButton>
+                {/if}
+            </Cell>
+            <Cell>
+                <IconButton class="material-icons" on:click={(e) => {
+                    e.stopPropagation();
+                    navigate(`/user/${item["ID"]}`)
+                }}>info</IconButton>
+            </Cell>
+        </Row>
+    {/each}
+    </Body>
 
-            <LinearProgress
-                    indeterminate
-                    bind:closed={loaded}
-                    aria-label="Data is being loaded..."
-                    slot="progress"
-            />
-        </DataTable>
-        <p/>
-        <Button on:click={() => navigate("/register")}>
-            <Icon class="material-icons">group_add</Icon>
-            <Label>Registriraj novega uporabnika brez izpisa</Label>
-        </Button>
-    </main>
-</AppContent>
+    <LinearProgress
+            indeterminate
+            bind:closed={loaded}
+            aria-label="Data is being loaded..."
+            slot="progress"
+    />
+</DataTable>
+<p/>
+<Button on:click={() => navigate("/register")}>
+    <Icon class="material-icons">group_add</Icon>
+    <Label>Registriraj novega uporabnika brez izpisa</Label>
+</Button>

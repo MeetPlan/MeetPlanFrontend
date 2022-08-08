@@ -1,7 +1,4 @@
 <script lang="ts">
-    import Drawer from "../Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-
     import Button, {Icon, Label} from "@smui/button";
     import {baseurl, saveBlob} from "../constants";
 
@@ -21,31 +18,26 @@
     });
 </script>
 
-<Drawer active="samotestiranje" />
-<AppContent class="app-content">
-    <main class="main-content">
-        {#each testings as test}
-            <h1>Samotestiranje</h1>
-            Učitelj: {test.TeacherName}
-            <br>
-            Datum testiranja: {test.Date}
-            <br>
-            Veljavno do: {test.ValidUntil}
-            <br>
-            Rezultat: <b>{test.Result}</b>
-            <p />
-            <Button on:click={() => {
-                fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-                    .then((response) => response.blob())
-                    .then((blob) => saveBlob(blob))
-                    .catch((err) => {
-                    console.log(err);
-                  });
-            }}>
-                <Icon class="material-icons">download</Icon>
-                <Label>Prenos potrdila o samotestiranju</Label>
-            </Button>
-            <hr>
-        {/each}
-    </main>
-</AppContent>
+{#each testings as test}
+    <h1>Samotestiranje</h1>
+    Učitelj: {test.TeacherName}
+    <br>
+    Datum testiranja: {test.Date}
+    <br>
+    Veljavno do: {test.ValidUntil}
+    <br>
+    Rezultat: <b>{test.Result}</b>
+    <p />
+    <Button on:click={() => {
+        fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            .then((response) => response.blob())
+            .then((blob) => saveBlob(blob))
+            .catch((err) => {
+            console.log(err);
+          });
+    }}>
+        <Icon class="material-icons">download</Icon>
+        <Label>Prenos potrdila o samotestiranju</Label>
+    </Button>
+    <hr>
+{/each}

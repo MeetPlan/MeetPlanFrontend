@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Router, Route } from "svelte-routing";
+	import {Router, Route} from "svelte-navigator";
 	import Samotestiranje from "./Samotestiranje.svelte";
 	import Home from "./Home.svelte";
 	import Login from "./Login.svelte";
@@ -26,60 +26,65 @@
 	import ProtonSettings from "./ProtonSettings.svelte";
 	import ErrorPage from "./ErrorPage.svelte";
 	import Documents from "./Documents.svelte";
-
-	export let url = "";
+	import Drawer from "./Drawer.svelte";
+	import {AppContent} from "@smui/drawer";
 </script>
 
-<main>
-	<Router url="{url}">
-		<div>
-			<Route path="/samotestiranje" component="{Samotestiranje}" />
-			<Route path="/login" component="{Login}" />
-			<Route path="/register" component="{Register}" />
-			<Route path="/users" component="{Users}" />
-			<Route path="/new/meeting" component="{NewMeeting}" />
-			<!--<Route path="/my/grades" component="{MyGrades}" />-->
-			<Route path="/my/class" component="{MyClass}" />
-			<Route path="/communication/:id" let:params >
-				<Communication id="{params.id}" />
-			</Route>
-			<Route path="/user/:id" let:params >
-				<User id="{params.id}" />
-			</Route>
-			<Route path="/class/user/:id" let:params >
-				<ClassUser studentId="{params.id}" />
-			</Route>
-			<Route path="/edit/:id" let:params >
-				<NewMeeting editId="{params.id}" />
-			</Route>
-			<Route path="/meeting/:id/grading" let:params >
-				<SubjectGrades meetingId="{params.id}" />
-			</Route>
-			<Route path="/meeting/:id/absence" let:params >
-				<AbsenceManagement meetingId="{params.id}" />
-			</Route>
-			<Route path="/meeting/:id/homework" let:params >
-				<Homework meetingId="{params.id}" />
-			</Route>
-			<Route path="/meeting/:id" let:params >
-				<Meeting meetingId="{params.id}" />
-			</Route>
-			<Route path="/class/:id" let:params >
-				<Class id="{params.id}" />
-			</Route>
-			<Route path="/subject/:id" let:params >
-				<Subject id="{params.id}" />
-			</Route>
-			<Route path="/subjects" component="{Subjects}" />
-			<Route path="/meals" component="{Meals}" />
-			<Route path="/classes" component="{Classes}" />
-			<Route path="/settings" component="{Settings}" />
-			<Route path="/notifications" component="{Notifications}" />
-			<Route path="/documents" component="{Documents}" />
-			<Route path="/settings/user" component="{UserSettings}" />
-			<Route path="/proton/settings" component="{ProtonSettings}" />
-			<Route path="/napaka" component="{ErrorPage}" />
-			<Route path="/"><Home /></Route>
-		</div>
+<div class="drawer-container">
+	<Router>
+		<Drawer />
+		<AppContent class="app-content">
+			<main class="main-content">
+				<div>
+					<Route path="/samotestiranje" component="{Samotestiranje}" />
+					<Route path="/login" component="{Login}" />
+					<Route path="/register" component="{Register}" />
+					<Route path="/users" component="{Users}" />
+					<Route path="/new/meeting" component="{NewMeeting}" />
+					<!--<Route path="/my/grades" component="{MyGrades}" />-->
+					<Route path="/my/class" component="{MyClass}" />
+					<Route path="/communication/:id" let:params >
+						<Communication id="{params.id}" />
+					</Route>
+					<Route path="/user/:id" let:params >
+						<User id="{params.id}" />
+					</Route>
+					<Route path="/class/user/:id" let:params >
+						<ClassUser studentId="{params.id}" />
+					</Route>
+					<Route path="/edit/:id" let:params >
+						<NewMeeting editId="{params.id}" />
+					</Route>
+					<Route path="/meeting/:id/grading" let:params >
+						<SubjectGrades meetingId="{params.id}" />
+					</Route>
+					<Route path="/meeting/:id/absence" let:params >
+						<AbsenceManagement meetingId="{params.id}" />
+					</Route>
+					<Route path="/meeting/:id/homework" let:params >
+						<Homework meetingId="{params.id}" />
+					</Route>
+					<Route path="/meeting/:id" let:params >
+						<Meeting meetingId="{params.id}" />
+					</Route>
+					<Route path="/class/:id" let:params >
+						<Class id="{params.id}" />
+					</Route>
+					<Route path="/subject/:id" let:params >
+						<Subject id="{params.id}" />
+					</Route>
+					<Route path="/subjects" component="{Subjects}" />
+					<Route path="/meals" component="{Meals}" />
+					<Route path="/classes" component="{Classes}" />
+					<Route path="/settings" component="{Settings}" />
+					<Route path="/notifications" component="{Notifications}" />
+					<Route path="/documents" component="{Documents}" />
+					<Route path="/settings/user" component="{UserSettings}" />
+					<Route path="/proton/settings" component="{ProtonSettings}" />
+					<Route path="/napaka" component="{ErrorPage}" />
+					<Route path="/"><Home /></Route>
+				</div>
+			</main>
+		</AppContent>
 	</Router>
-</main>
+</div>

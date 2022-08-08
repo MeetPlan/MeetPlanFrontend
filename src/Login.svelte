@@ -8,7 +8,7 @@
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
 
-    import { navigate, Link } from "svelte-routing";
+    import { navigate, Link } from "svelte-navigator";
 
     import Snackbar, {Actions} from "@smui/snackbar";
     import type { SnackbarComponentDev } from '@smui/snackbar';

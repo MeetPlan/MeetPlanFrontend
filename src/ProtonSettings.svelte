@@ -1,13 +1,6 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
-    import Textfield from "@smui/textfield";
-    import HelperText from '@smui/textfield/helper-text';
     import {baseurl} from "./constants";
 
-    import FormField from '@smui/form-field';
-    import Switch from '@smui/switch';
-    import Slider from '@smui/slider';
     import List, {Item, Meta, Separator, Text} from "@smui/list";
     import Button, {Icon, Label} from "@smui/button";
     import Autocomplete from "@smui-extra/autocomplete";
@@ -141,170 +134,165 @@
     })
 </script>
 
-<Drawer active="proton_settings" />
-<AppContent class="app-content">
-    {#await load()}
-    {:then _}
-        <main class="main-content">
-            <h1>Nastavitve Proton modula</h1>
-            <h2>Nastavitve modula za nadomeščanja in zaposlitve</h2>
+{#await load()}
+{:then _}
+    <h1>Nastavitve Proton modula</h1>
+    <h2>Nastavitve modula za nadomeščanja in zaposlitve</h2>
 
-            <h2>Beta srečanja</h2>
-            <Button on:click={async () => await deleteBetaMeetings()}>
-                <Icon class="material-icons">delete</Icon>
-                <Label>Izbrišite vsa beta srečanja</Label>
-            </Button>
-            <Button on:click={async () => await migrateBetaMeetings()}>
-                <Icon class="material-icons">meeting_room</Icon>
-                <Label>Spremenite beta srečanja v normalna srečanja</Label>
-            </Button>
+    <h2>Beta srečanja</h2>
+    <Button on:click={async () => await deleteBetaMeetings()}>
+        <Icon class="material-icons">delete</Icon>
+        <Label>Izbrišite vsa beta srečanja</Label>
+    </Button>
+    <Button on:click={async () => await migrateBetaMeetings()}>
+        <Icon class="material-icons">meeting_room</Icon>
+        <Label>Spremenite beta srečanja v normalna srečanja</Label>
+    </Button>
 
-            <h2>Nastavitve modula za ustvarjanje urnikov</h2>
+    <h2>Nastavitve modula za ustvarjanje urnikov</h2>
 
-            <h3>Novo pravilo</h3>
-            Namig 💡: Istih pravil je lahko več.
-            <Autocomplete options={moduleNames} style="width: 100%;" bind:value={settingName} label="Izberite ali vpišite ime pravila (modula)" />
-            <p/>
-            {#if settingName === moduleNames[0]}
-                To pravilo se uporabi, kadar je učitelj cel dan na šoli.
-                Če učitelj ni cel dan na šoli, se uporabi pravilo "Ure učitelja na šoli" za te dni, ko učitelj ni na šoli cel dan.
-                Če je učitelj polno zaposlen samo in izključno na tej šoli (tj. na nobeni drugi šoli), se ne uporablja te funkcije, saj bo sistem to avtomatično predvidel.
-                <h4>Dnevi</h4>
-                <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
-                    {#each days as h}
-                        <Item required>
-                            <Label>{h.Name}</Label>
-                            <Meta>
-                                <Checkbox bind:group={selectedDays} value={h.ID} />
-                            </Meta>
-                        </Item>
-                    {/each}
-                </List>
-                <h4>Učitelj</h4>
-                <Select bind:selected={teacherId} label="Izberite učitelja" variant="outlined" style="width: 100%;">
-                    <Option value="" on:click={() => teacherId = undefined}/>
-                    {#each teachers as c}
-                        <Option on:click={() => teacherId = c.ID} value={c.ID}>{c["Name"]}</Option>
-                    {/each}
-                </Select>
-            {/if}
-            {#if settingName === moduleNames[1]}
-                To pravilo se uporabi na dnevih, ko je učitelj le deloma na tej šoli.
-                Če je učitelj polno zaposlen samo in izključno na tej šoli (tj. na nobeni drugi šoli), se ne uporablja te funkcije, saj bo sistem to avtomatično predvidel.
-                <h4>Dnevi</h4>
-                <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
-                    {#each days as h}
-                        <Item required>
-                            <Label>{h.Name}</Label>
-                            <Meta>
-                                <Checkbox bind:group={selectedDays} value={h.ID} />
-                            </Meta>
-                        </Item>
-                    {/each}
-                </List>
-                <h4>Ure na te dni</h4>
-                <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
-                    {#each hours as h}
-                        <Item required>
-                            <Label>{h.Name}</Label>
-                            <Meta>
-                                <Checkbox bind:group={selectedHours} value={h.ID} />
-                            </Meta>
-                        </Item>
-                    {/each}
-                </List>
-                <h4>Učitelj</h4>
-                <Select bind:selected={teacherId} variant="outlined" style="width: 100%;">
-                    <Option value="" on:click={() => teacherId = undefined}/>
-                    {#each teachers as c}
-                        <Option on:click={() => teacherId = c.ID} value={c.ID}>{c["Name"]}</Option>
-                    {/each}
-                </Select>
-            {/if}
-            {#if settingName === moduleNames[2] || settingName === moduleNames[3] || settingName === moduleNames[4]}
-                {#if settingName === moduleNames[2]}
-                    To pravilo se uporabi, kadar so to heterogene, homogene oz. kakorkoli deljene skupine z različnimi učitelji, kjer pouk poteka isto uro.
-                    Za vsako skupino se ustvari svoj predmet in se jih tako združi.
-                {/if}
-                {#if settingName === moduleNames[3]}
-                    To pravilo se uporabi, kadar so to razni izbirni predmeti in pa dopolnilni/dodatni pouk, ki ne more biti sredi pouka.
-                {/if}
-                {#if settingName === moduleNames[4]}
-                    To pravilo se uporabi, kadar so predmeti taki, da zahtevajo blok uro (primer - izbirni predmet sodobna priprava hrane naj bi bil blok ura zaradi priprav na kuhanje).
-                {/if}
-                <h4>Predmeti</h4>
-                <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
-                    {#each subjects as h}
-                        <Item required>
-                            <Label>{h.Name}</Label>
-                            <Meta>
-                                <Checkbox bind:group={selectedSubjects} value={h.ID} />
-                            </Meta>
-                        </Item>
-                    {/each}
-                </List>
-            {/if}
-            <p/>
-            <Button on:click={() => newRule()} variant="raised">
-                <Label>OK</Label>
-            </Button>
-            <p/>
-            <hr>
-            <p/>
-            <h3>Pravila</h3>
-            {#each config as c}
-                <h4>{c.rule_name} - {moduleNames[c.rule_type]}</h4>
-                <b>Definicije:</b>
-                <br>
-                {#each c.objects as o}
-                    {#if o.type === "day"}
-                        Dan: {days[o.object_id].Name}
-                    {/if}
-                    {#if o.type === "hour"}
-                        Ura: {hours[o.object_id].Name}
-                    {/if}
-                    {#if o.type === "subject"}
-                        {#each subjects as s}
-                            {#if s.ID === o.object_id}
-                                Predmet: {s.Name}
-                            {/if}
-                        {/each}
-                    {/if}
-                    {#if o.type === "teacher"}
-                        {#each teachers as s}
-                            {#if s.ID === o.object_id}
-                                Učitelj: {s.Name}
-                            {/if}
-                        {/each}
-                    {/if}
-                    <br>
-                {/each}
-                <br>
-                <Button on:click={async () => await deleteRule(c.id)} variant="raised">
-                    <Label>Izbriši pravilo</Label>
-                </Button>
+    <h3>Novo pravilo</h3>
+    Namig 💡: Istih pravil je lahko več.
+    <Autocomplete options={moduleNames} style="width: 100%;" bind:value={settingName} label="Izberite ali vpišite ime pravila (modula)" />
+    <p/>
+    {#if settingName === moduleNames[0]}
+        To pravilo se uporabi, kadar je učitelj cel dan na šoli.
+        Če učitelj ni cel dan na šoli, se uporabi pravilo "Ure učitelja na šoli" za te dni, ko učitelj ni na šoli cel dan.
+        Če je učitelj polno zaposlen samo in izključno na tej šoli (tj. na nobeni drugi šoli), se ne uporablja te funkcije, saj bo sistem to avtomatično predvidel.
+        <h4>Dnevi</h4>
+        <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+            {#each days as h}
+                <Item required>
+                    <Label>{h.Name}</Label>
+                    <Meta>
+                        <Checkbox bind:group={selectedDays} value={h.ID} />
+                    </Meta>
+                </Item>
             {/each}
-            <p/>
-            <h2>Generiranje urnika</h2>
-            {#if !showNewTimetable}
-                <Button on:click={() => showNewTimetable = true} variant="raised">
-                    <Label>Generiraj urnik</Label>
-                </Button>
-            {:else}
-                <Button on:click={() => {
-                    showNewTimetable = false;
-                    setTimeout(() => showNewTimetable = true, 100);
-                }} variant="raised">
-                    <Label>Ponovno generiraj urnik</Label>
-                </Button>
+        </List>
+        <h4>Učitelj</h4>
+        <Select bind:selected={teacherId} label="Izberite učitelja" variant="outlined" style="width: 100%;">
+            <Option value="" on:click={() => teacherId = undefined}/>
+            {#each teachers as c}
+                <Option on:click={() => teacherId = c.ID} value={c.ID}>{c["Name"]}</Option>
+            {/each}
+        </Select>
+    {/if}
+    {#if settingName === moduleNames[1]}
+        To pravilo se uporabi na dnevih, ko je učitelj le deloma na tej šoli.
+        Če je učitelj polno zaposlen samo in izključno na tej šoli (tj. na nobeni drugi šoli), se ne uporablja te funkcije, saj bo sistem to avtomatično predvidel.
+        <h4>Dnevi</h4>
+        <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+            {#each days as h}
+                <Item required>
+                    <Label>{h.Name}</Label>
+                    <Meta>
+                        <Checkbox bind:group={selectedDays} value={h.ID} />
+                    </Meta>
+                </Item>
+            {/each}
+        </List>
+        <h4>Ure na te dni</h4>
+        <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+            {#each hours as h}
+                <Item required>
+                    <Label>{h.Name}</Label>
+                    <Meta>
+                        <Checkbox bind:group={selectedHours} value={h.ID} />
+                    </Meta>
+                </Item>
+            {/each}
+        </List>
+        <h4>Učitelj</h4>
+        <Select bind:selected={teacherId} variant="outlined" style="width: 100%;">
+            <Option value="" on:click={() => teacherId = undefined}/>
+            {#each teachers as c}
+                <Option on:click={() => teacherId = c.ID} value={c.ID}>{c["Name"]}</Option>
+            {/each}
+        </Select>
+    {/if}
+    {#if settingName === moduleNames[2] || settingName === moduleNames[3] || settingName === moduleNames[4]}
+        {#if settingName === moduleNames[2]}
+            To pravilo se uporabi, kadar so to heterogene, homogene oz. kakorkoli deljene skupine z različnimi učitelji, kjer pouk poteka isto uro.
+            Za vsako skupino se ustvari svoj predmet in se jih tako združi.
+        {/if}
+        {#if settingName === moduleNames[3]}
+            To pravilo se uporabi, kadar so to razni izbirni predmeti in pa dopolnilni/dodatni pouk, ki ne more biti sredi pouka.
+        {/if}
+        {#if settingName === moduleNames[4]}
+            To pravilo se uporabi, kadar so predmeti taki, da zahtevajo blok uro (primer - izbirni predmet sodobna priprava hrane naj bi bil blok ura zaradi priprav na kuhanje).
+        {/if}
+        <h4>Predmeti</h4>
+        <List checkList style="border-left: 1px solid var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));">
+            {#each subjects as h}
+                <Item required>
+                    <Label>{h.Name}</Label>
+                    <Meta>
+                        <Checkbox bind:group={selectedSubjects} value={h.ID} />
+                    </Meta>
+                </Item>
+            {/each}
+        </List>
+    {/if}
+    <p/>
+    <Button on:click={() => newRule()} variant="raised">
+        <Label>OK</Label>
+    </Button>
+    <p/>
+    <hr>
+    <p/>
+    <h3>Pravila</h3>
+    {#each config as c}
+        <h4>{c.rule_name} - {moduleNames[c.rule_type]}</h4>
+        <b>Definicije:</b>
+        <br>
+        {#each c.objects as o}
+            {#if o.type === "day"}
+                Dan: {days[o.object_id].Name}
             {/if}
-            <p/>
-            {#if showNewTimetable}
-                <ProtonTimetable />
+            {#if o.type === "hour"}
+                Ura: {hours[o.object_id].Name}
             {/if}
-            <p/>
-        </main>
-    {:catch error}
-            <Error error={error} />
-    {/await}
-</AppContent>
+            {#if o.type === "subject"}
+                {#each subjects as s}
+                    {#if s.ID === o.object_id}
+                        Predmet: {s.Name}
+                    {/if}
+                {/each}
+            {/if}
+            {#if o.type === "teacher"}
+                {#each teachers as s}
+                    {#if s.ID === o.object_id}
+                        Učitelj: {s.Name}
+                    {/if}
+                {/each}
+            {/if}
+            <br>
+        {/each}
+        <br>
+        <Button on:click={async () => await deleteRule(c.id)} variant="raised">
+            <Label>Izbriši pravilo</Label>
+        </Button>
+    {/each}
+    <p/>
+    <h2>Generiranje urnika</h2>
+    {#if !showNewTimetable}
+        <Button on:click={() => showNewTimetable = true} variant="raised">
+            <Label>Generiraj urnik</Label>
+        </Button>
+    {:else}
+        <Button on:click={() => {
+            showNewTimetable = false;
+            setTimeout(() => showNewTimetable = true, 100);
+        }} variant="raised">
+            <Label>Ponovno generiraj urnik</Label>
+        </Button>
+    {/if}
+    <p/>
+    {#if showNewTimetable}
+        <ProtonTimetable />
+    {/if}
+    <p/>
+{:catch error}
+    <Error error={error} />
+{/await}

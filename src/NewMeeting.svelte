@@ -1,6 +1,4 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
     import Textfield from "@smui/textfield";
     import Icon from '@smui/textfield/icon';
     import HelperText from '@smui/textfield/helper-text';
@@ -11,7 +9,7 @@
     import Timetable from "./Widgets/Timetable.svelte";
     import {baseurl} from "./constants";
 
-    import {navigate} from "svelte-routing";
+    import {navigate} from "svelte-navigator";
     import * as marked from 'marked';
     import insane from "insane";
     import type {Subject} from "./typescript-definitions/tsdef";
@@ -146,112 +144,107 @@
     }
 </script>
 
-<Drawer active="novosrecanje" />
-<AppContent class="app-content">
-    <main class="main-content">
-        Izberite predmet:
-        <Select bind:value={subjectId} variant="outlined">
-            <Option value="" on:click={() => subjectId = undefined}/>
-            {#each subjects as c}
-                <Option on:click={async () => {
-                    subjectId = c.ID;
-                    for (let i in subjects) {
-                        let subject = subjects[i];
-                        if (subject.ID === subjectId) {
-                            console.log(subject, subjectId);
-                            location = subject.Location;
-                        }
-                    }
-                }} value={c.ID}>{c["Name"]}</Option>
-            {/each}
-        </Select>
-        <p/>
-        <Textfield bind:value={date} label="Datum srečanja" type="date" required on:click={() => date = ""}>
-            <Icon class="material-icons" slot="leadingIcon">event</Icon>
-            <HelperText slot="helper">Izberite prosim datum srečanja</HelperText>
-        </Textfield>
-        Izberite uro:
-        <Select bind:value={hour} required>
-            {#each hours as h}
-                <Option value={h} on:click={() => {
-                    console.log("H", h)
-                    hour = h;
-                }}>{h}.</Option>
-            {/each}
-        </Select>
-        <p/>
-        {#if subjectId !== ""}
-            {#if date !== ""}
-                {#if hour !== undefined}
-                    <Timetable subjectId={subjectId} date={new Date(date)} hour={hour} />
-                {:else}
-                    <Timetable subjectId={subjectId} date={new Date(date)} />
-                {/if}
-            {:else}
-                <Timetable subjectId={subjectId} />
-            {/if}
+Izberite predmet:
+<Select bind:value={subjectId} variant="outlined">
+    <Option value="" on:click={() => subjectId = undefined}/>
+    {#each subjects as c}
+        <Option on:click={async () => {
+            subjectId = c.ID;
+            for (let i in subjects) {
+                let subject = subjects[i];
+                if (subject.ID === subjectId) {
+                    console.log(subject, subjectId);
+                    location = subject.Location;
+                }
+            }
+        }} value={c.ID}>{c["Name"]}</Option>
+    {/each}
+</Select>
+<p/>
+<Textfield bind:value={date} label="Datum srečanja" type="date" required on:click={() => date = ""}>
+    <Icon class="material-icons" slot="leadingIcon">event</Icon>
+    <HelperText slot="helper">Izberite prosim datum srečanja</HelperText>
+</Textfield>
+Izberite uro:
+<Select bind:value={hour} required>
+    {#each hours as h}
+        <Option value={h} on:click={() => {
+            console.log("H", h)
+            hour = h;
+        }}>{h}.</Option>
+    {/each}
+</Select>
+<p/>
+{#if subjectId !== ""}
+    {#if date !== ""}
+        {#if hour !== undefined}
+            <Timetable subjectId={subjectId} date={new Date(date)} hour={hour} />
+        {:else}
+            <Timetable subjectId={subjectId} date={new Date(date)} />
         {/if}
-        <p/>
-        <Textfield bind:value={name} label="Ime srečanja" required style="width: 100%;" helperLine$style="width: 100%;">
-            <HelperText slot="helper">Izberite poljubno ime srečanja</HelperText>
-        </Textfield>
-        <Textfield bind:value={description} label="Opis srečanja" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
-        {#if description !== ""}
-            <h2>Predogled:</h2>
-            {@html insane(marked.marked(description))}
-        {/if}
-        <Textfield label="Učilnica/Lokacija" required style="width: 100%;" helperLine$style="width: 100%;" bind:value={location}>
-            <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
-        </Textfield>
-        <Textfield bind:value={url} label="URL do srečanja" style="width: 100%;" helperLine$style="width: 100%;">
-            <HelperText slot="helper">Vpišite URL do srečanja</HelperText>
-        </Textfield>
-        <FormField>
-            <Switch bind:checked={isMandatory} />
-            Je srečanje obvezno
-        </FormField>
-        <p/>
-        {#if !isTest}
-            <FormField>
-                <Switch bind:checked={isGrading} />
-                Je ocenjevanje znanja
-            </FormField>
-        {/if}
-        <p/>
-        {#if isGrading && isMandatory}
-            <FormField>
-                <Switch bind:checked={isWrittenAssessment} />
-                Je pisno ocenjevanje znanja
-            </FormField>
-        {/if}
-        <p/>
-        {#if !isGrading}
-            <FormField>
-                <Switch bind:checked={isTest} />
-                Je preverjanje znanja
-            </FormField>
-        {/if}
-        <p/>
-        <FormField>
-            <Switch bind:checked={isRepetitive} />
-            Je ponavljajoče
-        </FormField>
-        {#if isRepetitive}
-            <p/>
-            <Textfield bind:value={lastDate} label="Datum zadnjega srečanja" type="date" on:click={() => lastDate = ""}>
-                <Icon class="material-icons" slot="leadingIcon">event</Icon>
-                <HelperText slot="helper">Izberite prosim zadnji datum srečanja</HelperText>
-            </Textfield>
-            <p/>
-            <Textfield bind:value={repeatCycle} label="Cikel ponavljanja" type="number">
-                <Icon class="material-icons" slot="leadingIcon">replay</Icon>
-                <HelperText slot="helper">Vpišite na koliko tednov se srečanje ponovi</HelperText>
-            </Textfield>
-        {/if}
-        <p/><hr><p/>
-        <Button on:click={() => createNew()}>
-            <Icon class="material-icons">add</Icon>
-            <Label>Dodaj</Label>
-        </Button>
-    </main>
-</AppContent>
+    {:else}
+        <Timetable subjectId={subjectId} />
+    {/if}
+{/if}
+<p/>
+<Textfield bind:value={name} label="Ime srečanja" required style="width: 100%;" helperLine$style="width: 100%;">
+    <HelperText slot="helper">Izberite poljubno ime srečanja</HelperText>
+</Textfield>
+<Textfield bind:value={description} label="Opis srečanja" textarea style="width: 100%;" helperLine$style="width: 100%;" input$rows={8} />
+{#if description !== ""}
+    <h2>Predogled:</h2>
+    {@html insane(marked.marked(description))}
+{/if}
+<Textfield label="Učilnica/Lokacija" required style="width: 100%;" helperLine$style="width: 100%;" bind:value={location}>
+    <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
+</Textfield>
+<Textfield bind:value={url} label="URL do srečanja" style="width: 100%;" helperLine$style="width: 100%;">
+    <HelperText slot="helper">Vpišite URL do srečanja</HelperText>
+</Textfield>
+<FormField>
+    <Switch bind:checked={isMandatory} />
+    Je srečanje obvezno
+</FormField>
+<p/>
+{#if !isTest}
+    <FormField>
+        <Switch bind:checked={isGrading} />
+        Je ocenjevanje znanja
+    </FormField>
+{/if}
+<p/>
+{#if isGrading && isMandatory}
+    <FormField>
+        <Switch bind:checked={isWrittenAssessment} />
+        Je pisno ocenjevanje znanja
+    </FormField>
+{/if}
+<p/>
+{#if !isGrading}
+    <FormField>
+        <Switch bind:checked={isTest} />
+        Je preverjanje znanja
+    </FormField>
+{/if}
+<p/>
+<FormField>
+    <Switch bind:checked={isRepetitive} />
+    Je ponavljajoče
+</FormField>
+{#if isRepetitive}
+    <p/>
+    <Textfield bind:value={lastDate} label="Datum zadnjega srečanja" type="date" on:click={() => lastDate = ""}>
+        <Icon class="material-icons" slot="leadingIcon">event</Icon>
+        <HelperText slot="helper">Izberite prosim zadnji datum srečanja</HelperText>
+    </Textfield>
+    <p/>
+    <Textfield bind:value={repeatCycle} label="Cikel ponavljanja" type="number">
+        <Icon class="material-icons" slot="leadingIcon">replay</Icon>
+        <HelperText slot="helper">Vpišite na koliko tednov se srečanje ponovi</HelperText>
+    </Textfield>
+{/if}
+<p/><hr><p/>
+<Button on:click={() => createNew()}>
+    <Icon class="material-icons">add</Icon>
+    <Label>Dodaj</Label>
+</Button>

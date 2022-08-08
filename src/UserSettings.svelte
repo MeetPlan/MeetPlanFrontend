@@ -1,12 +1,10 @@
 <script lang="ts">
-    import Drawer from "./Drawer.svelte";
-    import {AppContent} from "@smui/drawer";
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {baseurl} from "./constants";
 
     import Button, {Icon} from "@smui/button";
-    import {navigate} from "svelte-routing";
+    import {navigate} from "svelte-navigator";
 
     let newPassword = "";
     let oldPassword = "";
@@ -25,21 +23,16 @@
     }
 </script>
 
-<Drawer active="userSettings" />
-<AppContent class="app-content">
-    <main class="main-content">
-        <h1>Geslo</h1>
-        <Textfield type="password" bind:value={oldPassword} label="Staro geslo">
-            <Icon class="material-icons" slot="leadingIcon">password</Icon>
-            <HelperText slot="helper">Vpišite staro geslo</HelperText>
-        </Textfield>
-        <Textfield type="password" bind:value={newPassword} label="Novo geslo">
-            <Icon class="material-icons" slot="leadingIcon">password</Icon>
-            <HelperText slot="helper">Vpišite novo geslo</HelperText>
-        </Textfield>
-        <Button on:click={() => updatePassword()}>
-            <Icon class="material-icons">password</Icon>
-            Spremeni geslo
-        </Button>
-    </main>
-</AppContent>
+<h1>Geslo</h1>
+<Textfield type="password" bind:value={oldPassword} label="Staro geslo">
+    <Icon class="material-icons" slot="leadingIcon">password</Icon>
+    <HelperText slot="helper">Vpišite staro geslo</HelperText>
+</Textfield>
+<Textfield type="password" bind:value={newPassword} label="Novo geslo">
+    <Icon class="material-icons" slot="leadingIcon">password</Icon>
+    <HelperText slot="helper">Vpišite novo geslo</HelperText>
+</Textfield>
+<Button on:click={() => updatePassword()}>
+    <Icon class="material-icons">password</Icon>
+    Spremeni geslo
+</Button>
