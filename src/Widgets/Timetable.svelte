@@ -141,7 +141,7 @@
     <tr>
         <th>{i}.</th>
         <td>
-            <div class="{hour === i && dates[0] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[0] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(mon[i]) as m}
                     <!--<div style="height: 5px;"/>-->
                     {#if m}
@@ -151,7 +151,7 @@
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[1] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[1] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(tue[i]) as m}
                     <!--<div style="height: 5px;"/>-->
                     {#if m}
@@ -161,7 +161,7 @@
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[2] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[2] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(wed[i]) as m}
                     <!--<div style="height: 5px;"/>-->
                     {#if m}
@@ -171,7 +171,7 @@
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[3] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[3] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(thu[i]) as m}
                     <!--<div style="height: 5px;"/>-->
                     {#if m}
@@ -181,7 +181,7 @@
             </div>
         </td>
         <td>
-            <div class="{hour === i && dates[4] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[4] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(fri[i]) as m}
                     <!--<div style="height: 5px;"/>-->
                     {#if m}
@@ -191,7 +191,7 @@
             </div>
         </td>
         <!--<td>
-            <div class="{hour === i && dates[5] === fmtDate(date) ? 'yellow' : ''}">
+            <div class="{hour === i && dates[5] === fmtDate(date) ? 'yellow' : ''} sameline">
                 {#each Array(sat[i]) as m}
                     <div style="height: 5px;"/>
                     {#if m}

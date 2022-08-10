@@ -88,3 +88,7 @@ button:focus {
 .sameline {
 	white-space: nowrap;
 }
+
+.inline {
+	display: inline-block;
+}

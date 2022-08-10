@@ -12,6 +12,7 @@
         0: "Spričevalo",
         1: "Potrdilo o šolanju",
         2: "Pristopna izjava (resetiranje gesla)",
+        3: "Potrdilo o samotestiranju",
     };
 
     async function getDocuments() {

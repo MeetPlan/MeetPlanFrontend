@@ -47,7 +47,6 @@ export default {
 			"public/build/*.js",
 			"public/build/*.js.map",
 			"public/build/*.js.gz",
-			"public/build/bundle.css",
 			"public/build/*.css.gz",
 		]}),
 
