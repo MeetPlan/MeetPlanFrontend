@@ -20,6 +20,10 @@
     const decoded = jwt_decode(token);
 
     function getCommunication() {
+        const token = localStorage.getItem("key");
+        if (token === null || token === undefined) {
+            return;
+        }
         fetch(`${baseurl}/communication/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((r) => r.json())
             .then((r) => {
@@ -56,8 +60,6 @@
     let usersAtCommunication = [];
     let open = false;
     let user = "";
-    let rerender = true;
-    let rerenderDrawer = true;
 
     function openDialog() {
         usersAtCommunication = [];

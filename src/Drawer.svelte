@@ -40,6 +40,7 @@
 
     let lastUrl = "";
     let showDrawer = false;
+    let hasRequested = false;
 
     $: (async () => {
         if (!($location.pathname === "/login" || $location.pathname === "/register")) {
@@ -111,24 +112,38 @@
         }
 
         showDrawer = false;
+        hasRequested = false;
+
+        // Set a fake timeout to get the highest timeout id
+        let highestTimeoutId = setTimeout(";");
+        for (let i = 0 ; i <= highestTimeoutId ; i++) {
+            clearTimeout(i);
+        }
     })()
 
-    function getUnread() {
-        fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    unreadMessages = json.data;
-                    communicationUnread = {};
-                    for (let i in unreadMessages) {
-                        let message = unreadMessages[i];
-                        if (communicationUnread[message.CommunicationID]) {
-                            communicationUnread[message.CommunicationID] = communicationUnread[message.CommunicationID] + 1;
-                        } else {
-                            communicationUnread[message.CommunicationID] = 1;
-                        }
-                    }
-                },
-            );
+    async function getCommunications() {
+        let response = await fetch(`${baseurl}/communications/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let json = await response.json()
+        communications = json.data;
+    }
+
+    async function getUnread() {
+        const token = localStorage.getItem("key");
+        if (token === null || token === undefined) {
+            return;
+        }
+        let response = await fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let json = await response.json()
+        unreadMessages = json.data;
+        communicationUnread = {};
+        for (let i in unreadMessages) {
+            let message = unreadMessages[i];
+            if (communicationUnread[message.CommunicationID]) {
+                communicationUnread[message.CommunicationID] = communicationUnread[message.CommunicationID] + 1;
+            } else {
+                communicationUnread[message.CommunicationID] = 1;
+            }
+        }
     }
 
     let hasClass = false;
@@ -158,6 +173,10 @@
     let open: boolean = !mobile;
 
     async function fetchData() {
+        if (hasRequested) {
+            return;
+        }
+
         if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
             let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             let json = await response.json()
@@ -170,13 +189,9 @@
             children = json.data;
         }
 
-        let response = await fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
         let json = await response.json()
-        unreadMessages = json.data;
-
-        let response2 = await fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-        let json2 = await response2.json()
-        mealsBlocked = json2.data;
+        mealsBlocked = json.data;
 
         if ((decoded["role"] === "teacher" || decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") && meetingActive !== -1) {
             let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -184,9 +199,7 @@
             users = json.data;
         }
 
-        let response3 = await fetch(`${baseurl}/communications/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-        let json3 = await response3.json()
-        communications = json3.data;
+        await getCommunications();
 
         teachers = [];
         admins = [];
@@ -195,9 +208,9 @@
         principalAssistant = [];
         foodOrganizer = [];
 
-        let response4 = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
-        let json4 = await response4.json()
-        let us = json4.data;
+        let response2 = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let json2 = await response2.json()
+        let us = json2.data;
         for (let i in us) {
             let user = us[i];
             if (user["Role"] === "admin" && !admins.includes(user)) {
@@ -215,7 +228,9 @@
             }
         }
 
-        getUnread();
+        await getUnread();
+
+        hasRequested = true;
     }
 
     setInterval(getUnread, 10000);
@@ -361,7 +376,7 @@
             let fd = new FormData();
             fd.append("users", JSON.stringify(selected));
             fd.append("title", newCommunicationTitle);
-            fetch(`${baseurl}/communication/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+            fetch(`${baseurl}/communication/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd}).then(getCommunications)
         }}>
             <Label>
                 USTVARI

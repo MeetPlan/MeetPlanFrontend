@@ -88,8 +88,10 @@
                             );
                     }} bind:selected="{item['Role']}">
                         {#if
-                            (decoded["role"] !== "principal assistant" && segment !== "principal") ||
-                            (decoded["role"] !== "principal assistant" && segment !== "principal assistant")}
+                            (decoded["role"] === "principal assistant" && !(segment === "principal" || segment === "principal assistant")) ||
+                            (decoded["role"] === "principal" && !(segment === "principal")) ||
+                            (decoded["role"] === "admin")
+                        }
                             {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
                                 <Segment {segment}>
                                     <Label>{segment}</Label>

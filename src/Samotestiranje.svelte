@@ -53,7 +53,7 @@
     onMount(async () => {
         if (classId !== "") {
             await makeRequest(to_number(classId))
-        } else {
+        } else if (!(decoded.role === "student" || decoded.role === "parent" || decoded.role === "food organizer")) {
             await getClasses()
         }
     });
