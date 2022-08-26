@@ -1,5 +1,5 @@
 <script lang="ts">
-    import jwt_decode from "jwt-decode";
+
     import Timetable from "./Widgets/Timetable.svelte";
     import Select, {Option} from "@smui/select";
 
@@ -7,6 +7,7 @@
     import * as marked from 'marked';
     import isMobile from "is-mobile";
     import insane from "insane";
+
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
@@ -21,10 +22,10 @@
 
     const mobile = isMobile();
 
-    const decoded = jwt_decode(token);
+
 
     function loadThings() {
-        fetch(`${baseurl}/${(decoded["role"] === "student" || decoded.role === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/${(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => {
                 if (response.ok) {
                     return response
@@ -60,7 +61,7 @@
         {@html insane(marked.marked(notification.Notification))}
     </div>
 {/each}
-{#if mobile && !(decoded.role === "student" || decoded.role === "parent")}
+{#if mobile && !(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent")}
     <p/>
     <div
             tabindex="0"
@@ -71,7 +72,7 @@
     </div>
 {/if}
 <h1>Pozdravljeni v MeetPlan sistemu</h1>
-<b>Vaša dovoljenja: {decoded["role"]}</b>
+<b>Vaša dovoljenja: {sessionStorage.getItem("role")}</b>
 <hr />
 <Select bind:classId variant="outlined">
     <Option value="" on:click={() => {

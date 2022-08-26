@@ -15,14 +15,15 @@
 
     import { navigate } from "svelte-navigator";
     import {baseurl} from "./constants";
-    import jwt_decode from "jwt-decode";
+
+
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     let items = [];
     let teachers = [];
@@ -75,7 +76,7 @@
     }
 </script>
 
-{#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
     <Textfield label="Nov razred" bind:value={nclass}>
         <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
     </Textfield>

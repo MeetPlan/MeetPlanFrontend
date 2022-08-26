@@ -2,8 +2,6 @@
     import Paper from "@smui/paper";
     import Textfield from "@smui/textfield";
 
-    import * as constants from "./constants";
-
     import Icon from '@smui/textfield/icon';
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
@@ -12,6 +10,7 @@
 
     import Snackbar, {Actions} from "@smui/snackbar";
     import type { SnackbarComponentDev } from '@smui/snackbar';
+    import * as constants from "./constants";
 
     async function login() {
         let fd = new FormData();
@@ -21,12 +20,16 @@
             let r = await fetch(`${constants.baseurl}/user/login`, {body: fd, method: "POST"})
             let response = await r.json();
             if (response["success"] === true) {
-                localStorage.setItem("key", response["data"]);
+                sessionStorage.setItem("role", response["data"]["role"]);
+                sessionStorage.setItem("userId", response["data"]["user_id"]);
+                sessionStorage.setItem("email", response["data"]["email"]);
+                localStorage.setItem("key", response["data"]["token"]);
                 navigate("/")
             } else {
                 snackbarWithClose.open();
             }
         } catch (e) {
+            console.log(e)
             snackbarWithClose.open();
         }
     }

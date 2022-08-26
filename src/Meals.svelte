@@ -8,7 +8,7 @@
     import Switch from '@smui/switch';
     import Button, {Label} from "@smui/button";
 
-    import jwt_decode from "jwt-decode";
+
 
     import IconButton, { Icon } from '@smui/icon-button';
 
@@ -18,6 +18,7 @@
     import Avatar from "svelte-avatar";
     import insane from "insane";
     import Error from "./Widgets/Error.svelte";
+
 
     let meals = [];
     
@@ -112,12 +113,12 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 </script>
 
 {#await getMeals()}
 {:then _}
-    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "food organizer"}
+    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "food organizer"}
         <h1>Dodaj nov meni</h1>
         <Textfield bind:value={date} label="Datum menija" type="date" required on:click={() => date = ""}>
             <Icon class="material-icons" slot="leadingIcon">event</Icon>
@@ -240,7 +241,7 @@
                             {/if}
                             <p/>
                         {/if}
-                        {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "food organizer"}
+                        {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "food organizer"}
                             <Button on:click={() => {
                                 mealDescription = meal.Meals;
                                 date = meal.Date;

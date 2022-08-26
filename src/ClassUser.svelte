@@ -12,7 +12,7 @@
     import IconButton, { Icon } from '@smui/icon-button';
 
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-    import jwt_decode from "jwt-decode";
+
 
     import * as marked from 'marked';
 
@@ -21,6 +21,7 @@
         Meta,
     } from '@smui/list';
     import insane from "insane";
+
 
     let grades;
     let userData;
@@ -107,7 +108,7 @@
     }
 
     function getParentConfig() {
-        if (decoded["role"] === "parent") {
+        if (sessionStorage.getItem("role") === "parent") {
             fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
                 .then((r) => r.json())
                 .then((r) => {
@@ -152,7 +153,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     const translatedSegments = {
         "DONE": "NAREJENO",
@@ -167,7 +168,7 @@
 {#if userData}
     <h1>{userData.Name}</h1>
 {/if}
-{#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "school psychologist"}
+{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
     <Button on:click={() => {
         fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             .then((response) => response.blob())
@@ -230,7 +231,7 @@
 {:else}
     Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
 {/if}
-{#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+{#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
     <p/>
     <FormField>
         <Switch bind:checked={isPassing} on:click={() => {
@@ -284,7 +285,7 @@
                             {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
                             <Meta>
                                 <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                    if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+                                    if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
                                         fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
                                             .then((r) => r.json())
                                             .then((r) => {

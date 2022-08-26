@@ -11,13 +11,13 @@
 
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
-    import jwt_decode from "jwt-decode";
+
     import insane from "insane";
 
     export let id: string = "";
 
     const token = localStorage.getItem("key");
-    const decoded = jwt_decode(token);
+
 
     function getCommunication() {
         const token = localStorage.getItem("key");
@@ -80,7 +80,7 @@
         <div style="white-space: nowrap;">
             <Avatar name={message.UserName} style="display: inline-block;"/>
             <h2 style="display: inline-block; text-align: center;">{message.UserName}</h2>
-            {#if message.UserID === decoded["user_id"]}
+            {#if message.UserID.toString() === sessionStorage.getItem("userId")}
                 <Meta style="display: inline-block;">
                     <Button on:click={() => deleteMessage(message.ID)}>
                         <Icon class="material-icons">delete</Icon>

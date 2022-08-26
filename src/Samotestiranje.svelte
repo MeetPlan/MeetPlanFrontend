@@ -24,15 +24,16 @@
 
     import { Icon } from '@smui/common';
 
-    import jwt_decode from "jwt-decode";
+
     import { navigate } from "svelte-navigator";
+
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     let options;
     let classes = [];
@@ -53,13 +54,13 @@
     onMount(async () => {
         if (classId !== "") {
             await makeRequest(to_number(classId))
-        } else if (!(decoded.role === "student" || decoded.role === "parent" || decoded.role === "food organizer")) {
+        } else if (!(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" || sessionStorage.getItem("role") === "food organizer")) {
             await getClasses()
         }
     });
 </script>
 
-{#if decoded.role === "teacher" || decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "school psychologist"}
+{#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
     <div
             tabindex="0"
             style="background-color: #ffc107; color: black; padding: 10px;"

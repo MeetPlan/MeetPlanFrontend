@@ -36,7 +36,7 @@
 
     let choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
-    import jwt_decode from "jwt-decode";
+
     import { navigate } from "svelte-navigator";
 
     const token = localStorage.getItem("key");
@@ -44,7 +44,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 </script>
 
 <DataTable table$aria-label="User list" style="width: 100%;">
@@ -66,7 +66,7 @@
             <Cell>{item["Name"]}</Cell>
             <Cell>{item["Email"]}</Cell>
             <Cell>
-                {#if decoded["user_id"] !== item["ID"]}
+                {#if sessionStorage.getItem("userId") !== item["ID"]}
                     <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
                         e.stopPropagation();
                         console.log(e);
@@ -88,9 +88,9 @@
                             );
                     }} bind:selected="{item['Role']}">
                         {#if
-                            (decoded["role"] === "principal assistant" && !(segment === "principal" || segment === "principal assistant")) ||
-                            (decoded["role"] === "principal" && !(segment === "principal")) ||
-                            (decoded["role"] === "admin")
+                            (sessionStorage.getItem("role") === "principal assistant" && !(segment === "principal" || segment === "principal assistant")) ||
+                            (sessionStorage.getItem("role") === "principal" && !(segment === "principal")) ||
+                            (sessionStorage.getItem("role") === "admin")
                         }
                             {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
                                 <Segment {segment}>
@@ -102,7 +102,7 @@
                 {/if}
             </Cell>
             <Cell>
-                {#if decoded["email"] !== item["Email"]}
+                {#if sessionStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -115,7 +115,7 @@
                 {/if}
             </Cell>
             <Cell>
-                {#if decoded["email"] !== item["Email"]}
+                {#if sessionStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         fetch(`${baseurl}/user/delete/${item["ID"]}`, {

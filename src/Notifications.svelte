@@ -1,5 +1,5 @@
 <script lang="ts">
-    import jwt_decode from "jwt-decode";
+
 
     import { Icon } from '@smui/common';
 
@@ -24,7 +24,7 @@
 
     let systemNotifications = [];
 
-    const decoded = jwt_decode(token);
+
 
     function getSystemNotifications() {
         fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})

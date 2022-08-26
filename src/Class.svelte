@@ -9,14 +9,15 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-navigator";
-    import jwt_decode from "jwt-decode";
+
+
 
     const token = localStorage.getItem("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     let myClasses;
     let students;
@@ -108,7 +109,7 @@
                 <TextList>
                     <PrimaryText>{item.Name}</PrimaryText>
                 </TextList>
-                {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+                {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
                     <Meta><IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation()
                         deleteFromClass(item.ID)

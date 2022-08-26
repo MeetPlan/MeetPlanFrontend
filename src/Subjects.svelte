@@ -18,7 +18,8 @@
 
     import { navigate } from "svelte-navigator";
     import {baseurl} from "./constants";
-    import jwt_decode from "jwt-decode";
+
+
 
     let items = [];
     let teachers = [];
@@ -29,7 +30,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     function loadThings() {
         fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -93,7 +94,7 @@
     }
 </script>
 
-{#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
     <Textfield label="Nov predmet" bind:value={nclass}>
         <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
     </Textfield>

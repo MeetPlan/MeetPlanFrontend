@@ -13,11 +13,12 @@
     import {baseurl} from "./constants";
     import Select, {Option} from "@smui/select";
     import {navigate} from "svelte-navigator";
-    import jwt_decode from "jwt-decode";
+
     import Slider from "@smui/slider";
     import FormField from '@smui/form-field';
     import Button, {Icon} from "@smui/button";
     import type {Subject} from "./typescript-definitions/tsdef";
+
 
     let myClasses;
     let students: Subject;
@@ -36,7 +37,7 @@
         navigate("/login");
     }
 
-    const decoded = jwt_decode(token);
+
 
     function getSubject() {
         fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
@@ -127,7 +128,7 @@
                 <TextList>
                     <PrimaryText>{item.Name}</PrimaryText>
                 </TextList>
-                {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+                {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
                     <Meta><IconButton class="material-icons" on:click={() => deleteFromSubject(item.ID)} title="Remove from class">delete</IconButton></Meta>
                 {/if}
             </Item>

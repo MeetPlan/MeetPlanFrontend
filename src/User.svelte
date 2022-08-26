@@ -12,7 +12,7 @@
     import List, {Item, Text as TextList, Meta} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
-    import jwt_decode from "jwt-decode";
+
 
     let classes = [];
     let myClasses = [];

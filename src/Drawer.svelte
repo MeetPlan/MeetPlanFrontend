@@ -10,7 +10,7 @@
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
 
-    import jwt_decode from "jwt-decode";
+
 
     import {baseurl} from "./constants";
     import Dialog, {Actions} from "@smui/dialog";
@@ -26,6 +26,7 @@
     import {useLocation} from "svelte-navigator";
     import Checkbox from "@smui/checkbox";
 
+
     const location = useLocation();
 
     let active = "";
@@ -35,7 +36,6 @@
     let communicationUnread = {};
     let unreadMessages;
 
-    let decoded = {};
     let allPaths = {};
 
     let lastUrl = "";
@@ -50,8 +50,6 @@
             if (token === null || token === undefined) {
                 navigate("/login");
             }
-
-            decoded = jwt_decode(token);
 
             let path = $location.pathname;
 
@@ -177,13 +175,13 @@
             return;
         }
 
-        if (decoded["role"] === "teacher" || decoded["role"] === "admin") {
+        if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
             let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             let json = await response.json()
             if (json.data === "true" || json.data === true) {
                 hasClass = true;
             }
-        } else if (decoded["role"] === "parent") {
+        } else if (sessionStorage.getItem("role") === "parent") {
             let response = await fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             let json = await response.json()
             children = json.data;
@@ -193,7 +191,7 @@
         let json = await response.json()
         mealsBlocked = json.data;
 
-        if ((decoded["role"] === "teacher" || decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") && meetingActive !== -1) {
+        if ((sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") && meetingActive !== -1) {
             let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
             let json = await response.json()
             users = json.data;
@@ -408,8 +406,8 @@
                     <Text>Pregled</Text>
                 </Item>
                 {#if meetingActive === -1 && communicationActive === undefined}
-                    {#if decoded.role === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded.role === "teacher" || decoded.role === "student" || decoded.role === "school psychologist" || decoded.role === "food organizer"}
-                        {#if decoded.role !== "food organizer"}
+                    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "school psychologist" || sessionStorage.getItem("role") === "food organizer"}
+                        {#if sessionStorage.getItem("role") !== "food organizer"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/samotestiranje')}
@@ -444,7 +442,7 @@
                             {/if}
                         </Text>
                     </Item>
-                    {#if decoded["role"] === "student"}
+                    {#if sessionStorage.getItem("role") === "student"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/class/user/me')}
@@ -454,7 +452,7 @@
                             <Text>Moj pregled</Text>
                         </Item>
                     {/if}
-                    {#if decoded["role"] === "parent"}
+                    {#if sessionStorage.getItem("role") === "parent"}
                         {#each children as child}
                             <Item
                                     href="javascript:void(0)"
@@ -466,7 +464,7 @@
                             </Item>
                         {/each}
                     {/if}
-                    {#if decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "admin"}
+                    {#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "admin"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/new/meeting')}
@@ -476,7 +474,7 @@
                             <Text>Dodaj srečanje</Text>
                         </Item>
                     {/if}
-                    {#if decoded["role"] === "teacher"}
+                    {#if sessionStorage.getItem("role") === "teacher"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/my/class')}
@@ -502,8 +500,8 @@
                             <Text>Redovalnica</Text>
                         </Item>-->
                     {/if}
-                    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist"}
-                        {#if decoded["role"] !== "school psychologist"}
+                    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
+                        {#if sessionStorage.getItem("role") !== "school psychologist"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/users')}
@@ -529,7 +527,7 @@
                             <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                             <Text>Vsi razredi</Text>
                         </Item>
-                        {#if decoded["role"] !== "school psychologist"}
+                        {#if sessionStorage.getItem("role") !== "school psychologist"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/settings')}
@@ -565,7 +563,7 @@
                         {/if}
                     {/if}
                 {/if}
-                {#if meetingActive !== -1 && (decoded["role"] === "admin" || decoded["role"] === "teacher" || decoded.role === "principal" || decoded.role === "principal assistant" || decoded["role"] === "school psychologist")}
+                {#if meetingActive !== -1 && (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist")}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate(`/meeting/${meetingActive}`)}

@@ -1,6 +1,6 @@
 <script lang="ts">
     import {navigate} from "svelte-navigator";
-    import jwt_decode from "jwt-decode";
+
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
     import {baseurl} from "./constants";
@@ -12,6 +12,7 @@
     import { chart } from "svelte-apexcharts";
     import Timetable from "./Widgets/Timetable.svelte";
     import insane from "insane";
+
     let options;
 
     export let meetingId: number;
@@ -120,9 +121,9 @@
     let items = [];
     let classId = "";
 
-    const decoded = jwt_decode(token);
 
-    if (decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant") {
+
+    if (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") {
         getTeachers();
         getProtonSubstitutionRatings();
     }
@@ -145,7 +146,7 @@
         {@html insane(marked.marked(meetingData.Details))}
     {/if}
     <a href="{meetingData.URL}">Povezava do srečanja</a>
-    {#if decoded["role"] === "admin" || decoded["role"] === "principal" || decoded["role"] === "principal assistant" || decoded["user_id"] === meetingData.Subject.TeacherID || decoded["user_id"] === meetingData.TeacherID}
+    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("userId") === meetingData.Subject.TeacherID.toString() || sessionStorage.getItem("userId") === meetingData.TeacherID.toString()}
         <p/>
         <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
             <Icon class="material-icons">edit</Icon>
@@ -158,7 +159,7 @@
     {/if}
     <p/>
     <div use:chart={options}/>
-    {#if decoded["role"] === "admin" || decoded.role === "principal" || decoded.role === "principal assistant"}
+    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
         <p/>
         <FormField>
             <Switch bind:checked={isSubstitution} on:click={() => {
