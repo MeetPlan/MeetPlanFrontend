@@ -390,7 +390,8 @@
             <div style="display:inline-block; float:right;">
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    localStorage.removeItem("key")
+                    localStorage.clear()
+                    sessionStorage.clear()
                     navigate("/login")
                 }}>logout</IconButton>
             </div>
