@@ -44,6 +44,7 @@
     import isMobile from "is-mobile";
     import MeetingCard from "../MeetingCard.svelte";
     import type {Meeting} from "../typescript-definitions/tsdef";
+    import Cookies from "js-cookie";
 
     export let date: Date = new Date();
     let currentDate = new Date(date);
