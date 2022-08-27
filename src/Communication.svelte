@@ -13,18 +13,19 @@
     import Icon from '@smui/textfield/icon';
 
     import insane from "insane";
+    import Cookies from "js-cookie";
 
     export let id: string = "";
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
 
 
     function getCommunication() {
-        const token = localStorage.getItem("key");
+        const token = Cookies.get("key");
         if (token === null || token === undefined) {
             return;
         }
-        fetch(`${baseurl}/communication/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/communication/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 comm = r.data;
@@ -32,7 +33,7 @@
     }
 
     function deleteMessage(messageId) {
-        fetch(`${baseurl}/message/get/${messageId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/message/get/${messageId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => {
                 getCommunication();
@@ -42,7 +43,7 @@
     function editMessage() {
         let fd = new FormData();
         fd.append("body", newMessageValue)
-        fetch(`${baseurl}/message/get/${messageEditingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/message/get/${messageEditingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getCommunication();
@@ -115,7 +116,7 @@
     <Button on:click={() => {
         let fd = new FormData();
         fd.append("body", newMessageValue)
-        fetch(`${baseurl}/communication/get/${id}/message/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "POST"})
+        fetch(`${baseurl}/communication/get/${id}/message/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "POST"})
             .then((r) => {
                 newMessageValue = "";
                 getCommunication();

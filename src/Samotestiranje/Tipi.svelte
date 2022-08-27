@@ -18,7 +18,7 @@
             let formData = new FormData();
             formData.append("result", segment)
 
-            fetch(`${baseurl}/user/self_testing/patch/${classId}/${userId}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + localStorage.getItem("key")}}).then((response) => {
+            fetch(`${baseurl}/user/self_testing/patch/${classId}/${userId}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + Cookies.get("key")}}).then((response) => {
                 return response.json()
             }).then((response) => {
                 console.log(response);

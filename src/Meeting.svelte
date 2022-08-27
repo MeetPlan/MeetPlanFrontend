@@ -12,6 +12,7 @@
     import { chart } from "svelte-apexcharts";
     import Timetable from "./Widgets/Timetable.svelte";
     import insane from "insane";
+    import Cookies from "js-cookie";
 
     let options;
 
@@ -45,7 +46,7 @@
     let protonRatings = [];
 
     function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     teachers = json["data"];
@@ -54,7 +55,7 @@
     }
 
     function getProtonSubstitutionRatings() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     protonRatings = json["data"];
@@ -64,7 +65,7 @@
 
 
     function getMeetingData() {
-        fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 meetingData = r.data;
@@ -85,7 +86,7 @@
     }
 
     function deleteMeeting() {
-        fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => navigate("/"))
     }
@@ -106,14 +107,14 @@
         fd.append("teacherId", teacherId.toString());
         fd.append("location", meetingData.Location);
         fetch(`${baseurl}/meetings/new/${meetingId}`,
-            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "PATCH"})
+            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
             .then((r) => r.json())
             .then((r) => getMeetingData())
     }
 
     getMeetingData();
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }

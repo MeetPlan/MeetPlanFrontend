@@ -20,11 +20,12 @@
         PrimaryText,
         SecondaryText,
     } from '@smui/list';
+    import Cookies from "js-cookie";
 
     let homework = [];
     
     function getHomework() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 homework = r.data;
@@ -39,7 +40,7 @@
         fd.append("name", name);
         fd.append("description", description);
         fd.append("to_date", date);
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getHomework()
@@ -115,7 +116,7 @@
                                             let formData = new FormData();
                                             formData.append("status", segment)
 
-                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + localStorage.getItem("key")}}).then((response) => {
+                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + Cookies.get("key")}}).then((response) => {
                                                 return response.json()
                                             }).then((response) => {
                                                 getHomework();

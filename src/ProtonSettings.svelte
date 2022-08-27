@@ -10,6 +10,7 @@
     import {onMount} from "svelte";
     import Error from "./Widgets/Error.svelte";
     import ProtonTimetable from "./Widgets/ProtonTimetable.svelte";
+    import Cookies from "js-cookie";
 
     let config = [];
 
@@ -56,7 +57,7 @@
     let settingName: string = undefined;
 
     async function getConfiguration() {
-        let response = await fetch(`${baseurl}/proton/rules/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/proton/rules/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json();
         config = json["data"]["rules"];
     }
@@ -81,42 +82,42 @@
         fd.append("protonRuleId", moduleId.toString());
         fd.append("selectedHours", selectedHour.toString());
         fetch(`${baseurl}/proton/rule/new`,
-            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "POST"})
+            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "POST"})
             .then((r) => r.json())
             .then((r) => getConfiguration())
     }
 
     function deleteConfig(configId: number) {
         fetch(`${baseurl}/proton/rule/get/${configId}`,
-            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => getConfiguration())
     }
 
     async function getTeachers() {
-        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json()
         teachers = json["data"];
     }
 
     async function getSubjects() {
-        let response = await fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json()
         subjects = json["data"];
     }
 
     async function migrateBetaMeetings() {
-        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
     }
 
     async function deleteBetaMeetings() {
-        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/meetings/beta`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
     }
 
     async function deleteRule(ruleId: string) {
         let fd = new FormData();
         fd.append("ruleId", ruleId);
-        let response = await fetch(`${baseurl}/proton/rule/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE", body: fd})
+        let response = await fetch(`${baseurl}/proton/rule/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE", body: fd})
         let json = await response.json();
         config = json["data"]["rules"];
     }

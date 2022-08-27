@@ -25,6 +25,7 @@
 
     import {useLocation} from "svelte-navigator";
     import Checkbox from "@smui/checkbox";
+    import Cookies from "js-cookie";
 
 
     const location = useLocation();
@@ -46,7 +47,7 @@
         if (!($location.pathname === "/login" || $location.pathname === "/register")) {
             showDrawer = true;
 
-            const token = localStorage.getItem("key");
+            const token = Cookies.get("key");
             if (token === null || token === undefined) {
                 navigate("/login");
             }
@@ -120,17 +121,17 @@
     })()
 
     async function getCommunications() {
-        let response = await fetch(`${baseurl}/communications/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/communications/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json()
         communications = json.data;
     }
 
     async function getUnread() {
-        const token = localStorage.getItem("key");
+        const token = Cookies.get("key");
         if (token === null || token === undefined) {
             return;
         }
-        let response = await fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json()
         unreadMessages = json.data;
         communicationUnread = {};
@@ -176,23 +177,23 @@
         }
 
         if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
-            let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             if (json.data === "true" || json.data === true) {
                 hasClass = true;
             }
         } else if (sessionStorage.getItem("role") === "parent") {
-            let response = await fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            let response = await fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             children = json.data;
         }
 
-        let response = await fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json()
         mealsBlocked = json.data;
 
         if ((sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") && meetingActive !== -1) {
-            let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             users = json.data;
         }
@@ -206,7 +207,7 @@
         principalAssistant = [];
         foodOrganizer = [];
 
-        let response2 = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response2 = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json2 = await response2.json()
         let us = json2.data;
         for (let i in us) {
@@ -272,7 +273,7 @@
         <Button on:click={() => {
             let fd = new FormData();
             fd.append("message", improvementBody);
-            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
                 .then((r) => r.json())
                 .then((r) => {
                     improvementBody = "";
@@ -374,7 +375,7 @@
             let fd = new FormData();
             fd.append("users", JSON.stringify(selected));
             fd.append("title", newCommunicationTitle);
-            fetch(`${baseurl}/communication/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd}).then(getCommunications)
+            fetch(`${baseurl}/communication/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd}).then(getCommunications)
         }}>
             <Label>
                 USTVARI
@@ -390,7 +391,7 @@
             <div style="display:inline-block; float:right;">
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    localStorage.clear()
+                    document.cookie = ""
                     sessionStorage.clear()
                     navigate("/login")
                 }}>logout</IconButton>

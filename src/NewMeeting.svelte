@@ -13,6 +13,7 @@
     import * as marked from 'marked';
     import insane from "insane";
     import type {Subject} from "./typescript-definitions/tsdef";
+    import Cookies from "js-cookie";
 
     let date: string = "";
     let lastDate: string = "";
@@ -38,7 +39,7 @@
     export let editId;
 
     function getSubjects() {
-        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     subjects = json["data"];
@@ -76,7 +77,7 @@
     }
 
     function getMeetingData() {
-        fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
@@ -132,7 +133,7 @@
         fd.append("last_date", fmtDate(new Date(lastDate)))
         fd.append("location", location);
         fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
-            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
+            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
             .then((r) => r.json())
             .then((r) => console.log(r))
             .then(() => navigate("/"))

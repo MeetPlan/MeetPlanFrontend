@@ -8,7 +8,7 @@
     let classId = "";
 
     async function getTestings() {
-        let response = await fetch(`${baseurl}/user/self_testing/get_results`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/user/self_testing/get_results`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         const r = await response.json();
         testings = r["data"];
     }
@@ -29,7 +29,7 @@
     Rezultat: <b>{test.Result}</b>
     <p />
     <Button on:click={() => {
-        fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
             .catch((err) => {

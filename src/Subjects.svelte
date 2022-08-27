@@ -18,6 +18,7 @@
 
     import { navigate } from "svelte-navigator";
     import {baseurl} from "./constants";
+    import Cookies from "js-cookie";
 
 
 
@@ -25,7 +26,7 @@
     let teachers = [];
     let subjects = [];
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
@@ -33,7 +34,7 @@
 
 
     function loadThings() {
-        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -42,7 +43,7 @@
     }
 
     function getSubjects() {
-        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     subjects = json["data"];
@@ -51,7 +52,7 @@
     }
 
     function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     teachers = json["data"];
@@ -76,7 +77,7 @@
         fd.append("class_id", classId);
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
-        fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
                     getSubjects();
@@ -85,7 +86,7 @@
     }
 
     function deleteSubject(cid: number) {
-        fetch(`${baseurl}/subject/get/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/subject/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((json) => {
                     getSubjects();

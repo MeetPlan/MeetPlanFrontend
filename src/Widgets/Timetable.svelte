@@ -87,7 +87,7 @@
 
         console.log(classId, teacherId, subjectId)
 
-        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 mon = r["data"][0]["meetings"];

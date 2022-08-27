@@ -18,12 +18,13 @@
     import Avatar from "svelte-avatar";
     import insane from "insane";
     import Error from "./Widgets/Error.svelte";
+    import Cookies from "js-cookie";
 
 
     let meals = [];
     
     async function getMeals() {
-        let response = await fetch(`${baseurl}/meals/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/meals/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let json = await response.json();
         meals = json["data"];
         for (let i in meals) {
@@ -65,33 +66,33 @@
 
     async function newMeal() {
         let fd = getMealParameters();
-        await fetch(`${baseurl}/meals/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd});
+        await fetch(`${baseurl}/meals/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd});
         await getMeals()
     }
 
     async function order(mealId) {
-        await fetch(`${baseurl}/order/new/${mealId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST"});
+        await fetch(`${baseurl}/order/new/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST"});
         await getMeals();
     }
 
     async function editMeal(mealId) {
-        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: getMealParameters()})
+        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: getMealParameters()})
         await getMeals();
         resetMealParams();
     }
 
     async function deleteMeal(mealId) {
-        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
         await getMeals();
     }
 
     async function blockOrders(mealId) {
-        await fetch(`${baseurl}/order/get/${mealId}/block_unblock`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        await fetch(`${baseurl}/order/get/${mealId}/block_unblock`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
         await getMeals();
     }
 
     async function removeOrder(mealId) {
-        await fetch(`${baseurl}/order/get/${mealId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/order/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
         await getMeals();
     }
 
@@ -108,7 +109,7 @@
     let limit = 100;
     let mealEditId;
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }

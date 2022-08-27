@@ -1,6 +1,4 @@
 <script lang="ts">
-
-
     import { Icon } from '@smui/common';
 
     import Button, {Label} from "@smui/button";
@@ -10,10 +8,11 @@
     import {baseurl} from "./constants";
     import * as marked from 'marked';
     import insane from "insane";
+    import Cookies from "js-cookie";
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
-        localStorage.clear();
+        document.cookie = "";
         window.location.href = "/login";
     }
 
@@ -27,13 +26,13 @@
 
 
     function getSystemNotifications() {
-        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => systemNotifications = json.data);
     }
 
     function deleteNotification(nid) {
-        fetch(`${baseurl}/notification/${nid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/notification/${nid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((json) => getSystemNotifications());
     }
@@ -41,7 +40,7 @@
     function newNotification() {
         let fd = new FormData();
         fd.append("body", newBody)
-        fetch(`${baseurl}/system/notifications/new`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/system/notifications/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => getSystemNotifications());
     }

@@ -18,6 +18,7 @@
     import FormField from '@smui/form-field';
     import Button, {Icon} from "@smui/button";
     import type {Subject} from "./typescript-definitions/tsdef";
+    import Cookies from "js-cookie";
 
 
     let myClasses;
@@ -32,7 +33,7 @@
 
     export let id: number;
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
@@ -40,7 +41,7 @@
 
 
     function getSubject() {
-        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => {
                 let data: Subject = r.data;
@@ -58,25 +59,25 @@
         fd.append("realization", realization.toString());
         fd.append("selected_hours", selectedHour.toString());
         fd.append("location", location);
-        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getSubject());
     }
 
     function getStudents() {
-        fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => studentsToAdd = r.data);
     }
 
     function assignToSubject(cid: string) {
-        fetch(`${baseurl}/subject/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/subject/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getSubject());
     }
 
     function deleteFromSubject(cid: string) {
-        fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getSubject());
     }

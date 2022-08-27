@@ -11,6 +11,7 @@
 
     import List, {Item, Text as TextList, Meta} from "@smui/list";
     import IconButton from "@smui/icon-button";
+    import Cookies from "js-cookie";
 
 
 
@@ -30,31 +31,31 @@
     export let id: number;
 
     function getClasses() {
-        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => classes = r["data"]);
     }
 
     function getStudents() {
-        fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => students = r["data"]);
     }
 
     function getMyClasses() {
-        fetch(`${baseurl}/user/get/classes?id=${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/classes?id=${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => myClasses = r.data);
     }
 
     function getMyChildren() {
-        fetch(`${baseurl}/parents/get/students?parentId=${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/parents/get/students?parentId=${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => myStudents = r.data);
     }
 
     function getData() {
-        fetch(`${baseurl}/user/get/data/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/data/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((r) => {
                 birthCertificateNumber = r.data.BirthCertificateNumber;
@@ -75,31 +76,31 @@
         fd.append("country_of_birth", birthCountry !== undefined ? birthCountry : "");
         fd.append("name", name !== undefined ? name : "");
         fd.append("email", email !== undefined ? email : "");
-        fetch(`${baseurl}/user/get/data/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/user/get/data/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getData());
     }
 
     function assignToClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getMyClasses());
     }
 
     function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getMyClasses());
     }
 
     function removeUserFromParent(sid: string) {
-        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getMyChildren());
     }
 
     function assignToParent(sid: string) {
-        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getMyChildren());
     }

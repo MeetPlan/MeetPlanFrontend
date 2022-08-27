@@ -43,6 +43,7 @@
     import Button, {Icon, Label} from "@smui/button";
     import Switch from '@smui/switch';
     import FormField from '@smui/form-field';
+    import Cookies from "js-cookie";
 
     let weeks = {};
 
@@ -144,7 +145,7 @@
         let fd = new FormData();
         fd.append("cancelPostProcessingBeforeDone", cancelPostProcessingBeforeDone.toString());
         fd.append("timetable", JSON.stringify(timetable))
-        let response = await fetch(`${baseurl}/proton/timetable/manual_postprocessing`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "POST"})
+        let response = await fetch(`${baseurl}/proton/timetable/manual_postprocessing`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "POST"})
         let json = await response.json();
         timetable = json.data;
         eraseTimetable();
@@ -153,7 +154,7 @@
     }
 
     async function assembleTimetable() {
-        let response = await fetch(`${baseurl}/proton/assemble/timetable`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/proton/assemble/timetable`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         if (response.status === 500) {
             throw "Ni bilo možno sestaviti urnika. To se zgodi občasno, kadar naš sistem ne izbere naključnih in primernih številk za začetek sestavljanja tega urnika. Prosimo, poskusite znova.";
         }
@@ -178,7 +179,7 @@
     }
 
     async function getClasses() {
-        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let r = await response.json()
         classes = r["data"]
         eraseTimetable();
@@ -293,7 +294,7 @@
     <Button on:click={() => {
                     let fd = new FormData();
                     fd.append("timetable", JSON.stringify(timetable));
-                    fetch(`${baseurl}/proton/accept/timetable`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+                    fetch(`${baseurl}/proton/accept/timetable`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
                 }} variant="raised">
         <Icon class="material-icons">check</Icon>
         <Label>Sprejmi urnik in ga pošlji v beto</Label>

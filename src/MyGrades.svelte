@@ -8,11 +8,12 @@
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {Meta} from "@smui/list";
     import {baseurl} from "./constants";
+    import Cookies from "js-cookie";
 
     let grades = null;
 
     function getGrades() {
-        fetch(`${baseurl}/my/grades`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/my/grades`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 grades = r["data"];

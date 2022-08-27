@@ -10,6 +10,7 @@
     } from '@smui/list';
 
     import Avatar from "svelte-avatar";
+    import Cookies from "js-cookie";
 
     let classes = [];
     let classId;
@@ -19,18 +20,18 @@
     let classDetails;
 
     function getClasses() {
-        fetch(`${baseurl}/user/get/classes`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/classes`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => classes = r["data"]);
     }
 
     function getClass(cid) {
-        fetch(`${baseurl}/class/get/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/class/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => classDetails = r["data"]);
     }
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }

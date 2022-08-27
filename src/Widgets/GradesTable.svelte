@@ -14,6 +14,7 @@
     import FormField from '@smui/form-field';
     import Button, { Label } from '@smui/button';
     import Switch from '@smui/switch';
+    import Cookies from "js-cookie";
 
     let open = false;
 
@@ -25,7 +26,7 @@
     let canPatch = true;
 
     function getGrades() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 grades = r["data"];
@@ -40,7 +41,7 @@
         fd.append("period", selectedPeriod);
         fd.append("is_final", finalize.toString());
         fd.append("can_patch", canPatch.toString())
-        fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();
@@ -52,7 +53,7 @@
         fd.append("is_written", isWritten.toString());
         fd.append("grade", selectedGrade);
         fd.append("period", selectedPeriod);
-        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();
@@ -60,7 +61,7 @@
     }
 
     function deleteGrade() {
-        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();

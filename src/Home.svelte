@@ -7,11 +7,12 @@
     import * as marked from 'marked';
     import isMobile from "is-mobile";
     import insane from "insane";
+    import Cookies from "js-cookie";
 
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
-        localStorage.clear();
+        document.cookie = "";
         window.location.href = "/login";
     }
 
@@ -25,7 +26,7 @@
 
 
     function loadThings() {
-        fetch(`${baseurl}/${(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/${(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => {
                 if (response.ok) {
                     return response
@@ -38,13 +39,13 @@
                 },
             ).catch((e) => {
                 console.log(e)
-                localStorage.clear();
+                document.cookie = "";
                 window.location.href = "/login";
         });
     }
 
     function getSystemNotifications() {
-        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => systemNotifications = json.data);
     }

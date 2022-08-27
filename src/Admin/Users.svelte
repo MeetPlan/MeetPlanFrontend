@@ -18,7 +18,7 @@
     function loadThings() {
         loaded = false;
 
-        fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -38,13 +38,12 @@
 
 
     import { navigate } from "svelte-navigator";
+    import Cookies from "js-cookie";
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
-
-
 </script>
 
 <DataTable table$aria-label="User list" style="width: 100%;">
@@ -77,7 +76,7 @@
                         principalId = undefined;
 
                         fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
-                            headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
+                            headers: {"Authorization": "Bearer " + Cookies.get("key")},
                             body: fd,
                             method: "PATCH"
                         })
@@ -105,7 +104,7 @@
                 {#if sessionStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
-                        fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                        fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
                             .then((response) => response.blob())
                             .then((blob) => saveBlob(blob))
                             .catch((err) => {
@@ -119,7 +118,7 @@
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         fetch(`${baseurl}/user/delete/${item["ID"]}`, {
-                            headers: {"Authorization": "Bearer " + localStorage.getItem("key")},
+                            headers: {"Authorization": "Bearer " + Cookies.get("key")},
                             method: "DELETE"
                         })
                             .then((response) => response.json())

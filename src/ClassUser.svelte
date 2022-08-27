@@ -21,6 +21,7 @@
         Meta,
     } from '@smui/list';
     import insane from "insane";
+    import Cookies from "js-cookie";
 
 
     let grades;
@@ -51,7 +52,7 @@
     let printTemplate = false;
 
     function getUserData() {
-        fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 userData = r["data"];
@@ -60,7 +61,7 @@
     }
 
     function getImprovements() {
-        fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 improvements = r.data;
@@ -68,7 +69,7 @@
     }
 
     function getAbsences() {
-        fetch(`${baseurl}/user/get/absences/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/absences/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 absences = r["data"];
@@ -82,7 +83,7 @@
     }
 
     function getUserGradings() {
-        fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 gradings = r["data"];
@@ -90,7 +91,7 @@
     }
 
     function getHomework() {
-        fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 homework = r["data"];
@@ -98,7 +99,7 @@
     }
 
     function getGrades() {
-        fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((r) => r.json())
             .then((r) => {
                 if (r.data !== "Forbidden") {
@@ -109,7 +110,7 @@
 
     function getParentConfig() {
         if (sessionStorage.getItem("role") === "parent") {
-            fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+            fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
                 .then((r) => r.json())
                 .then((r) => {
                     let data = r["data"];
@@ -148,7 +149,7 @@
         "#64DD17"
     ];
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
@@ -170,7 +171,7 @@
 {/if}
 {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
     <Button on:click={() => {
-        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
         .catch((err) => {
@@ -238,7 +239,7 @@
             setTimeout(() => {
                 let fd = new FormData();
                 fd.append("is_passing", isPassing.toString());
-                fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+                fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
                     .then((response) => response.json())
                     .then((r) => getUserData());
             }, 200);
@@ -252,7 +253,7 @@
     </FormField>
     <p/>
     <Button on:click={() => {
-        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
             .catch((err) => {
@@ -286,7 +287,7 @@
                             <Meta>
                                 <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
                                     if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
-                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
                                             .then((r) => r.json())
                                             .then((r) => {
                                                 getAbsences();

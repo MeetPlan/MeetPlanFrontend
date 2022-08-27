@@ -11,6 +11,7 @@
     import Snackbar, {Actions} from "@smui/snackbar";
     import type { SnackbarComponentDev } from '@smui/snackbar';
     import * as constants from "./constants";
+    import Cookies from "js-cookie";
 
     async function login() {
         let fd = new FormData();
@@ -23,7 +24,7 @@
                 sessionStorage.setItem("role", response["data"]["role"]);
                 sessionStorage.setItem("userId", response["data"]["user_id"]);
                 sessionStorage.setItem("email", response["data"]["email"]);
-                localStorage.setItem("key", response["data"]["token"]);
+                Cookies.set("key", response["data"]["token"], {sameSite: "strict"});
                 navigate("/")
             } else {
                 snackbarWithClose.open();
@@ -93,7 +94,7 @@
                     <Icon class="material-icons" slot="leadingIcon">link</Icon>
                 </Textfield>
             {/if}
-            {#if localStorage.getItem("key") !== "" && localStorage.getItem("key") !== undefined && localStorage.getItem("key") !== null}
+            {#if Cookies.get("key") !== "" && Cookies.get("key") !== undefined && Cookies.get("key") !== null}
                 <Link to="/">POJDITE NEPOSREDNO V SISTEM</Link>
             {/if}
         </Paper>

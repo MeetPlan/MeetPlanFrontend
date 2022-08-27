@@ -1,5 +1,5 @@
 <script lang="ts">
-    import List, {Item, Text as TextList, Meta, Graphic, PrimaryText, SecondaryText} from "@smui/list";
+    import List, {Item, Text as TextList, Meta, PrimaryText} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
     import Avatar from "svelte-avatar";
@@ -9,10 +9,11 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-navigator";
+    import Cookies from "js-cookie";
 
 
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
@@ -43,7 +44,7 @@
 
 
     async function getClass() {
-        let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         let r = await response.json();
         students = r["data"];
         classYear = students["ClassYear"];
@@ -54,13 +55,13 @@
     }
 
     function assignToClass(cid: string) {
-        fetch(`${baseurl}/class/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
 
     function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
@@ -71,7 +72,7 @@
         fd.append("sok", sok.toString());
         fd.append("eok", eok.toString())
         fd.append("last_date", ((new Date(lastDate)).valueOf() / 1000).toString())
-        fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getClass());
     }

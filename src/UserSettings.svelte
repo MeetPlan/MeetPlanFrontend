@@ -5,6 +5,7 @@
 
     import Button, {Icon} from "@smui/button";
     import {navigate} from "svelte-navigator";
+    import Cookies from "js-cookie";
 
     let newPassword = "";
     let oldPassword = "";
@@ -14,7 +15,7 @@
         fd.append("password", newPassword);
         fd.append("oldPassword", oldPassword);
         fetch(`${baseurl}/user/get/password_change`,
-            {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}, body: fd, method: "PATCH"})
+            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
             .then((r) => {
                 if (r.status === 200) {
                     navigate("/")

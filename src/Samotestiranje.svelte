@@ -26,9 +26,10 @@
 
 
     import { navigate } from "svelte-navigator";
+    import Cookies from "js-cookie";
 
 
-    const token = localStorage.getItem("key");
+    const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
@@ -40,13 +41,13 @@
     let classId = "";
 
     async function getClasses() {
-        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         const r = await response.json();
         classes = r["data"];
     }
 
     async function makeRequest(c: number) {
-        let response = await fetch(`${baseurl}/class/get/${c}/self_testing`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+        let response = await fetch(`${baseurl}/class/get/${c}/self_testing`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
         const r = await response.json();
         options = r["data"];
     }
@@ -101,7 +102,7 @@
                         <Meta>
                             {#if item["IsDone"] && item["Result"] !== "SE NE TESTIRA"}
                                 <IconButton class="material-icons" on:click={() => {
-                                    fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {headers: {"Authorization": "Bearer " + localStorage.getItem("key")}})
+                                    fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
                                         .then((response) => response.blob())
                                         .then((blob) => saveBlob(blob))
                                         .catch((err) => {
