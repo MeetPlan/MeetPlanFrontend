@@ -2,6 +2,7 @@
     import SegmentedButton, {Segment} from "@smui/segmented-button";
     import { Label } from '@smui/common';
     import {baseurl} from "../constants";
+    import Cookies from "js-cookie";
 
     let choices = ['SE NE TESTIRA', 'NEGATIVEN', 'POZITIVEN', 'NEVELJAVEN'];
 
