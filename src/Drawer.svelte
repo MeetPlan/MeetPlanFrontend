@@ -391,7 +391,7 @@
             <div style="display:inline-block; float:right;">
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    document.cookie = ""
+                    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
                     sessionStorage.clear()
                     navigate("/login")
                 }}>logout</IconButton>

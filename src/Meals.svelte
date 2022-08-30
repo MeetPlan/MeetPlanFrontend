@@ -19,6 +19,7 @@
     import insane from "insane";
     import Error from "./Widgets/Error.svelte";
     import Cookies from "js-cookie";
+    import List, {Item, Meta, PrimaryText, Text as TextList} from "@smui/list";
 
 
     let meals = [];
@@ -236,6 +237,12 @@
                             {/if}
                         {:else}
                             {#if meal.IsLimitReached}
+                                {#if meal.HasOrdered}
+                                    <Button on:click={async () => await removeOrder(meal.ID)}>
+                                        <Icon class="material-icons">remove</Icon>
+                                        <Label>Odstrani naročilo</Label>
+                                    </Button>
+                                {/if}
                                 Prekoračeno je bilo maksimalno število naročil.
                             {:else}
                                 Naročila so blokirana. Obrnite se na sistemskega administratorja.
@@ -276,13 +283,23 @@
                             <p/>
                             <h2>Naročila:</h2>
                             Števec naročil: {meal.MealOrders.length}
-                            {#each meal.MealOrders as user}
-                                <br>
-                                <div class="sameline">
-                                    <Avatar name={user.Name} style="display: inline-block;"/>
-                                    <div style="display: inline-block;">{user.Name}</div>
-                                </div>
-                            {/each}
+                            <List class="demo-list" avatarList>
+                                {#each meal.MealOrders as user}
+                                    <Item>
+                                        <Avatar name={user.Name} style="display: inline-block;"/>
+                                        <TextList>
+                                            <PrimaryText>{user.Name}</PrimaryText>
+                                        </TextList>
+                                        <Meta>
+                                            <IconButton class="material-icons" on:click={async (e) => {
+                                                e.stopPropagation();
+                                                await fetch(`${baseurl}/order/get/${meal.ID}/${user.ID}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+                                                await getMeals();
+                                            }} title="Odstrani naročilo">delete</IconButton>
+                                        </Meta>
+                                    </Item>
+                                {/each}
+                            </List>
                         {/if}
                     </Content>
                 </Panel>
