@@ -8,8 +8,6 @@
     import Switch from '@smui/switch';
     import Button, {Label} from "@smui/button";
 
-
-
     import IconButton, { Icon } from '@smui/icon-button';
 
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';

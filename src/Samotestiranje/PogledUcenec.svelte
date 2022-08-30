@@ -1,6 +1,7 @@
 <script lang="ts">
     import Button, {Icon, Label} from "@smui/button";
     import {baseurl, saveBlob} from "../constants";
+    import Cookies from "js-cookie";
 
     import {onMount} from "svelte";
 
