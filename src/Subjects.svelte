@@ -1,15 +1,12 @@
 <script lang="ts">
-    import List, {
-        Item,
-        Text,
-        Meta
-    } from '@smui/list';
+    import Slider from "@smui/slider";
+    import FormField from '@smui/form-field';
 
     import IconButton from "@smui/icon-button";
 
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
-    import Button, {Label} from "@smui/button";
+    import Button, {Icon, Label} from "@smui/button";
 
     import Autocomplete from '@smui-extra/autocomplete';
     import {subjects as subjectsList} from "./Constants/consts";
@@ -19,8 +16,7 @@
     import { navigate } from "svelte-navigator";
     import {baseurl} from "./constants";
     import Cookies from "js-cookie";
-
-
+    import DataTable, {Body, Cell, Head, Row, Label as TableLabel} from "@smui/data-table";
 
     let items = [];
     let teachers = [];
@@ -30,8 +26,6 @@
     if (token === null || token === undefined) {
         navigate("/login");
     }
-
-
 
     function loadThings() {
         fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
@@ -123,14 +117,54 @@
         <Label>OK</Label>
     </Button>
 {/if}
-<List class="demo-list">
+
+<DataTable
+        style="width: 100%;"
+>
+    <Head>
+        <Row>
+            <Cell>Enolični identifikator predmeta</Cell>
+            <Cell>Ime predmeta</Cell>
+            <Cell>Dolgo ime predmeta</Cell>
+            <Cell>Lokacija</Cell>
+            <Cell>Ur na teden</Cell>
+            <Cell>Shrani spremembe</Cell>
+            <Cell>Izbriši</Cell>
+        </Row>
+    </Head>
+    <Body>
     {#each subjects as item}
-        <Item on:SMUI:action={() => navigate("/subject/" + item["ID"])}>
-            <Text>{item["Name"]} - {item["LongName"]}</Text>
-            <Meta><IconButton class="material-icons" on:click={(e) => {
-                e.stopPropagation();
-                deleteSubject(item["ID"])
-            }} title="Remove from class">delete</IconButton></Meta>
-        </Item>
+        <Row on:click={() => navigate("/subject/" + item["ID"])} style="height: 100px;">
+            <Cell>{item.ID}</Cell>
+            <Cell>{item.Name}</Cell>
+            <Cell>{item.LongName}</Cell>
+            <Cell on:click={(e) => e.stopPropagation()}><Textfield bind:value={item.Location}/></Cell>
+            <Cell on:click={(e) => e.stopPropagation()}>
+                <FormField align="end" style="display: flex; width: 400px;">
+                    <Slider discrete style="flex-grow: 1;" bind:value={item.SelectedHours} min={1} max={10} step={0.5} />
+                </FormField>
+            </Cell>
+            <Cell on:click={(e) => e.stopPropagation()}>
+                <Button on:click={async () => {
+                    let fd = new FormData();
+                    fd.append("long_name", item.LongName)
+                    fd.append("realization", item.Realization.toString());
+                    fd.append("selected_hours", item.SelectedHours.toString());
+                    fd.append("location", item.Location);
+                    await fetch(`${baseurl}/subject/get/${item.ID}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+                    await getSubjects();
+                }}>
+                    <Icon class="material-icons">done</Icon>
+                    Shrani spremembe
+                </Button>
+            </Cell>
+            <Cell>
+                <IconButton class="material-icons" on:click={(e) => {
+                    e.stopPropagation();
+                    deleteSubject(item["ID"])
+                }}>delete</IconButton>
+            </Cell>
+        </Row>
     {/each}
-</List>
+    </Body>
+</DataTable>

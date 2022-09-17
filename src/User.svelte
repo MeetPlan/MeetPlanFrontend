@@ -13,8 +13,6 @@
     import IconButton from "@smui/icon-button";
     import Cookies from "js-cookie";
 
-
-
     let classes = [];
     let myClasses = [];
     let classId = "";

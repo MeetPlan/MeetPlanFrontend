@@ -10,22 +10,22 @@
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-navigator";
     import Cookies from "js-cookie";
-
-
+    import Autocomplete from "@smui-extra/autocomplete";
+    import {onMount} from "svelte";
 
     const token = Cookies.get("key");
     if (token === null || token === undefined) {
         navigate("/login");
     }
 
-
-
+    let studentPick;
     let myClasses;
     let students;
     let classId = "";
     let classYear = "";
     let sok = 1;
     let eok = 1;
+    let allStudents = [];
     let lastDate = fmtDateReverse(new Date());
 
     export let id: number;
@@ -42,6 +42,11 @@
         return `${date.getFullYear()}-${mm}-${dd}`
     }
 
+    async function getStudents() {
+        let response = await fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        allStudents = r.data;
+    }
 
     async function getClass() {
         let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
@@ -54,8 +59,8 @@
         console.log(lastDate);
     }
 
-    function assignToClass(cid: string) {
-        fetch(`${baseurl}/class/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+    function assignToClass() {
+        fetch(`${baseurl}/class/get/${id}/add_user/${studentPick["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
@@ -77,7 +82,10 @@
             .then((r) => getClass());
     }
 
-    getClass()
+    onMount(async () => {
+        await getClass();
+        await getStudents();
+    })
 </script>
 
 {#if students !== undefined}
@@ -103,6 +111,13 @@
         </Item>
     </List>
     <h2>Učenci:</h2>
+    <Autocomplete
+        options={allStudents}
+        getOptionLabel={(option) => option ? option["Name"] : ""}
+        bind:value={studentPick}
+        label="Dodajte učenca"
+        on:change={() => setTimeout(assignToClass, 200)}
+    />
     <List class="demo-list" twoLine avatarList>
         {#each students.Students as item}
             <Item on:click={() => navigate(`/class/user/${item.ID}`)}>

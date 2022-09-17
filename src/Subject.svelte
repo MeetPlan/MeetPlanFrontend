@@ -11,7 +11,6 @@
 
     import Autocomplete from '@smui-extra/autocomplete';
     import {baseurl} from "./constants";
-    import Select, {Option} from "@smui/select";
     import {navigate} from "svelte-navigator";
 
     import Slider from "@smui/slider";
@@ -19,9 +18,9 @@
     import Button, {Icon} from "@smui/button";
     import type {Subject} from "./typescript-definitions/tsdef";
     import Cookies from "js-cookie";
+    import {onMount} from "svelte";
 
-
-    let myClasses;
+    let studentPick;
     let students: Subject;
     let studentsToAdd = [];
     let classId: string = "";
@@ -38,60 +37,55 @@
         navigate("/login");
     }
 
-
-
-    function getSubject() {
-        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((r) => {
-                let data: Subject = r.data;
-                longName = data.LongName;
-                students = data;
-                realization = data.Realization;
-                selectedHour = data.SelectedHours;
-                location = data.Location;
-            });
+    async function getSubject() {
+        let response = await fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        let data: Subject = r.data;
+        longName = data.LongName;
+        students = data;
+        realization = data.Realization;
+        selectedHour = data.SelectedHours;
+        location = data.Location;
     }
 
-    function patchSubjectName() {
+    async function patchSubjectName() {
         let fd = new FormData();
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
         fd.append("selected_hours", selectedHour.toString());
         fd.append("location", location);
-        fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
-            .then((response) => response.json())
-            .then((r) => getSubject());
+        await fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+        await getSubject();
     }
 
-    function getStudents() {
-        fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((r) => studentsToAdd = r.data);
+    async function getStudents() {
+        let response = await fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        studentsToAdd = r.data;
     }
 
-    function assignToSubject(cid: string) {
-        fetch(`${baseurl}/subject/get/${id}/add_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
-            .then((response) => response.json())
-            .then((r) => getSubject());
+    async function assignToSubject() {
+        await fetch(`${baseurl}/subject/get/${id}/add_user/${studentPick["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+        await getSubject();
     }
 
-    function deleteFromSubject(cid: string) {
-        fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
-            .then((response) => response.json())
-            .then((r) => getSubject());
+    async function deleteFromSubject(cid: string) {
+        await fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await getSubject();
     }
 
-    getSubject()
-    getStudents();
+    onMount(async () => {
+        await getSubject();
+        await getStudents();
+    })
 </script>
 
 {#if students !== undefined}
-    <Autocomplete combobox options={subjects} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 500)} />
-    <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5" on:change={() => setTimeout(patchSubjectName, 500)}>
+    <Autocomplete combobox options={subjects} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 200)} />
+    <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5" on:change={() => setTimeout(patchSubjectName, 200)}>
         <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
     </Textfield>
-    <Textfield label="Učilnica/Lokacija" bind:value={location} on:change={() => setTimeout(patchSubjectName, 500)}>
+    <Textfield label="Učilnica/Lokacija" bind:value={location} on:change={() => setTimeout(patchSubjectName, 200)}>
         <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
     </Textfield>
     <p/>
@@ -105,12 +99,13 @@
     </Button>
     <p/>
     {#if !students.InheritsClass}
-        <Select bind:classId label="Izberite učenca" variant="outlined" style="width: 100%;">
-            <Option value="" on:click={() => classId = ""}/>
-            {#each studentsToAdd as c}
-                <Option value={c["ID"]} on:click={() => assignToSubject(c["ID"])}>{c["Name"]}</Option>
-            {/each}
-        </Select>
+        <Autocomplete
+            options={studentsToAdd}
+            getOptionLabel={(option) => option ? option["Name"] : ""}
+            bind:value={studentPick}
+            label="Izberite učenca"
+            on:change={() => setTimeout(assignToSubject, 200)}
+        />
     {/if}
     <h2>Učitelj:</h2>
     <List class="demo-list" twoLine avatarList>

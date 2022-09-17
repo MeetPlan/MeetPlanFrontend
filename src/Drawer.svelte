@@ -232,7 +232,7 @@
         hasRequested = true;
     }
 
-    setInterval(getUnread, 10000);
+    setInterval(getUnread, 120000);
 </script>
 
 <Dialog

@@ -196,6 +196,10 @@
             window.location = `/napaka?error=${e.reason}`
         }
     })
+
+
+
+    getClasses().then(() => parseTimetable());
 </script>
 
 {#await get()}
