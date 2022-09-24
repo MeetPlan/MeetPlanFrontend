@@ -47,7 +47,7 @@
 
     let teachers = [];
     let isSubstitution = false;
-    let teacherId: number = undefined;
+    let teacherId: string = undefined;
     let protonRatings = [];
 
     function getTeachers() {
