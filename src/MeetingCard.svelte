@@ -68,7 +68,7 @@
                     {n.Location}
                 </span>
             </span>
-            <Tooltip unbounded>
+            <Tooltip unbounded hideDelay={0}>
                 <h1>{n.MeetingName}</h1>
                 Predmet: <b>{n.Subject.Name}</b><br>
                 Učitelj: <b>{n.TeacherName}</b><br>

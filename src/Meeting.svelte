@@ -18,6 +18,11 @@
 
     export let meetingId: string;
 
+    function removeAllTooltips() {
+        // this is incredible junk, but it works
+        [...document.getElementsByClassName("mdc-tooltip")].map(n => n && n.remove());
+    }
+
     let meetingData;
 
     let realization = 0;
@@ -122,7 +127,7 @@
     let items = [];
     let classId = "";
 
-
+    removeAllTooltips();
 
     if (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") {
         getTeachers();
