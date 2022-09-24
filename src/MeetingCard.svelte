@@ -32,6 +32,7 @@
 
     .test { border-top: 20px solid green; }
     .substitution { border-top: 20px solid red; }
+    .correctionTest { border-top: 20px solid yellowgreen; }
     .notMandatory { border-top: 20px solid blue; }
     .grading { border-top: 20px solid pink; }
     .beta { border-top: 20px solid orange; }
@@ -62,7 +63,7 @@
                     {/each}
                 </span>
                 <div
-                        class="triangle {n.IsSubstitution ? 'substitution' : ''} {n.IsGrading ? 'grading' : ''} {n.IsTest ? 'test' : ''} {n.IsBeta ? 'beta' : ''} {!n.IsMandatory ? 'notMandatory' : ''}"
+                        class="triangle {n.IsSubstitution ? 'substitution' : ''} {n.IsGrading ? 'grading' : ''} {n.IsTest ? 'test' : ''} {n.IsCorrectionTest ? 'correctionTest' : ''} {n.IsBeta ? 'beta' : ''} {!n.IsMandatory ? 'notMandatory' : ''}"
                 ></div>
                 <span class="classroom">
                     {n.Location}
@@ -81,6 +82,9 @@
                     <b>Srečanje je ocenjevanje</b><br>
                     {#if n.IsWrittenAssessment}
                         <b>Srečanje je pisno ocenjevanje</b><br>
+                    {/if}
+                    {#if n.IsCorrectionTest}
+                        <b>Srečanje je popravni izpit (drugi rok)</b><br>
                     {/if}
                 {/if}
                 {#if n.IsTest}

@@ -93,7 +93,7 @@ export default {
 		// Watch the `public` directory and refresh the
 		// browser on changes when not in production
 		// TODO: Not include this delay
-		!production && livereload({watch: 'public', delay: 25000,}),
+		!production && livereload({watch: 'public', delay: 10000,}),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify

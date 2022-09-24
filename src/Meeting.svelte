@@ -143,7 +143,8 @@
     <p>Je obvezno: <b>{meetingData.IsMandatory ? "Ja" : "Ne"}</b></p>
     <p>Je ocenjevanje znanja: <b>{meetingData.IsGrading ? "Ja" : "Ne"}</b></p>
     {#if meetingData.IsGrading}
-        <p>Je pisno ocenjevanje znanja: <b>{meetingData.IsWrittenAssessment}</b></p>
+        <p>Je pisno ocenjevanje znanja: <b>{meetingData.IsWrittenAssessment ? "Ja" : "Ne"}</b></p>
+        <p>Je popravni izpit (drugi rok): <b>{meetingData.IsCorrectionTest ? "Ja" : "Ne"}</b></p>
     {/if}
     <p>Je preverjanje znanja: <b>{meetingData.IsTest ? "Ja" : "Ne"}</b></p>
     <p>Je nadomeščanje: <b>{meetingData.IsSubstitution ? "Ja" : "Ne"}</b></p>

@@ -32,9 +32,10 @@
     let isWrittenAssessment: boolean = false;
     let isTest: boolean = false;
     let isRepetitive: boolean = false;
+    let isCorrectionTest: boolean = false;
 
     let subjects: Subject[] = [];
-    let subjectId: number = undefined;
+    let subjectId: string = undefined;
 
     export let editId;
 
@@ -92,11 +93,12 @@
                     isGrading = json.data.IsGrading;
                     isTest = json.data.IsTest;
                     location = json.data.Location;
+                    isCorrectionTest = json.data.IsCorrectionTest;
                 },
             );
     }
 
-    function createNew() {
+    async function createNew() {
         if (date === "") {
             console.log("Date is empty");
             date = ""
@@ -132,11 +134,10 @@
         fd.append("repeat_cycle", repeatCycle.toString())
         fd.append("last_date", fmtDate(new Date(lastDate)))
         fd.append("location", location);
-        fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
+        fd.append("is_correction_test", isCorrectionTest.toString());
+        await fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
             {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
-            .then((r) => r.json())
-            .then((r) => console.log(r))
-            .then(() => navigate("/"))
+        navigate("/")
     }
 
     getSubjects();
@@ -221,6 +222,13 @@ Izberite uro:
     </FormField>
 {/if}
 <p/>
+{#if isGrading}
+    <FormField>
+        <Switch bind:checked={isCorrectionTest} />
+        Je popravni izpit (drugi rok)
+    </FormField>
+{/if}
+<p/>
 {#if !isGrading}
     <FormField>
         <Switch bind:checked={isTest} />
@@ -245,7 +253,7 @@ Izberite uro:
     </Textfield>
 {/if}
 <p/><hr><p/>
-<Button on:click={() => createNew()}>
+<Button on:click={() => setTimeout(createNew, 200)}>
     <Icon class="material-icons">add</Icon>
     <Label>Dodaj</Label>
 </Button>
