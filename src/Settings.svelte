@@ -5,7 +5,7 @@
 
     import FormField from '@smui/form-field';
     import Switch from '@smui/switch';
-    import List, {Item, Separator, Text} from "@smui/list";
+    import List, {Item, Text} from "@smui/list";
     import {Icon} from "@smui/button";
     import Cookies from "js-cookie";
 

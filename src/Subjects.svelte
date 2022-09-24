@@ -16,7 +16,9 @@
     import { navigate } from "svelte-navigator";
     import {baseurl} from "./constants";
     import Cookies from "js-cookie";
-    import DataTable, {Body, Cell, Head, Row, Label as TableLabel} from "@smui/data-table";
+    import DataTable, {Body, Cell, Head, Row} from "@smui/data-table";
+    import Switch from "@smui/switch";
+    import {onMount} from "svelte";
 
     let items = [];
     let teachers = [];
@@ -27,66 +29,53 @@
         navigate("/login");
     }
 
-    function loadThings() {
-        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    items = json["data"];
-                },
-            );
+    async function loadThings() {
+        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json()
+        items = json["data"];
     }
 
-    function getSubjects() {
-        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    subjects = json["data"];
-                },
-            );
+    async function getSubjects() {
+        let response = await fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json();
+        subjects = json["data"];
     }
 
-    function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    teachers = json["data"];
-                },
-            );
+    async function getTeachers() {
+        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json()
+        teachers = json["data"];
     }
-
-    loadThings();
-    getTeachers();
-    getSubjects();
 
     let nclass = "";
     let teacherId = "";
     let classId = "";
     let longName = "";
     let realization: number = 60.0;
+    let isGraded: boolean = true;
 
-    function newSubject() {
+    async function newSubject() {
         let fd = new FormData();
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
         fd.append("class_id", classId);
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
-        fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
-            .then((response) => response.json())
-            .then((json) => {
-                    getSubjects();
-                },
-            );
+        fd.append("is_graded", isGraded.toString());
+        await fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd});
+        await getSubjects();
     }
 
-    function deleteSubject(cid: number) {
-        fetch(`${baseurl}/subject/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
-            .then((response) => response.json())
-            .then((json) => {
-                    getSubjects();
-                },
-            );
+    async function deleteSubject(cid: number) {
+        await fetch(`${baseurl}/subject/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await getSubjects();
     }
+
+    onMount(async () => {
+        await loadThings();
+        await getTeachers();
+        await getSubjects();
+    })
 </script>
 
 {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
@@ -113,7 +102,12 @@
         <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
     </Textfield>
     <p/>
-    <Button on:click={() => newSubject()} variant="raised">
+    <FormField>
+        <Switch bind:checked={isGraded} />
+        <span slot="label">Se ocenjuje</span>
+    </FormField>
+    <p/>
+    <Button on:click={newSubject} variant="raised">
         <Label>OK</Label>
     </Button>
 {/if}
@@ -128,6 +122,7 @@
             <Cell>Dolgo ime predmeta</Cell>
             <Cell>Lokacija</Cell>
             <Cell>Ur na teden</Cell>
+            <Cell>Se ocenjuje</Cell>
             <Cell>Shrani spremembe</Cell>
             <Cell>Izbriši</Cell>
         </Row>
@@ -145,12 +140,18 @@
                 </FormField>
             </Cell>
             <Cell on:click={(e) => e.stopPropagation()}>
+                <FormField>
+                    <Switch bind:checked={item.IsGraded} />
+                </FormField>
+            </Cell>
+            <Cell on:click={(e) => e.stopPropagation()}>
                 <Button on:click={async () => {
                     let fd = new FormData();
                     fd.append("long_name", item.LongName)
                     fd.append("realization", item.Realization.toString());
                     fd.append("selected_hours", item.SelectedHours.toString());
                     fd.append("location", item.Location);
+                    fd.append("is_graded", item.IsGraded.toString());
                     await fetch(`${baseurl}/subject/get/${item.ID}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
                     await getSubjects();
                 }}>
@@ -159,9 +160,9 @@
                 </Button>
             </Cell>
             <Cell>
-                <IconButton class="material-icons" on:click={(e) => {
+                <IconButton class="material-icons" on:click={async (e) => {
                     e.stopPropagation();
-                    deleteSubject(item["ID"])
+                    await deleteSubject(item["ID"])
                 }}>delete</IconButton>
             </Cell>
         </Row>

@@ -19,6 +19,7 @@
     import type {Subject} from "./typescript-definitions/tsdef";
     import Cookies from "js-cookie";
     import {onMount} from "svelte";
+    import Switch from "@smui/switch";
 
     let studentPick;
     let students: Subject;
@@ -27,6 +28,7 @@
     let longName: string = "";
     let selectedHour: number = 1;
     let location: string = "";
+    let isGraded: boolean = true;
 
     let realization: number = 60.0;
 
@@ -46,6 +48,7 @@
         realization = data.Realization;
         selectedHour = data.SelectedHours;
         location = data.Location;
+        isGraded = data.IsGraded;
     }
 
     async function patchSubjectName() {
@@ -54,6 +57,7 @@
         fd.append("realization", realization.toString());
         fd.append("selected_hours", selectedHour.toString());
         fd.append("location", location);
+        fd.append("is_graded", isGraded.toString());
         await fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
         await getSubject();
     }
@@ -88,6 +92,11 @@
     <Textfield label="Učilnica/Lokacija" bind:value={location} on:change={() => setTimeout(patchSubjectName, 200)}>
         <HelperText slot="helper">Vnesite, prosimo lokacijo oz. učilnico, v kateri bo potekal ta predmet</HelperText>
     </Textfield>
+    <p/>
+    <FormField>
+        <Switch bind:checked={isGraded} on:change={() => setTimeout(patchSubjectName, 200)} />
+        <span slot="label">Se ocenjuje</span>
+    </FormField>
     <p/>
     <FormField align="end" style="display: flex;">
         <Slider discrete style="flex-grow: 1;" bind:value={selectedHour} min={1} max={10} step={0.5} />

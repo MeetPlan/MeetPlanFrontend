@@ -16,7 +16,7 @@
 
     let options;
 
-    export let meetingId: number;
+    export let meetingId: string;
 
     let meetingData;
 

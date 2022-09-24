@@ -31,7 +31,7 @@
     const location = useLocation();
 
     let active = "";
-    let meetingActive: number = -1;
+    let meetingActive: string = undefined;
     let communicationActive: string = undefined;
     let communications = [];
     let communicationUnread = {};
@@ -81,17 +81,17 @@
             if (active === undefined) {
                 let pathSplit = path.split("/")
                 if (pathSplit.length >= 3 && pathSplit[1] === "meeting") {
-                    meetingActive = parseInt(pathSplit[2]);
+                    meetingActive = pathSplit[2];
                 } else if (pathSplit.length === 3 && pathSplit[1] === "communication") {
                     communicationActive = pathSplit[2];
                 }
             } else {
                 console.log("resetting", $location.pathname)
-                meetingActive = -1
+                meetingActive = undefined
                 communicationActive = undefined
             }
 
-            if (meetingActive !== -1) {
+            if (meetingActive !== undefined) {
                 allPaths[`/meeting/${meetingActive}`] = "srecanje"
                 allPaths[`/meeting/${meetingActive}/absence`] = "absenceManagement"
                 allPaths[`/meeting/${meetingActive}/grading`] = "grading"
@@ -192,7 +192,7 @@
         let json = await response.json()
         mealsBlocked = json.data;
 
-        if ((sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") && meetingActive !== -1) {
+        if ((sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") && meetingActive !== undefined) {
             let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             users = json.data;
@@ -407,7 +407,7 @@
                     <Graphic class="material-icons" aria-hidden="true">home</Graphic>
                     <Text>Pregled</Text>
                 </Item>
-                {#if meetingActive === -1 && communicationActive === undefined}
+                {#if meetingActive === undefined && communicationActive === undefined}
                     {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "school psychologist" || sessionStorage.getItem("role") === "food organizer"}
                         {#if sessionStorage.getItem("role") !== "food organizer"}
                             <Item
@@ -565,7 +565,7 @@
                         {/if}
                     {/if}
                 {/if}
-                {#if meetingActive !== -1 && (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist")}
+                {#if meetingActive !== undefined && (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist")}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate(`/meeting/${meetingActive}`)}

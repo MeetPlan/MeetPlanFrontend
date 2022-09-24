@@ -201,29 +201,35 @@
                         <div style="display:inline-block;">{subject.Name}</div>
                         <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{subject.Average.toFixed(2)}</div>
                     </Cell>
-                    {#each subject.Periods as period, i}
-                        <Cell>
-                            <div class="sameline">
-                                <div style="display:inline-block; width: 5px;"/>
-                                {#each period.Grades as grade}
-                                    <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
-                                        <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
-{grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">{grade.Grade}
-                                        </span>
-                                    </div>
+                    {#if subject.IsGraded}
+                        {#each subject.Periods as period, i}
+                            <Cell>
+                                <div class="sameline">
                                     <div style="display:inline-block; width: 5px;"/>
-                                {/each}
-                                <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
-                            </div>
+                                    {#each period.Grades as grade}
+                                        <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
+                                            <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
+    {grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">{grade.Grade}
+                                            </span>
+                                        </div>
+                                        <div style="display:inline-block; width: 5px;"/>
+                                    {/each}
+                                    <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
+                                </div>
+                            </Cell>
+                        {/each}
+                        <Cell>
+                            {#if subject.Final !== 0}
+                                <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
+                                    {subject.Final}
+                                </div>
+                            {/if}
                         </Cell>
-                    {/each}
-                    <Cell>
-                        {#if subject.Final !== 0}
-                            <div style="color: {gradeColors[subject.Final - 1]}; display:inline-block; font-size: 20px;">
-                                {subject.Final}
-                            </div>
-                        {/if}
-                    </Cell>
+                    {:else}
+                        <Cell>/</Cell>
+                        <Cell>/</Cell>
+                        <Cell>/</Cell>
+                    {/if}
                 </Row>
             {/each}
         {/if}

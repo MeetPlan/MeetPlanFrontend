@@ -56,9 +56,12 @@ export default {
 			isProduction: production,
 			isTauriApp: tauri === "true",
 		}),
+
 		svelte({
 			preprocess: sveltePreprocess({ sourceMap: !production }),
 			compilerOptions: {
+				// disable sourcemap to save some more space
+				sourcemap: !production,
 				// enable run-time checks when not in production
 				dev: !production
 			}
@@ -89,7 +92,8 @@ export default {
 
 		// Watch the `public` directory and refresh the
 		// browser on changes when not in production
-		!production && livereload('public'),
+		// TODO: Not include this delay
+		!production && livereload({watch: 'public', delay: 25000,}),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify

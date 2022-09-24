@@ -27,6 +27,7 @@ export declare interface Subject {
     TeacherName: string;
     User: UserJSON[];
     RealizationDone: number;
+    IsGraded: boolean;
 }
 
 export declare interface Meeting {
