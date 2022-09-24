@@ -26,7 +26,7 @@
 
 
     function loadThings() {
-        fetch(`${baseurl}/${(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => {
                 if (response.ok) {
                     return response
@@ -62,7 +62,7 @@
         {@html insane(marked.marked(notification.Notification))}
     </div>
 {/each}
-{#if mobile && !(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent")}
+{#if mobile && !(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent")}
     <p/>
     <div
             tabindex="0"
@@ -73,7 +73,7 @@
     </div>
 {/if}
 <h1>Pozdravljeni v MeetPlan sistemu</h1>
-<b>Vaša dovoljenja: {sessionStorage.getItem("role")}</b>
+<b>Vaša dovoljenja: {localStorage.getItem("role")}</b>
 <hr />
 <Select bind:classId variant="outlined">
     <Option value="" on:click={() => {

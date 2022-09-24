@@ -118,7 +118,7 @@
 
 {#await getMeals()}
 {:then _}
-    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "food organizer"}
+    {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "food organizer"}
         <h1>Dodaj nov meni</h1>
         <Textfield bind:value={date} label="Datum menija" type="date" required on:click={() => date = ""}>
             <Icon class="material-icons" slot="leadingIcon">event</Icon>
@@ -247,7 +247,7 @@
                             {/if}
                             <p/>
                         {/if}
-                        {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "food organizer"}
+                        {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "food organizer"}
                             <Button on:click={() => {
                                 mealDescription = meal.Meals;
                                 date = meal.Date;

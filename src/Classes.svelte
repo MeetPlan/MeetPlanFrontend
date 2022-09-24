@@ -73,7 +73,7 @@
     }
 </script>
 
-{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
+{#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
     <Textfield label="Nov razred" bind:value={nclass}>
         <HelperText slot="helper">Vpišite prosimo ime novega razreda</HelperText>
     </Textfield>

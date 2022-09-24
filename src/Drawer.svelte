@@ -176,13 +176,13 @@
             return;
         }
 
-        if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
+        if (localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin") {
             let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             if (json.data === "true" || json.data === true) {
                 hasClass = true;
             }
-        } else if (sessionStorage.getItem("role") === "parent") {
+        } else if (localStorage.getItem("role") === "parent") {
             let response = await fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             children = json.data;
@@ -192,7 +192,7 @@
         let json = await response.json()
         mealsBlocked = json.data;
 
-        if ((sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") && meetingActive !== undefined) {
+        if ((localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") && meetingActive !== undefined) {
             let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             let json = await response.json()
             users = json.data;
@@ -392,7 +392,7 @@
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
                 <IconButton class="material-icons" aria-hidden="true" on:click={() => {
                     document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-                    sessionStorage.clear()
+                    localStorage.clear()
                     navigate("/login")
                 }}>logout</IconButton>
             </div>
@@ -408,8 +408,8 @@
                     <Text>Pregled</Text>
                 </Item>
                 {#if meetingActive === undefined && communicationActive === undefined}
-                    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "school psychologist" || sessionStorage.getItem("role") === "food organizer"}
-                        {#if sessionStorage.getItem("role") !== "food organizer"}
+                    {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "student" || localStorage.getItem("role") === "school psychologist" || localStorage.getItem("role") === "food organizer"}
+                        {#if localStorage.getItem("role") !== "food organizer"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/samotestiranje')}
@@ -444,7 +444,7 @@
                             {/if}
                         </Text>
                     </Item>
-                    {#if sessionStorage.getItem("role") === "student"}
+                    {#if localStorage.getItem("role") === "student"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/class/user/me')}
@@ -454,7 +454,7 @@
                             <Text>Moj pregled</Text>
                         </Item>
                     {/if}
-                    {#if sessionStorage.getItem("role") === "parent"}
+                    {#if localStorage.getItem("role") === "parent"}
                         {#each children as child}
                             <Item
                                     href="javascript:void(0)"
@@ -466,7 +466,7 @@
                             </Item>
                         {/each}
                     {/if}
-                    {#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "admin"}
+                    {#if localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "admin"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/new/meeting')}
@@ -476,7 +476,7 @@
                             <Text>Dodaj srečanje</Text>
                         </Item>
                     {/if}
-                    {#if sessionStorage.getItem("role") === "teacher"}
+                    {#if localStorage.getItem("role") === "teacher"}
                         <Item
                                 href="javascript:void(0)"
                                 on:click={() => navigate('/my/class')}
@@ -502,8 +502,8 @@
                             <Text>Redovalnica</Text>
                         </Item>-->
                     {/if}
-                    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
-                        {#if sessionStorage.getItem("role") !== "school psychologist"}
+                    {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
+                        {#if localStorage.getItem("role") !== "school psychologist"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/users')}
@@ -529,7 +529,7 @@
                             <Graphic class="material-icons" aria-hidden="true">school</Graphic>
                             <Text>Vsi razredi</Text>
                         </Item>
-                        {#if sessionStorage.getItem("role") !== "school psychologist"}
+                        {#if localStorage.getItem("role") !== "school psychologist"}
                             <Item
                                     href="javascript:void(0)"
                                     on:click={() => navigate('/settings')}
@@ -565,7 +565,7 @@
                         {/if}
                     {/if}
                 {/if}
-                {#if meetingActive !== undefined && (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist")}
+                {#if meetingActive !== undefined && (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist")}
                     <Item
                             href="javascript:void(0)"
                             on:click={() => navigate(`/meeting/${meetingActive}`)}

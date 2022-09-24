@@ -55,13 +55,13 @@
     onMount(async () => {
         if (classId !== "") {
             await makeRequest(to_number(classId))
-        } else if (!(sessionStorage.getItem("role") === "student" || sessionStorage.getItem("role") === "parent" || sessionStorage.getItem("role") === "food organizer")) {
+        } else if (!(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" || localStorage.getItem("role") === "food organizer")) {
             await getClasses()
         }
     });
 </script>
 
-{#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
+{#if localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
     <div
             tabindex="0"
             style="background-color: #ffc107; color: black; padding: 10px;"

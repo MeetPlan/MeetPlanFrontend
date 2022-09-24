@@ -125,7 +125,7 @@
                 <TextList>
                     <PrimaryText>{item.Name}</PrimaryText>
                 </TextList>
-                {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
+                {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
                     <Meta><IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation()
                         deleteFromClass(item.ID)

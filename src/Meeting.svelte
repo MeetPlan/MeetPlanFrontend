@@ -124,7 +124,7 @@
 
 
 
-    if (sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant") {
+    if (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") {
         getTeachers();
         getProtonSubstitutionRatings();
     }
@@ -147,7 +147,7 @@
         {@html insane(marked.marked(meetingData.Details))}
     {/if}
     <a href="{meetingData.URL}">Povezava do srečanja</a>
-    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("userId") === meetingData.Subject.TeacherID.toString() || sessionStorage.getItem("userId") === meetingData.TeacherID.toString()}
+    {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("userId") === meetingData.Subject.TeacherID.toString() || localStorage.getItem("userId") === meetingData.TeacherID.toString()}
         <p/>
         <Button on:click={() => navigate("/edit/" + meetingData.ID)}>
             <Icon class="material-icons">edit</Icon>
@@ -160,7 +160,7 @@
     {/if}
     <p/>
     <div use:chart={options}/>
-    {#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
+    {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
         <p/>
         <FormField>
             <Switch bind:checked={isSubstitution} on:click={() => {

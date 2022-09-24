@@ -65,7 +65,7 @@
             <Cell>{item["Name"]}</Cell>
             <Cell>{item["Email"]}</Cell>
             <Cell>
-                {#if sessionStorage.getItem("userId") !== item["ID"]}
+                {#if localStorage.getItem("userId") !== item["ID"]}
                     <SegmentedButton segments={choices} let:segment singleSelect on:change={(e) => {
                         e.stopPropagation();
                         console.log(e);
@@ -87,9 +87,9 @@
                             );
                     }} bind:selected="{item['Role']}">
                         {#if
-                            (sessionStorage.getItem("role") === "principal assistant" && !(segment === "principal" || segment === "principal assistant")) ||
-                            (sessionStorage.getItem("role") === "principal" && !(segment === "principal")) ||
-                            (sessionStorage.getItem("role") === "admin")
+                            (localStorage.getItem("role") === "principal assistant" && !(segment === "principal" || segment === "principal assistant")) ||
+                            (localStorage.getItem("role") === "principal" && !(segment === "principal")) ||
+                            (localStorage.getItem("role") === "admin")
                         }
                             {#if !(segment === "principal" && principalId !== undefined && principalId !== item.ID)}
                                 <Segment {segment}>
@@ -101,7 +101,7 @@
                 {/if}
             </Cell>
             <Cell>
-                {#if sessionStorage.getItem("email") !== item["Email"]}
+                {#if localStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
@@ -114,7 +114,7 @@
                 {/if}
             </Cell>
             <Cell>
-                {#if sessionStorage.getItem("email") !== item["Email"]}
+                {#if localStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={(e) => {
                         e.stopPropagation();
                         fetch(`${baseurl}/user/delete/${item["ID"]}`, {

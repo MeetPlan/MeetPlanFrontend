@@ -78,7 +78,7 @@
     })
 </script>
 
-{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
+{#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
     <Textfield label="Nov predmet" bind:value={nclass}>
         <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
     </Textfield>

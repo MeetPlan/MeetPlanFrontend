@@ -109,7 +109,7 @@
     }
 
     function getParentConfig() {
-        if (sessionStorage.getItem("role") === "parent") {
+        if (localStorage.getItem("role") === "parent") {
             fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
                 .then((r) => r.json())
                 .then((r) => {
@@ -169,7 +169,7 @@
 {#if userData}
     <h1>{userData.Name}</h1>
 {/if}
-{#if sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant" || sessionStorage.getItem("role") === "school psychologist"}
+{#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
     <Button on:click={() => {
         fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
             .then((response) => response.blob())
@@ -238,7 +238,7 @@
 {:else}
     Sistemski administrator je izključil vpogled v ocene otroka za vse starše.
 {/if}
-{#if sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin" || sessionStorage.getItem("role") === "principal" || sessionStorage.getItem("role") === "principal assistant"}
+{#if localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
     <p/>
     <FormField>
         <Switch bind:checked={isPassing} on:click={() => {
@@ -292,7 +292,7 @@
                             {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
                             <Meta>
                                 <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                    if (sessionStorage.getItem("role") === "teacher" || sessionStorage.getItem("role") === "admin") {
+                                    if (localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin") {
                                         fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
                                             .then((r) => r.json())
                                             .then((r) => {

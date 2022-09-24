@@ -81,7 +81,7 @@
         <div style="white-space: nowrap;">
             <Avatar name={message.UserName} style="display: inline-block;"/>
             <h2 style="display: inline-block; text-align: center;">{message.UserName}</h2>
-            {#if message.UserID.toString() === sessionStorage.getItem("userId")}
+            {#if message.UserID.toString() === localStorage.getItem("userId")}
                 <Meta style="display: inline-block;">
                     <Button on:click={() => deleteMessage(message.ID)}>
                         <Icon class="material-icons">delete</Icon>

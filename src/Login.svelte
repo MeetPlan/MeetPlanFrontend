@@ -21,9 +21,9 @@
             let r = await fetch(`${constants.baseurl}/user/login`, {body: fd, method: "POST"})
             let response = await r.json();
             if (response["success"] === true) {
-                sessionStorage.setItem("role", response["data"]["role"]);
-                sessionStorage.setItem("userId", response["data"]["user_id"]);
-                sessionStorage.setItem("email", response["data"]["email"]);
+                localStorage.setItem("role", response["data"]["role"]);
+                localStorage.setItem("userId", response["data"]["user_id"]);
+                localStorage.setItem("email", response["data"]["email"]);
                 Cookies.set("key", response["data"]["token"], {sameSite: "strict"});
                 navigate("/")
             } else {
