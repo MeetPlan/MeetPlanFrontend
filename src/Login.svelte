@@ -54,6 +54,18 @@
         transform: translate(-50%, -50%);
         text-align: center;
     }
+    @media only screen and (max-width: 600px) {
+        .center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    }
 </style>
 
 <main>

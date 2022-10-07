@@ -1,15 +1,45 @@
 <script lang="ts">
-	import {Router, Route} from "svelte-navigator";
+	import {Router, Route, globalHistory} from "svelte-navigator";
 	import Drawer from "./Drawer.svelte";
 	import {AppContent} from "@smui/drawer";
 	import Error from "./Widgets/Error.svelte";
+	import isMobile from "is-mobile";
+	import Button, {Icon, Label} from "@smui/button";
+	import {onDestroy, onMount} from "svelte";
+
+	const mobile = isMobile();
+	let open = !mobile;
+
+	let pathname = window.location.pathname;
+	let unsub;
+
+	onMount(() => {
+		unsub = globalHistory.listen(({ location, action }) => {
+			console.log(location, action);
+			pathname = location.pathname;
+		});
+	});
+
+	onDestroy(() => {
+		unsub();
+	});
 </script>
 
 <div class="drawer-container">
 	<Router>
-		<Drawer />
+		<Drawer open={open} statusCallback={(o) => open = o} />
 		<AppContent class="app-content">
 			<main class="main-content">
+				{#if isMobile() && !(pathname === "/login" || pathname === "/register")}
+					<Button on:click={() => open = !open}>
+						<Icon class="material-icons">menu_open</Icon>
+						{#if open}
+							<Label>Zapri navigacijo</Label>
+						{:else}
+							<Label>Odpri navigacijo</Label>
+						{/if}
+					</Button>
+				{/if}
 				<div>
 					<Route path="/samotestiranje">
 						{#await import('./Samotestiranje.svelte') then Samotestiranje}

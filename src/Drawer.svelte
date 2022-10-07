@@ -44,6 +44,7 @@
     let hasRequested = false;
 
     $: (async () => {
+        statusCallback(open);
         if (!($location.pathname === "/login" || $location.pathname === "/register")) {
             showDrawer = true;
 
@@ -169,7 +170,8 @@
     let user = 0;
 
     const mobile = isMobile();
-    let open: boolean = !mobile;
+    export let open: boolean = !mobile;
+    export let statusCallback;
 
     async function fetchData() {
         if (hasRequested) {
@@ -650,13 +652,5 @@
     </Drawer>
     {#if mobile}
         <Scrim fixed={false} />
-        <Button on:click={() => open = !open}>
-            <Icon class="material-icons">menu_open</Icon>
-            {#if open}
-                <Label>Zapri navigacijo</Label>
-            {:else}
-                <Label>Odpri navigacijo</Label>
-            {/if}
-        </Button>
     {/if}
 {/if}

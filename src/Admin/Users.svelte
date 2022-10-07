@@ -39,6 +39,8 @@
 
     import { navigate } from "svelte-navigator";
     import Cookies from "js-cookie";
+    import FormField from "@smui/form-field";
+    import Switch from "@smui/switch";
 
     const token = Cookies.get("key");
     if (token === null || token === undefined) {
@@ -53,6 +55,7 @@
             <Cell style="width: 100%;">Name</Cell>
             <Cell>Email</Cell>
             <Cell>Change role</Cell>
+            <Cell>Lock user</Cell>
             <Cell>Reset password</Cell>
             <Cell>Delete user</Cell>
             <Cell>View</Cell>
@@ -98,6 +101,17 @@
                             {/if}
                         {/if}
                     </SegmentedButton>
+                {/if}
+            </Cell>
+            <Cell>
+                {#if localStorage.getItem("email") !== item["Email"]}
+                    <FormField>
+                        <Switch bind:checked={item["IsLocked"]} on:click={async (e) => {
+                            e.stopPropagation();
+                            await fetch(`${baseurl}/user/lock_unlock/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"});
+                            loadThings();
+                        }} />
+                    </FormField>
                 {/if}
             </Cell>
             <Cell>
