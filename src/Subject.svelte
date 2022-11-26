@@ -85,7 +85,7 @@
 </script>
 
 {#if students !== undefined}
-    <Autocomplete combobox options={subjects} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 200)} />
+    <Autocomplete combobox options={subjects} textfield$style="width: 100%;" style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" on:change={() => setTimeout(patchSubjectName, 200)} />
     <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5" on:change={() => setTimeout(patchSubjectName, 200)}>
         <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>
     </Textfield>

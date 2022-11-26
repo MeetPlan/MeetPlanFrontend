@@ -14,6 +14,7 @@
     import insane from "insane";
     import type {Subject} from "./typescript-definitions/tsdef";
     import Cookies from "js-cookie";
+    import Autocomplete from "@smui-extra/autocomplete";
 
     let date: string = "";
     let lastDate: string = "";
@@ -35,7 +36,7 @@
     let isCorrectionTest: boolean = false;
 
     let subjects: Subject[] = [];
-    let subjectId: string = undefined;
+    let subjectId: Subject = undefined;
 
     export let editId;
 
@@ -77,25 +78,22 @@
         return `${pieces[2]}-${pieces[1]}-${pieces[0]}`
     }
 
-    function getMeetingData() {
-        fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
-                    console.log(date)
-                    subjectId = json.data.SubjectID;
-                    name = json.data.MeetingName;
-                    description = json.data.Details;
-                    url = json.data.URL;
-                    hour = json.data.Hour;
-                    isMandatory = json.data.IsMandatory;
-                    isWrittenAssessment = json.data.IsWrittenAssessment;
-                    isGrading = json.data.IsGrading;
-                    isTest = json.data.IsTest;
-                    location = json.data.Location;
-                    isCorrectionTest = json.data.IsCorrectionTest;
-                },
-            );
+    async function getMeetingData() {
+        let response = await fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json()
+        date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
+        console.log(date)
+        subjectId = json.data.SubjectID;
+        name = json.data.MeetingName;
+        description = json.data.Details;
+        url = json.data.URL;
+        hour = json.data.Hour;
+        isMandatory = json.data.IsMandatory;
+        isWrittenAssessment = json.data.IsWrittenAssessment;
+        isGrading = json.data.IsGrading;
+        isTest = json.data.IsTest;
+        location = json.data.Location;
+        isCorrectionTest = json.data.IsCorrectionTest;
     }
 
     async function createNew() {
@@ -121,7 +119,7 @@
         console.log(hour)
         let fd = new FormData()
         console.log(fmtDate(new Date(date)));
-        fd.append("subjectId", subjectId.toString());
+        fd.append("subjectId", subjectId.ID);
         fd.append("date", fmtDate(new Date(date)));
         fd.append("name", name);
         fd.append("details", description);
@@ -146,22 +144,15 @@
     }
 </script>
 
-Izberite predmet:
-<Select bind:value={subjectId} variant="outlined">
-    <Option value="" on:click={() => subjectId = undefined}/>
-    {#each subjects as c}
-        <Option on:click={async () => {
-            subjectId = c.ID;
-            for (let i in subjects) {
-                let subject = subjects[i];
-                if (subject.ID === subjectId) {
-                    console.log(subject, subjectId);
-                    location = subject.Location;
-                }
-            }
-        }} value={c.ID}>{c["Name"]}</Option>
-    {/each}
-</Select>
+<Autocomplete
+        options={subjects}
+        getOptionLabel={(option) => option ? option["Name"] : ""}
+        bind:value={subjectId}
+        label="Izberite predmet"
+        required
+        textfield$style="width: 100%;" style="width: 100%;"
+        on:click={() => setTimeout(() => location = subjectId.Location, 20)}
+/>
 <p/>
 <Textfield bind:value={date} label="Datum srečanja" type="date" required on:click={() => date = ""}>
     <Icon class="material-icons" slot="leadingIcon">event</Icon>
@@ -177,15 +168,15 @@ Izberite uro:
     {/each}
 </Select>
 <p/>
-{#if subjectId !== ""}
+{#if subjectId !== undefined}
     {#if date !== ""}
         {#if hour !== undefined}
-            <Timetable subjectId={subjectId} date={new Date(date)} hour={hour} />
+            <Timetable subjectId={subjectId.ID} date={new Date(date)} hour={hour} />
         {:else}
-            <Timetable subjectId={subjectId} date={new Date(date)} />
+            <Timetable subjectId={subjectId.ID} date={new Date(date)} />
         {/if}
     {:else}
-        <Timetable subjectId={subjectId} />
+        <Timetable subjectId={subjectId.ID} />
     {/if}
 {/if}
 <p/>
@@ -247,7 +238,7 @@ Izberite uro:
         <HelperText slot="helper">Izberite prosim zadnji datum srečanja</HelperText>
     </Textfield>
     <p/>
-    <Textfield bind:value={repeatCycle} label="Cikel ponavljanja" type="number">
+    <Textfield bind:value={repeatCycle} label="Cikel ponavljanja" min={1} type="number">
         <Icon class="material-icons" slot="leadingIcon">replay</Icon>
         <HelperText slot="helper">Vpišite na koliko tednov se srečanje ponovi</HelperText>
     </Textfield>

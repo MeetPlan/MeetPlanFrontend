@@ -56,9 +56,9 @@
 
     async function newSubject() {
         let fd = new FormData();
-        fd.append("teacher_id", teacherId);
+        fd.append("teacher_id", teacherId["ID"]);
         fd.append("name", nclass);
-        fd.append("class_id", classId);
+        if (!(classId === "" || classId === undefined)) fd.append("class_id", classId["ID"]);
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
         fd.append("is_graded", isGraded.toString());
@@ -79,24 +79,14 @@
 </script>
 
 {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
-    <Textfield label="Nov predmet" bind:value={nclass}>
+    <Textfield helperLine$style="width: 100%;" style="width: 100%;" label="Nov predmet" bind:value={nclass}>
         <HelperText slot="helper">Vpišite prosimo kratko ime novega predmeta (primer - SLJ9a, ŠPOf)</HelperText>
     </Textfield>
-    <Autocomplete combobox options={subjectsList} style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" />
+    <Autocomplete combobox options={subjectsList} textfield$style="width: 100%;" style="width: 100%;" bind:value={longName} label="Izberite ali vpišite dolgo ime predmeta, če ga ni vpisanega" />
     <p/>
-    <Select bind:classId label="Izberite razred" variant="outlined" style="width: 100%;">
-        <Option value="" on:click={() => classId = ""}>Bom ročno dodal uporabnike (ne uporabi razreda)</Option>
-        {#each items as c}
-            <Option value={c["ID"]} on:click={() => classId = c["ID"]}>{c["Name"]}</Option>
-        {/each}
-    </Select>
+    <Autocomplete options={items} textfield$style="width: 100%;" style="width: 100%;" getOptionLabel={(option) => option ? option["Name"] : ""} bind:value={classId} label="Izberite razred (če ne vpišete razreda, se učence doda ročno preko spodnjega seznama)"/>
     <p/>
-    <Select bind:teacherId label="Izberite učitelja tega predmeta" variant="outlined" style="width: 100%;">
-        <Option value="" />
-        {#each teachers as c}
-            <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>
-        {/each}
-    </Select>
+    <Autocomplete options={teachers} textfield$style="width: 100%;" style="width: 100%;" getOptionLabel={(option) => option ? option["Name"] : ""} bind:value={teacherId} label="Izberite učitelja tega predmeta"/>
     <p/>
     <Textfield type="number" label="Realizacija" bind:value={realization} input$step="0.5">
         <HelperText slot="helper">Vpišite prosimo realizacijo</HelperText>

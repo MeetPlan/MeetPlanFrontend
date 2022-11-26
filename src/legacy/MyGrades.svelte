@@ -7,8 +7,9 @@
 <script lang="ts">
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {Meta} from "@smui/list";
-    import {baseurl} from "./constants";
+    import {baseurl} from "../constants";
     import Cookies from "js-cookie";
+    import Tooltip, {Wrapper} from "@smui/tooltip";
 
     let grades = null;
 
@@ -55,7 +56,20 @@
                         <div class="sameline">
                             <div style="display:inline-block; width: 5px;"/>
                             {#each period.Grades as grade}
-                                <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</div>
+                                <Wrapper>
+                                    <span style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</span>
+                                    <Tooltip>
+                                        {#if grade.Description !== ''}
+                                            Opis ocene: {grade.Description}
+                                        {/if}
+                                        <br>
+                                        {#if grade.CanPatch}
+                                            Se lahko popravlja
+                                        {:else}
+                                            Se ne more popravljati
+                                        {/if}
+                                    </Tooltip>
+                                </Wrapper>
                                 <div style="display:inline-block; width: 5px;"/>
                             {/each}
                             <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>

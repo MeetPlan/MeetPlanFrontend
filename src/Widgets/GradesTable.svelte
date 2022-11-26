@@ -15,6 +15,9 @@
     import Button, { Label } from '@smui/button';
     import Switch from '@smui/switch';
     import Cookies from "js-cookie";
+    import Tooltip, {Wrapper} from "@smui/tooltip";
+    import Textfield from "@smui/textfield";
+    import HelperText from "@smui/textfield/helper-text";
 
     let open = false;
 
@@ -24,6 +27,7 @@
     let userId;
     let finalize = false;
     let canPatch = true;
+    let description: string = "";
 
     function getGrades() {
         fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
@@ -40,7 +44,8 @@
         fd.append("user_id", userId);
         fd.append("period", selectedPeriod);
         fd.append("is_final", finalize.toString());
-        fd.append("can_patch", canPatch.toString())
+        fd.append("can_patch", canPatch.toString());
+        fd.append("description", description);
         fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
@@ -53,6 +58,7 @@
         fd.append("is_written", isWritten.toString());
         fd.append("grade", selectedGrade);
         fd.append("period", selectedPeriod);
+        fd.append("description", description);
         fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
             .then((r) => r.json())
             .then((r) => {
@@ -128,6 +134,9 @@
             </FormField>
             <br>
         {/each}
+        <br>
+        <Textfield textarea style="width: 100%;" bind:value={description} label="Opis ocene"/>
+        <br>
         {#if finalize === false}
             <FormField>
                 <Switch bind:checked={isWritten} />
@@ -139,6 +148,10 @@
                     <Switch bind:checked={canPatch} />
                     <span slot="label">Se lahko popravlja</span>
                 </FormField>
+            {/if}
+            {#if !canPatch}
+                <br>
+                Če izberete opcijo, da se ocene ne more popravljati, je ne bo mogel popraviti nihče drug kakor strežniški administrator, zato bodite zelo previdni pri vpisu ocene.
             {/if}
         {/if}
     </Content>
@@ -195,6 +208,7 @@
                                 toPatch = undefined;
                                 finalize = false;
                                 open = true;
+                                description = "";
                             }
                         }}>
                             <div class="sameline">
@@ -207,13 +221,25 @@
                                             selectedGrade = grade.Grade;
                                             selectedPeriod = i + 1;
                                             isWritten = grade.IsWritten;
+                                            description = grade.Description;
                                             open = true;
                                         }
                                     }}>
-                                        <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
-{grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">
-                                            {grade.Grade}
-                                        </span>
+                                        <Wrapper>
+                                            <span>
+                                                {grade.Grade}
+                                            </span>
+                                            <Tooltip>
+                                                {#if grade.Description !== ''}
+                                                    Opis ocene: {grade.Description}<br>
+                                                {/if}
+                                                {#if grade.CanPatch}
+                                                    Se lahko popravlja
+                                                {:else}
+                                                    Se ne more popravljati
+                                                {/if}
+                                            </Tooltip>
+                                        </Wrapper>
                                     </div>
                                     <div style="display:inline-block; width: 5px;"/>
                                 {/each}

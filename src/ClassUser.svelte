@@ -22,6 +22,7 @@
     } from '@smui/list';
     import insane from "insane";
     import Cookies from "js-cookie";
+    import Tooltip, {Wrapper} from "@smui/tooltip";
 
 
     let grades;
@@ -207,11 +208,19 @@
                                 <div class="sameline">
                                     <div style="display:inline-block; width: 5px;"/>
                                     {#each period.Grades as grade}
-                                        <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">
-                                            <span title="{grade.Description !== '' ? `Opis ocene: ${grade.Description}` : ''}
-    {grade.CanPatch ? 'Se lahko popravlja' : 'Se ne more popravljati'}">{grade.Grade}
-                                            </span>
-                                        </div>
+                                        <Wrapper>
+                                            <span style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</span>
+                                            <Tooltip>
+                                                {#if grade.Description !== ''}
+                                                    Opis ocene: {grade.Description}<br>
+                                                {/if}
+                                                {#if grade.CanPatch}
+                                                    Se lahko popravlja
+                                                {:else}
+                                                    Se ne more popravljati
+                                                {/if}
+                                            </Tooltip>
+                                        </Wrapper>
                                         <div style="display:inline-block; width: 5px;"/>
                                     {/each}
                                     <Meta style="display:inline-block; font-size: 20px; float:right;">{period.Average.toFixed(2)}</Meta>
@@ -226,9 +235,9 @@
                             {/if}
                         </Cell>
                     {:else}
-                        <Cell>/</Cell>
-                        <Cell>/</Cell>
-                        <Cell>/</Cell>
+                        <Cell style="font-size: 20px;">/</Cell>
+                        <Cell style="font-size: 20px;">/</Cell>
+                        <Cell style="font-size: 20px;">/</Cell>
                     {/if}
                 </Row>
             {/each}

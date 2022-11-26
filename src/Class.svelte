@@ -116,6 +116,7 @@
         getOptionLabel={(option) => option ? option["Name"] : ""}
         bind:value={studentPick}
         label="Dodajte učenca"
+        textfield$style="width: 100%;" style="width: 100%;"
         on:change={() => setTimeout(assignToClass, 200)}
     />
     <List class="demo-list" twoLine avatarList>

@@ -2,7 +2,7 @@
 
 export declare interface UserJSON {
     Name: string;
-    ID: number;
+    ID: string;
     Email: string;
     Role: string;
     BirthCertificateNumber: string;
@@ -13,11 +13,11 @@ export declare interface UserJSON {
 }
 
 export declare interface Subject {
-    ID: number;
-    TeacherID: number;
+    ID: string;
+    TeacherID: string;
     Name: string;
     InheritsClass: boolean;
-    ClassID: number;
+    ClassID: string;
     Students: string;
     LongName: string;
     Realization: number;
@@ -31,10 +31,10 @@ export declare interface Subject {
 }
 
 export declare interface Meeting {
-    ID: number;
+    ID: string;
     MeetingName: string;
-    TeacherID: number;
-    SubjectID: number;
+    TeacherID: string;
+    SubjectID: string;
     Hour: number;
     Date: string;
     IsMandatory: boolean;

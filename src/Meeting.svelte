@@ -13,6 +13,9 @@
     import Timetable from "./Widgets/Timetable.svelte";
     import insane from "insane";
     import Cookies from "js-cookie";
+    import Autocomplete from "@smui-extra/autocomplete";
+    import type {UserJSON} from "./typescript-definitions/tsdef";
+    import {onMount} from "svelte";
 
     let options;
 
@@ -47,56 +50,47 @@
 
     let teachers = [];
     let isSubstitution = false;
-    let teacherId: string = undefined;
+    let teacherId = undefined;
     let protonRatings = [];
 
-    function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    teachers = json["data"];
-                },
-            );
+    async function getTeachers() {
+        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json();
+        teachers = json["data"];
     }
 
-    function getProtonSubstitutionRatings() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => {
-                    protonRatings = json["data"];
-                },
-            );
+    async function getProtonSubstitutionRatings() {
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json();
+        protonRatings = json["data"];
     }
 
 
-    function getMeetingData() {
-        fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                meetingData = r.data;
-                isSubstitution = meetingData.IsSubstitution;
-                teacherId = meetingData.TeacherID;
-                realizationDone = meetingData.Subject.RealizationDone;
-                realization = meetingData.Subject.Realization;
-                options = {
-                    chart: {
-                        type: "donut",
-                        width: "400px",
-                        offsetX: 0,
-                    },
-                    series: [realizationDone, realization-realizationDone],
-                    labels: ["Trenutna realizacija", "Realizacija"],
-                };
-            })
+    async function getMeetingData() {
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        meetingData = r.data;
+        isSubstitution = meetingData.IsSubstitution;
+        teacherId = meetingData.TeacherID;
+        realizationDone = meetingData.Subject.RealizationDone;
+        realization = meetingData.Subject.Realization;
+        options = {
+            chart: {
+                type: "donut",
+                width: "400px",
+                offsetX: 0,
+            },
+            series: [realizationDone, realization-realizationDone],
+            labels: ["Trenutna realizacija", "Realizacija"],
+        };
     }
 
-    function deleteMeeting() {
-        fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
-            .then((r) => r.json())
-            .then((r) => navigate("/"))
+    async function deleteMeeting() {
+        await fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        navigate("/")
     }
 
-    function patchMeeting() {
+    async function patchMeeting() {
         let fd = new FormData()
         fd.append("subjectId", meetingData.Subject.ID);
         fd.append("date", meetingData.Date);
@@ -107,17 +101,14 @@
         fd.append("is_mandatory", meetingData.IsMandatory)
         fd.append("is_grading", meetingData.IsGrading)
         fd.append("is_written_assessment", meetingData.IsWrittenAssessment)
+        fd.append("is_correction_test", meetingData.IsCorrectionTest)
         fd.append("is_test", meetingData.IsTest)
         fd.append("is_substitution", isSubstitution.toString())
-        fd.append("teacherId", teacherId.toString());
+        fd.append("teacherId", teacherId);
         fd.append("location", meetingData.Location);
-        fetch(`${baseurl}/meetings/new/${meetingId}`,
-            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
-            .then((r) => r.json())
-            .then((r) => getMeetingData())
+        await fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
+        await getMeetingData()
     }
-
-    getMeetingData();
 
     const token = Cookies.get("key");
     if (token === null || token === undefined) {
@@ -127,12 +118,14 @@
     let items = [];
     let classId = "";
 
-    removeAllTooltips();
-
-    if (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") {
-        getTeachers();
-        getProtonSubstitutionRatings();
-    }
+    onMount(async () => {
+        removeAllTooltips();
+        await getMeetingData();
+        if (localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") {
+            await getTeachers();
+            await getProtonSubstitutionRatings();
+        }
+    })
 </script>
 
 {#if meetingData !== undefined}
@@ -169,24 +162,34 @@
     {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
         <p/>
         <FormField>
-            <Switch bind:checked={isSubstitution} on:click={() => {
-                // Wait for the component to set new state
-                setTimeout(() => {
-                    if (!isSubstitution) {
-                        patchMeeting();
-                    }
-                }, 200);
-            }} />
+            <Switch bind:checked={isSubstitution} on:click={() => setTimeout(async () => {if (!isSubstitution) {await patchMeeting()}}, 50)}/>
             Je nadomeščanje
         </FormField>
         {#if isSubstitution}
             <p/>
+            <!--
+            Some black magic doesn't want me to replace Select with an Autocomplete.
+            JavaScript is weird.
+
+            {JSON.stringify(teachers)}
+            <Autocomplete
+                options={teachers}
+                getOptionLabel={(option) => option ? option.Name : ""}
+                bind:value={meetingData.TeacherID}
+                label="Izberite učitelja"
+                required
+                textfield$style="width: 100%;" style="width: 100%;"
+                on:click={() => {
+                    teacherId = meetingData.TeacherID;
+                    setTimeout(patchMeeting, 20);
+                }}
+            />-->
             <Select bind:selected={meetingData.TeacherID} label="Izberite učitelja za nadomeščanje" variant="outlined" style="width: 100%;">
                 <Option value="" on:click={() => teacherId = undefined}/>
                 {#each teachers as c}
                     <Option on:click={async () => {
                         teacherId = c.ID;
-                        patchMeeting();
+                        await patchMeeting();
                     }} value={c.ID}>{c["Name"]}</Option>
                 {/each}
             </Select>

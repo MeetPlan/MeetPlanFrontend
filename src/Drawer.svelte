@@ -13,7 +13,7 @@
 
 
     import {baseurl} from "./constants";
-    import Dialog, {Actions} from "@smui/dialog";
+    import Dialog, {Actions, Content as DialogContent, Title as DialogTitle} from "@smui/dialog";
     import Textfield from "@smui/textfield";
     import Button, {Icon, Label} from "@smui/button";
     import FormField from '@smui/form-field';
@@ -242,7 +242,11 @@
         aria-labelledby="simple-title"
         aria-describedby="simple-content"
 >
-    <Title id="simple-title">
+    <DialogTitle id="simple-title">
+        Vpis učenca
+    </DialogTitle>
+    <DialogContent id="simple-content">
+        <p/>
         <Select bind:value={user} variant="outlined" style="width: 100%;" label="Izberite učenca">
             <Option value="" on:click={() => user = -1}/>
             {#each users as c}
@@ -252,17 +256,14 @@
             {/each}
         </Select>
         <p/>
-    </Title>
-    <Content id="simple-content">
-        <p/>
         <FormField>
             <Textfield
-                    bind:value={improvementBody}
-                    style="width: 100%;"
-                    textarea
-                    label="Vpišite obvestilo. Podpira Markdown."
-                    input$rows={5}
-                    input$cols={48}
+                bind:value={improvementBody}
+                style="width: 100%;"
+                textarea
+                label="Vpišite obvestilo. Podpira Markdown."
+                input$rows={5}
+                input$cols={48}
             />
         </FormField>
         {#if improvementBody !== ""}
@@ -270,7 +271,7 @@
             Predogled:
             {@html insane(marked.marked(improvementBody))}
         {/if}
-    </Content>
+    </DialogContent>
     <Actions>
         <Button on:click={() => {
             let fd = new FormData();
