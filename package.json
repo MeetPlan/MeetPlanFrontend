@@ -5,7 +5,7 @@
   "package": "module",
   "type": "module",
   "scripts": {
-    "build": "vite build --outDir public && npm run prepare",
+    "build": "vite build --outDir public && npm run prep",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "dev": "vite --port 8080",
@@ -13,7 +13,7 @@
     "tauri": "tauri",
     "tauri-build": "TAURI=true tauri build",
     "tauri-dev": "TAURI=true tauri dev",
-    "prepare": "npm run smui-theme-light && npm run smui-theme-dark",
+    "prep": "npm run smui-theme-light && npm run smui-theme-dark",
     "smui-theme-light": "smui-theme compile public/smui.css -i src/theme",
     "smui-theme-dark": "smui-theme compile public/smui-dark.css -i src/theme/dark"
   },
