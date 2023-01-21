@@ -42,14 +42,14 @@
 
 <main>
     <Snackbar bind:this={snackbarWithClose}>
-        <Label>Registration failed.</Label>
+        <Label>Registracija ni uspela.</Label>
         <Actions>
-            <IconButton class="material-icons" title="Dismiss">close</IconButton>
+            <IconButton class="material-icons" title="Dismiss">zapri</IconButton>
         </Actions>
     </Snackbar>
     <div class="center">
         <Paper>
-            <h1>Login</h1>
+            <h1>Registracija</h1>
             <Textfield type="text" bind:value={name} label="Ime in priimek">
                 <Icon class="material-icons" slot="leadingIcon">person</Icon>
             </Textfield>
@@ -63,35 +63,10 @@
             </Textfield>
             <p />
             <Button on:click={async () => await login()} variant="raised">
-                <Label>REGISTER</Label>
+                <Label>REGISTRACIJA</Label>
             </Button>
             <p />
-            <Link to="/login">LOGIN</Link>
+            <Link to="/login">PRIJAVA</Link>
         </Paper>
     </div>
 </main>
-
-<style>
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 35%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
-    @media only screen and (max-width: 600px) {
-        .center {
-            margin: 0;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 80%;
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-    }
-</style>

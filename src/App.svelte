@@ -6,6 +6,31 @@
 	import isMobile from "is-mobile";
 	import Button, {Icon, Label} from "@smui/button";
 	import {onDestroy, onMount} from "svelte";
+	import Samotestiranje from "./Samotestiranje.svelte";
+	import Login from "./Login.svelte";
+	import Register from "./register.svelte";
+	import Users from "./Admin/Users.svelte";
+	import NewMeeting from "./NewMeeting.svelte";
+	import MyClass from "./MyClass.svelte";
+	import Communication from "./Communication.svelte";
+	import User from "./User.svelte";
+	import ClassUser from "./ClassUser.svelte";
+	import SubjectGrades from "./SubjectGrades.svelte";
+	import AbsenceManagement from "./AbsenceManagement.svelte";
+	import Homework from "./Homework.svelte";
+	import Meeting from "./Meeting.svelte";
+	import Class from "./Class.svelte";
+	import Subject from "./Subject.svelte";
+	import Subjects from "./Subjects.svelte";
+	import Meals from "./Meals.svelte";
+	import Classes from "./Classes.svelte";
+	import Settings from "./Settings.svelte";
+	import Notifications from "./Notifications.svelte";
+	import Documents from "./Documents.svelte";
+	import UserSettings from "./UserSettings.svelte";
+	import ProtonSettings from "./ProtonSettings.svelte";
+	import ErrorPage from "./ErrorPage.svelte";
+	import Home from "./Home.svelte";
 
 	const mobile = isMobile();
 	let open = !mobile;
@@ -42,187 +67,83 @@
 				{/if}
 				<div>
 					<Route path="/samotestiranje">
-						{#await import('./Samotestiranje.svelte') then Samotestiranje}
-							<Samotestiranje.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Samotestiranje />
 					</Route>
 					<Route path="/login">
-						{#await import('./Login.svelte') then Login}
-							<Login.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Login />
 					</Route>
 					<Route path="/register">
-						{#await import('./register.svelte') then Register}
-							<Register.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Register />
 					</Route>
 					<Route path="/users">
-						{#await import('./Admin/Users.svelte') then Users}
-							<Users.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Users />
 					</Route>
 					<Route path="/new/meeting">
-						{#await import('./NewMeeting.svelte') then NewMeeting}
-							<NewMeeting.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<NewMeeting />
 					</Route>
 					<!--<Route path="/my/grades" component="{MyGrades}" />-->
 					<Route path="/my/class">
-						{#await import('./MyClass.svelte') then MyClass}
-							<MyClass.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<MyClass />
 					</Route>
 					<Route path="/communication/:id" let:params >
-						{#await import('./Communication.svelte') then Communication}
-							<Communication.default id="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Communication id="{params.id}" />
 					</Route>
 					<Route path="/user/:id" let:params >
-						{#await import('./User.svelte') then User}
-							<User.default id="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<User id="{params.id}" />
 					</Route>
 					<Route path="/class/user/:id" let:params >
-						{#await import('./ClassUser.svelte') then ClassUser}
-							<ClassUser.default studentId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<ClassUser studentId="{params.id}" />
 					</Route>
 					<Route path="/edit/:id" let:params >
-						{#await import('./NewMeeting.svelte') then NewMeeting}
-							<NewMeeting.default editId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<NewMeeting editId="{params.id}" />
 					</Route>
 					<Route path="/meeting/:id/grading" let:params >
-						{#await import('./SubjectGrades.svelte') then SubjectGrades}
-							<SubjectGrades.default meetingId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<SubjectGrades meetingId="{params.id}" />
 					</Route>
 					<Route path="/meeting/:id/absence" let:params >
-						{#await import('./AbsenceManagement.svelte') then AbsenceManagement}
-							<AbsenceManagement.default meetingId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<AbsenceManagement meetingId="{params.id}" />
 					</Route>
 					<Route path="/meeting/:id/homework" let:params >
-						{#await import('./Homework.svelte') then Homework}
-							<Homework.default meetingId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Homework meetingId="{params.id}" />
 					</Route>
 					<Route path="/meeting/:id" let:params >
-						{#await import('./Meeting.svelte') then Meeting}
-							<Meeting.default meetingId="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Meeting meetingId="{params.id}" />
 					</Route>
 					<Route path="/class/:id" let:params >
-						{#await import('./Class.svelte') then Class}
-							<Class.default id="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Class id="{params.id}" />
 					</Route>
 					<Route path="/subject/:id" let:params >
-						{#await import('./Subject.svelte') then Subject}
-							<Subject.default id="{params.id}" />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Subject id="{params.id}" />
 					</Route>
 					<Route path="/subjects">
-						{#await import('./Subjects.svelte') then Subjects}
-							<Subjects.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Subjects />
 					</Route>
 					<Route path="/meals">
-						{#await import('./Meals.svelte') then Meals}
-							<Meals.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Meals />
 					</Route>
 					<Route path="/classes">
-						{#await import('./Classes.svelte') then Classes}
-							<Classes.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Classes />
 					</Route>
 					<Route path="/settings">
-						{#await import('./Settings.svelte') then Settings}
-							<Settings.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Settings />
 					</Route>
 					<Route path="/notifications">
-						{#await import('./Notifications.svelte') then Notifications}
-							<Notifications.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Notifications />
 					</Route>
 					<Route path="/documents">
-						{#await import('./Documents.svelte') then Documents}
-							<Documents.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Documents />
 					</Route>
 					<Route path="/settings/user">
-						{#await import('./UserSettings.svelte') then UserSettings}
-							<UserSettings.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<UserSettings />
 					</Route>
 					<Route path="/proton/settings">
-						{#await import('./ProtonSettings.svelte') then ProtonSettings}
-							<ProtonSettings.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<ProtonSettings />
 					</Route>
 					<Route path="/napaka">
-						{#await import('./ErrorPage.svelte') then ErrorPage}
-							<ErrorPage.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<ErrorPage />
 					</Route>
 					<Route path="/">
-						{#await import('./Home.svelte') then Home}
-							<Home.default />
-						{:catch e}
-							<Error err={e} />
-						{/await}
+						<Home />
 					</Route>
 				</div>
 			</main>

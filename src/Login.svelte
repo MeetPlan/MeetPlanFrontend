@@ -43,41 +43,16 @@
     let snackbarWithClose: SnackbarComponentDev;
 </script>
 
-<style>
-    .center {
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 35%;
-        -ms-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
-    @media only screen and (max-width: 600px) {
-        .center {
-            margin: 0;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 80%;
-            -ms-transform: translate(-50%, -50%);
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-    }
-</style>
-
 <main>
     <Snackbar bind:this={snackbarWithClose}>
-        <Label>Login failed.</Label>
+        <Label>Prijava ni uspela.</Label>
         <Actions>
-            <IconButton class="material-icons" title="Dismiss">close</IconButton>
+            <IconButton class="material-icons" title="Dismiss">zapri</IconButton>
         </Actions>
     </Snackbar>
     <div class="center">
         <Paper>
-            <h1>Login</h1>
+            <h1>Prijava v MeetPlan</h1>
             <Textfield type="email" bind:value={email} label="Elektronska pošta">
                 <Icon class="material-icons" slot="leadingIcon">alternate_email</Icon>
             </Textfield>
@@ -91,10 +66,10 @@
             </Textfield>
             <p />
             <Button on:click={async () => await login()} variant="raised">
-                <Label>LOGIN</Label>
+                <Label>PRIJAVA</Label>
             </Button>
             <p />
-            <Link to="/register">REGISTER</Link>
+            <Link to="/register">REGISTRACIJA</Link>
             <p/>
             {#if constants.isTauri}
                 <Textfield on:change={() => {

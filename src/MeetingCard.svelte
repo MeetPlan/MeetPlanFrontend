@@ -25,7 +25,7 @@
 
     .classroom {
         position: absolute;
-        bottom: 6px;
+        bottom: 2px;
         right: 5px;
         font-size: 10px;
     }
@@ -52,7 +52,7 @@
     <a use:link href={`/meeting/${n.ID}`}>
         <Wrapper>
             <span tabindex="0" style="background-color: {n.Subject.Color}; padding: 5px; display: flex; width: 100%; display: inline-block; height: 40px; text-align: left;" class="pos">
-                <span style="font-size: 12px; font-weight: 700;">{n.MeetingName}</span><br>
+                <span style="font-size: 15px; font-weight: 700;">{n.MeetingName}</span><br>
                 <span style="font-size: 10px;">
                     {#each n.TeacherName.split(" ") as t, i}
                         {#if n.TeacherName.split(" ").length === i+1 && !mobile}
