@@ -26,6 +26,7 @@
     import {useLocation} from "svelte-navigator";
     import Checkbox from "@smui/checkbox";
     import Cookies from "js-cookie";
+    import * as child_process from "child_process";
 
 
     const location = useLocation();
@@ -100,6 +101,10 @@
             }
             if (communicationActive !== undefined) {
                 allPaths[`/communication/${communicationActive}`] = `communication${communicationActive}`
+            }
+            for (let i in children) {
+                const child = children[i];
+                allPaths[`/class/user/${child.ID}`] = `student${child.ID}`
             }
 
             active = allPaths[path]

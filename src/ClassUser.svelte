@@ -1,21 +1,13 @@
 <script lang="ts">
     import {navigate} from "svelte-navigator";
-
     import Button from "@smui/button";
-
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {baseurl, saveBlob} from "./constants";
-
     import FormField from '@smui/form-field';
     import Switch from '@smui/switch';
-
     import IconButton, { Icon } from '@smui/icon-button';
-
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
-
-
     import * as marked from 'marked';
-
     import List, {
         Item,
         Meta,
@@ -23,6 +15,7 @@
     import insane from "insane";
     import Cookies from "js-cookie";
     import Tooltip, {Wrapper} from "@smui/tooltip";
+    import {onMount} from "svelte";
 
 
     let grades;
@@ -52,94 +45,80 @@
     let isPassing = true;
     let printTemplate = false;
 
-    function getUserData() {
-        fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                userData = r["data"];
-                isPassing = userData.IsPassing;
-            });
+    async function getUserData() {
+        let response = await fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        userData = r["data"];
+        isPassing = userData.IsPassing;
     }
 
-    function getImprovements() {
-        fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                improvements = r.data;
-            });
+    async function getImprovements() {
+        let response = await fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        improvements = r.data;
     }
 
-    function getAbsences() {
-        fetch(`${baseurl}/user/get/absences/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                absences = r["data"];
-                let al = [];
-                for (let absence in absences) {
-                    al = [...al, !(absences[absence].IsExcused)]
-                }
-                console.log(al);
-                absenceList = al;
-            });
-    }
-
-    function getUserGradings() {
-        fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                gradings = r["data"];
-            });
-    }
-
-    function getHomework() {
-        fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                homework = r["data"];
-            });
-    }
-
-    function getGrades() {
-        fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((r) => r.json())
-            .then((r) => {
-                if (r.data !== "Forbidden") {
-                    grades = r.data;
-                }
-            });
-    }
-
-    function getParentConfig() {
-        if (localStorage.getItem("role") === "parent") {
-            fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-                .then((r) => r.json())
-                .then((r) => {
-                    let data = r["data"];
-                    viewAbsences = data["parent_view_absences"];
-                    viewHomework = data["parent_view_homework"];
-                    viewGrades = data["parent_view_grades"];
-                    viewGradings = data["parent_view_gradings"];
-                    if (viewGrades) {
-                        getGrades();
-                    }
-                    if (viewHomework) {
-                        getHomework();
-                    }
-                    if (viewAbsences) {
-                        getAbsences();
-                    }
-                    if (viewGradings) {
-                        getUserGradings();
-                    }
-                });
-        } else {
-            getGrades();
-            getUserData();
-            getAbsences();
-            getHomework();
-            getUserGradings();
+    async function getAbsences() {
+        let response = await fetch(`${baseurl}/user/get/absences/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        absences = r["data"];
+        let al = [];
+        for (let absence in absences) {
+            al = [...al, !(absences[absence].IsExcused)]
         }
-        getImprovements();
+        console.log(al);
+        absenceList = al;
+    }
+
+    async function getUserGradings() {
+        let response = await fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        gradings = r["data"];
+    }
+
+    async function getHomework() {
+        let response = await fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json()
+        homework = r["data"];
+    }
+
+    async function getGrades() {
+        let response = await fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let r = await response.json();
+        if (r.data !== "Forbidden") {
+            grades = r.data;
+        }
+    }
+
+    async function getParentConfig() {
+        if (localStorage.getItem("role") === "parent") {
+            let response = await fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let r = await response.json()
+            let data = r["data"];
+            viewAbsences = data["parent_view_absences"];
+            viewHomework = data["parent_view_homework"];
+            viewGrades = data["parent_view_grades"];
+            viewGradings = data["parent_view_gradings"];
+            if (viewGrades) {
+                await getGrades();
+            }
+            if (viewHomework) {
+                await getHomework();
+            }
+            if (viewAbsences) {
+                await getAbsences();
+            }
+            if (viewGradings) {
+                await getUserGradings();
+            }
+        } else {
+            await getGrades();
+            await getUserData();
+            await getAbsences();
+            await getHomework();
+            await getUserGradings();
+        }
+        await getImprovements();
     }
 
     const gradeColors = [
@@ -164,7 +143,10 @@
         "NOT MANAGED": "NI VPISANO"
     }
 
-    getParentConfig();
+    $: {
+        console.log(studentId)
+        getParentConfig();
+    }
 </script>
 
 {#if userData}

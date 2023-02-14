@@ -49,6 +49,7 @@
     export let date: Date = new Date();
     let currentDate = new Date(date);
     export let hour = -1;
+    export let dateCallback = (day) => {};
 
     let start: Date = startOfWeek(currentDate, {weekStartsOn: 1})
     let end: Date = endOfWeek(currentDate, {weekStartsOn: 1})
@@ -56,6 +57,7 @@
     const mobile: boolean = isMobile();
 
     function remakeCalendar() {
+        dateCallback(currentDate);
         start = startOfWeek(currentDate, {weekStartsOn: 1})
         end = endOfWeek(currentDate, {weekStartsOn: 1})
         fmtStart = fmtDate(start);

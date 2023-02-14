@@ -1,5 +1,4 @@
 <script lang="ts">
-
     import Timetable from "./Widgets/Timetable.svelte";
     import Select, {Option} from "@smui/select";
 
@@ -7,14 +6,16 @@
     import * as marked from 'marked';
     import isMobile from "is-mobile";
     import insane from "insane";
+
     import Cookies from "js-cookie";
-
-
+    import {onMount} from "svelte";
     const token = Cookies.get("key");
     if (token === null || token === undefined) {
         document.cookie = "";
         window.location.href = "/login";
     }
+
+    let date = new Date();
 
     let items = [];
     let classId = "";
@@ -22,8 +23,6 @@
     let systemNotifications = [];
 
     const mobile = isMobile();
-
-
 
     function loadThings() {
         fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
@@ -44,14 +43,16 @@
         });
     }
 
-    function getSystemNotifications() {
-        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
-            .then((response) => response.json())
-            .then((json) => systemNotifications = json.data);
+    async function getSystemNotifications() {
+        let response = await fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let json = await response.json()
+        systemNotifications = json.data
     }
 
-    loadThings()
-    getSystemNotifications();
+    onMount(async () => {
+        loadThings()
+        await getSystemNotifications();
+    });
 </script>
 
 {#each systemNotifications as notification}
@@ -92,5 +93,5 @@
 </Select>
 <p/>
 {#if classId !== undefined}
-    <Timetable classId={classId} />
+    <Timetable classId={classId} dateCallback={(d) => date = d} date={date} />
 {/if}
