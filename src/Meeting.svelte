@@ -7,12 +7,9 @@
     import Switch from "@smui/switch";
     import Select, {Option} from "@smui/select";
     import * as marked from 'marked';
-    import { chart } from "svelte-apexcharts";
     import Timetable from "./Widgets/Timetable.svelte";
     import insane from "insane";
     import {onMount} from "svelte";
-
-    let options;
 
     export let meetingId: string;
 
@@ -68,15 +65,6 @@
         teacherId = meetingData.TeacherID;
         realizationDone = meetingData.Subject.RealizationDone;
         realization = meetingData.Subject.Realization;
-        options = {
-            chart: {
-                type: "donut",
-                width: "400px",
-                offsetX: 0,
-            },
-            series: [realizationDone, realization-realizationDone],
-            labels: ["Trenutna realizacija", "Realizacija"],
-        };
     }
 
     async function deleteMeeting() {
@@ -147,7 +135,6 @@
         </Button>
     {/if}
     <p/>
-    <div use:chart={options}/>
     {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
         <p/>
         <FormField>
