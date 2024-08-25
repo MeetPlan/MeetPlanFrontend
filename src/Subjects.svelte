@@ -11,11 +11,8 @@
     import Autocomplete from '@smui-extra/autocomplete';
     import {subjects as subjectsList} from "./Constants/consts";
 
-    import Select, {Option} from "@smui/select";
-
     import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
-    import Cookies from "js-cookie";
     import DataTable, {Body, Cell, Head, Row} from "@smui/data-table";
     import Switch from "@smui/switch";
     import {onMount} from "svelte";
@@ -24,25 +21,20 @@
     let teachers = [];
     let subjects = [];
 
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
-
     async function loadThings() {
-        let response = await fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/classes/get`, {credentials: "include"})
         let json = await response.json()
         items = json["data"];
     }
 
     async function getSubjects() {
-        let response = await fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/subjects/get`, {credentials: "include"})
         let json = await response.json();
         subjects = json["data"];
     }
 
     async function getTeachers() {
-        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/teachers/get`, {credentials: "include"})
         let json = await response.json()
         teachers = json["data"];
     }
@@ -62,12 +54,12 @@
         fd.append("long_name", longName)
         fd.append("realization", realization.toString());
         fd.append("is_graded", isGraded.toString());
-        await fetch(`${baseurl}/subjects/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd});
+        await fetch(`${baseurl}/subjects/new`, {credentials: "include", method: "POST", body: fd});
         await getSubjects();
     }
 
     async function deleteSubject(cid: number) {
-        await fetch(`${baseurl}/subject/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/subject/get/${cid}`, {credentials: "include", method: "DELETE"})
         await getSubjects();
     }
 
@@ -142,7 +134,7 @@
                     fd.append("selected_hours", item.SelectedHours.toString());
                     fd.append("location", item.Location);
                     fd.append("is_graded", item.IsGraded.toString());
-                    await fetch(`${baseurl}/subject/get/${item.ID}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+                    await fetch(`${baseurl}/subject/get/${item.ID}`, {credentials: "include", method: "PATCH", body: fd})
                     await getSubjects();
                 }}>
                     <Icon class="material-icons">done</Icon>

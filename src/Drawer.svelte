@@ -9,13 +9,10 @@
     import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
-
-
-
     import {baseurl} from "./constants";
-    import Dialog, {Actions, Content as DialogContent, Title as DialogTitle} from "@smui/dialog";
+    import Dialog, {Actions} from "@smui/dialog";
     import Textfield from "@smui/textfield";
-    import Button, {Icon, Label} from "@smui/button";
+    import Button, {Label} from "@smui/button";
     import FormField from '@smui/form-field';
     import Select, {Option} from "@smui/select";
 
@@ -25,9 +22,6 @@
 
     import {useLocation} from "svelte-routing";
     import Checkbox from "@smui/checkbox";
-    import Cookies from "js-cookie";
-    import * as child_process from "child_process";
-
 
     const location = useLocation();
 
@@ -48,11 +42,6 @@
         statusCallback(open);
         if (!($location.pathname === "/login" || $location.pathname === "/register")) {
             showDrawer = true;
-
-            const token = Cookies.get("key");
-            if (token === null || token === undefined) {
-                navigate("/login");
-            }
 
             let path = $location.pathname;
 
@@ -127,17 +116,13 @@
     })()
 
     async function getCommunications() {
-        let response = await fetch(`${baseurl}/communications/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/communications/get`, {credentials: "include"})
         let json = await response.json()
         communications = json.data;
     }
 
     async function getUnread() {
-        const token = Cookies.get("key");
-        if (token === null || token === undefined) {
-            return;
-        }
-        let response = await fetch(`${baseurl}/user/get/unread_messages`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/get/unread_messages`, {credentials: "include"})
         let json = await response.json()
         unreadMessages = json.data;
         communicationUnread = {};
@@ -184,23 +169,23 @@
         }
 
         if (localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin") {
-            let response = await fetch(`${baseurl}/user/check/has/class`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let response = await fetch(`${baseurl}/user/check/has/class`, {credentials: "include"})
             let json = await response.json()
             if (json.data === "true" || json.data === true) {
                 hasClass = true;
             }
         } else if (localStorage.getItem("role") === "parent") {
-            let response = await fetch(`${baseurl}/parents/get/students`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let response = await fetch(`${baseurl}/parents/get/students`, {credentials: "include"})
             let json = await response.json()
             children = json.data;
         }
 
-        let response = await fetch(`${baseurl}/meals/blocked`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/meals/blocked`, {credentials: "include"})
         let json = await response.json()
         mealsBlocked = json.data;
 
         if ((localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant") && meetingActive !== undefined) {
-            let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let response = await fetch(`${baseurl}/meeting/get/${meetingActive}/users`, {credentials: "include"})
             let json = await response.json()
             users = json.data;
         }
@@ -214,7 +199,7 @@
         principalAssistant = [];
         foodOrganizer = [];
 
-        let response2 = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response2 = await fetch(`${baseurl}/users/get`, {credentials: "include"})
         let json2 = await response2.json()
         let us = json2.data;
         for (let i in us) {
@@ -281,7 +266,7 @@
         <Button on:click={() => {
             let fd = new FormData();
             fd.append("message", improvementBody);
-            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
+            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {credentials: "include", method: "POST", body: fd})
                 .then((r) => r.json())
                 .then((r) => {
                     improvementBody = "";
@@ -383,7 +368,7 @@
             let fd = new FormData();
             fd.append("users", JSON.stringify(selected));
             fd.append("title", newCommunicationTitle);
-            fetch(`${baseurl}/communication/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd}).then(getCommunications)
+            fetch(`${baseurl}/communication/new`, {credentials: "include", method: "POST", body: fd}).then(getCommunications)
         }}>
             <Label>
                 USTVARI

@@ -8,16 +8,6 @@
     import {baseurl} from "./constants";
     import * as marked from 'marked';
     import insane from "insane";
-    import Cookies from "js-cookie";
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        document.cookie = "";
-        window.location.href = "/login";
-    }
-
-    let items = [];
-    let classId = "";
 
     let newBody = "";
 
@@ -26,13 +16,13 @@
 
 
     function getSystemNotifications() {
-        fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/system/notifications`, {credentials: "include"})
             .then((response) => response.json())
             .then((json) => systemNotifications = json.data);
     }
 
     function deleteNotification(nid) {
-        fetch(`${baseurl}/notification/${nid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        fetch(`${baseurl}/notification/${nid}`, {credentials: "include", method: "DELETE"})
             .then((response) => response.json())
             .then((json) => getSystemNotifications());
     }
@@ -40,7 +30,7 @@
     function newNotification() {
         let fd = new FormData();
         fd.append("body", newBody)
-        fetch(`${baseurl}/system/notifications/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/system/notifications/new`, {credentials: "include", method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => getSystemNotifications());
     }

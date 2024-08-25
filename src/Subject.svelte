@@ -1,23 +1,16 @@
 <script lang="ts">
     import List, {Item, Text as TextList, Meta, Graphic, PrimaryText} from "@smui/list";
     import IconButton from "@smui/icon-button";
-
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
-
     import {subjects} from "./Constants/consts";
-
     import Avatar from "svelte-avatar";
-
     import Autocomplete from '@smui-extra/autocomplete';
     import {baseurl} from "./constants";
-    import {navigate} from "svelte-routing";
-
     import Slider from "@smui/slider";
     import FormField from '@smui/form-field';
     import Button, {Icon} from "@smui/button";
     import type {Subject} from "./typescript-definitions/tsdef";
-    import Cookies from "js-cookie";
     import {onMount} from "svelte";
     import Switch from "@smui/switch";
 
@@ -34,13 +27,8 @@
 
     export let id: number;
 
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
-
     async function getSubject() {
-        let response = await fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/subject/get/${id}`, {credentials: "include"})
         let r = await response.json()
         let data: Subject = r.data;
         longName = data.LongName;
@@ -58,23 +46,23 @@
         fd.append("selected_hours", selectedHour.toString());
         fd.append("location", location);
         fd.append("is_graded", isGraded.toString());
-        await fetch(`${baseurl}/subject/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+        await fetch(`${baseurl}/subject/get/${id}`, {credentials: "include", method: "PATCH", body: fd})
         await getSubject();
     }
 
     async function getStudents() {
-        let response = await fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/students/get`, {credentials: "include"})
         let r = await response.json()
         studentsToAdd = r.data;
     }
 
     async function assignToSubject() {
-        await fetch(`${baseurl}/subject/get/${id}/add_user/${studentPick["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+        await fetch(`${baseurl}/subject/get/${id}/add_user/${studentPick["ID"]}`, {credentials: "include", method: "PATCH"})
         await getSubject();
     }
 
     async function deleteFromSubject(cid: string) {
-        await fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/subject/get/${id}/remove_user/${cid}`, {credentials: "include", method: "DELETE"})
         await getSubject();
     }
 

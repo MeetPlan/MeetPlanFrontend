@@ -7,7 +7,6 @@
     import Switch from '@smui/switch';
     import List, {Item, Text} from "@smui/list";
     import {Icon} from "@smui/button";
-    import Cookies from "js-cookie";
 
     let schoolName = "";
     let postNumber = 1000;
@@ -27,7 +26,7 @@
     let date = "";
 
     function getConfiguration() {
-        fetch(`${baseurl}/admin/config/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/admin/config/get`, {credentials: "include"})
             .then((response) => response.json())
             .then((json) => {
                     let config = json["data"];
@@ -62,7 +61,7 @@
         fd.append("block_meals", blockMeals.toString());
         fd.append("school_free_days", JSON.stringify(dates));
         fetch(`${baseurl}/admin/config/get`,
-            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
+            {credentials: "include"})
             .then((r) => r.json())
             .then((r) => getConfiguration())
     }

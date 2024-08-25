@@ -1,7 +1,6 @@
 <script lang="ts">
     import Button, {Icon, Label} from "@smui/button";
     import {baseurl, saveBlob} from "../constants";
-    import Cookies from "js-cookie";
 
     import {onMount} from "svelte";
 
@@ -9,7 +8,7 @@
     let classId = "";
 
     async function getTestings() {
-        let response = await fetch(`${baseurl}/user/self_testing/get_results`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/self_testing/get_results`, {credentials: "include"})
         const r = await response.json();
         testings = r["data"];
     }
@@ -30,7 +29,7 @@
     Rezultat: <b>{test.Result}</b>
     <p />
     <Button on:click={() => {
-        fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/user/self_testing/get_results/pdf/${test["ID"]}`, {credentials: "include"})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
             .catch((err) => {

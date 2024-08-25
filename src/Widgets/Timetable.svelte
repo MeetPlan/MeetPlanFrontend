@@ -44,7 +44,6 @@
     import isMobile from "is-mobile";
     import MeetingCard from "../MeetingCard.svelte";
     import type {Meeting} from "../typescript-definitions/tsdef";
-    import Cookies from "js-cookie";
 
     export let date: Date = new Date();
     let currentDate = new Date(date);
@@ -90,7 +89,7 @@
 
         console.log(classId, teacherId, subjectId)
 
-        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {credentials: "include"})
             .then((r) => r.json())
             .then((r) => {
                 mon = r["data"][0]["meetings"];

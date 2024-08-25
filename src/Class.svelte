@@ -9,14 +9,8 @@
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
     import {navigate} from "svelte-routing";
-    import Cookies from "js-cookie";
     import Autocomplete from "@smui-extra/autocomplete";
     import {onMount} from "svelte";
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
 
     let studentPick;
     let myClasses;
@@ -43,13 +37,13 @@
     }
 
     async function getStudents() {
-        let response = await fetch(`${baseurl}/students/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/students/get`, {credentials: "include"})
         let r = await response.json()
         allStudents = r.data;
     }
 
     async function getClass() {
-        let response = await fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/class/get/${id}`, {credentials: "include"})
         let r = await response.json();
         students = r["data"];
         classYear = students["ClassYear"];
@@ -60,13 +54,13 @@
     }
 
     function assignToClass() {
-        fetch(`${baseurl}/class/get/${id}/add_user/${studentPick["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+        fetch(`${baseurl}/class/get/${id}/add_user/${studentPick["ID"]}`, {credentials: "include", method: "PATCH"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
 
     function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {credentials: "include", method: "DELETE"})
             .then((response) => response.json())
             .then((r) => getClass());
     }
@@ -77,7 +71,7 @@
         fd.append("sok", sok.toString());
         fd.append("eok", eok.toString())
         fd.append("last_date", ((new Date(lastDate)).valueOf() / 1000).toString())
-        fetch(`${baseurl}/class/get/${id}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/class/get/${id}`, {credentials: "include", method: "PATCH", body: fd})
             .then((response) => response.json())
             .then((r) => getClass());
     }

@@ -15,7 +15,7 @@
 
     async function loadThings() {
         loaded = false;
-        let response = await fetch(`${baseurl}/users/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/users/get`, {credentials: "include"})
         let json = await response.json();
         items = json["data"];
         loaded = true;
@@ -31,15 +31,9 @@
     const choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
     import { navigate } from "svelte-routing";
-    import Cookies from "js-cookie";
     import FormField from "@smui/form-field";
     import Switch from "@smui/switch";
     import {onMount} from "svelte";
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
 
     onMount(loadThings);
 </script>
@@ -72,7 +66,7 @@
                         principalId = undefined;
 
                         await fetch(`${baseurl}/user/role/update/${item["ID"]}`, {
-                            headers: {"Authorization": "Bearer " + Cookies.get("key")},
+                            credentials: "include",
                             body: fd,
                             method: "PATCH"
                         })
@@ -97,7 +91,7 @@
                     <FormField>
                         <Switch bind:checked={item["IsLocked"]} on:click={async (e) => {
                             e.stopPropagation();
-                            await fetch(`${baseurl}/user/lock_unlock/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"});
+                            await fetch(`${baseurl}/user/lock_unlock/${item["ID"]}`, {credentials: "include", method: "PATCH"});
                             await loadThings();
                         }} />
                     </FormField>
@@ -107,7 +101,7 @@
                 {#if localStorage.getItem("email") !== item["Email"]}
                     <IconButton class="material-icons" on:click={async (e) => {
                         e.stopPropagation();
-                        let response = await fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+                        let response = await fetch(`${baseurl}/user/get/password_reset/${item["ID"]}`, {credentials: "include"})
                         let blob = await response.blob()
                         await saveBlob(blob)
                     }}>download</IconButton>
@@ -118,7 +112,7 @@
                     <IconButton class="material-icons" on:click={async (e) => {
                         e.stopPropagation();
                         await fetch(`${baseurl}/user/delete/${item["ID"]}`, {
-                            headers: {"Authorization": "Bearer " + Cookies.get("key")},
+                            credentials: "include",
                             method: "DELETE"
                         })
                         await loadThings()

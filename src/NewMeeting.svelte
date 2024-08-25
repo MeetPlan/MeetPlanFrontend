@@ -13,7 +13,6 @@
     import * as marked from 'marked';
     import insane from "insane";
     import type {Subject} from "./typescript-definitions/tsdef";
-    import Cookies from "js-cookie";
     import Autocomplete from "@smui-extra/autocomplete";
 
     let date: string = "";
@@ -41,7 +40,7 @@
     export let editId;
 
     function getSubjects() {
-        fetch(`${baseurl}/subjects/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/subjects/get`, {credentials: "include"})
             .then((response) => response.json())
             .then((json) => {
                     subjects = json["data"];
@@ -79,7 +78,7 @@
     }
 
     async function getMeetingData() {
-        let response = await fetch(`${baseurl}/meeting/get/${editId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/meeting/get/${editId}`, {credentials: "include"})
         let json = await response.json()
         date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
         console.log(date)
@@ -134,7 +133,7 @@
         fd.append("location", location);
         fd.append("is_correction_test", isCorrectionTest.toString());
         await fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
-            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: editId === undefined ? "POST" : "PATCH"})
+            {credentials: "include", body: fd, method: editId === undefined ? "POST" : "PATCH"})
         navigate("/")
     }
 

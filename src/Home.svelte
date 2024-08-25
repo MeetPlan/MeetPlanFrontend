@@ -6,14 +6,7 @@
     import * as marked from 'marked';
     import isMobile from "is-mobile";
     import insane from "insane";
-
-    import Cookies from "js-cookie";
     import {onMount} from "svelte";
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        document.cookie = "";
-        window.location.href = "/login";
-    }
 
     let date = new Date();
 
@@ -25,7 +18,7 @@
     const mobile = isMobile();
 
     function loadThings() {
-        fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {credentials: "include"})
             .then((response) => {
                 if (response.ok) {
                     return response
@@ -44,7 +37,7 @@
     }
 
     async function getSystemNotifications() {
-        let response = await fetch(`${baseurl}/system/notifications`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/system/notifications`, {credentials: "include"})
         let json = await response.json()
         systemNotifications = json.data
     }

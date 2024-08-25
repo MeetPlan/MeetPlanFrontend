@@ -2,7 +2,6 @@
     import SegmentedButton, {Segment} from "@smui/segmented-button";
     import { Label } from '@smui/common';
     import {baseurl} from "../constants";
-    import Cookies from "js-cookie";
 
     let choices = ['SE NE TESTIRA', 'NEGATIVEN', 'POZITIVEN', 'NEVELJAVEN'];
 
@@ -19,7 +18,7 @@
             let formData = new FormData();
             formData.append("result", segment)
 
-            fetch(`${baseurl}/user/self_testing/patch/${classId}/${userId}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + Cookies.get("key")}}).then((response) => {
+            fetch(`${baseurl}/user/self_testing/patch/${classId}/${userId}`, {method: "PATCH", body: formData, credentials: "include"}).then((response) => {
                 return response.json()
             }).then((response) => {
                 console.log(response);

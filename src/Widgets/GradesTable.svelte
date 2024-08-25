@@ -14,10 +14,8 @@
     import FormField from '@smui/form-field';
     import Button, { Label } from '@smui/button';
     import Switch from '@smui/switch';
-    import Cookies from "js-cookie";
     import Tooltip, {Wrapper} from "@smui/tooltip";
     import Textfield from "@smui/textfield";
-    import HelperText from "@smui/textfield/helper-text";
 
     let open = false;
 
@@ -30,7 +28,7 @@
     let description: string = "";
 
     function getGrades() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {credentials: "include"})
             .then((r) => r.json())
             .then((r) => {
                 grades = r["data"];
@@ -46,7 +44,7 @@
         fd.append("is_final", finalize.toString());
         fd.append("can_patch", canPatch.toString());
         fd.append("description", description);
-        fetch(`${baseurl}/grades/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/grades/new/${meetingId}`, {credentials: "include", method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();
@@ -59,7 +57,7 @@
         fd.append("grade", selectedGrade);
         fd.append("period", selectedPeriod);
         fd.append("description", description);
-        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+        fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "PATCH", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();
@@ -67,7 +65,7 @@
     }
 
     function deleteGrade() {
-        fetch(`${baseurl}/grade/get/${toPatch}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "DELETE"})
             .then((r) => r.json())
             .then((r) => {
                 getGrades();

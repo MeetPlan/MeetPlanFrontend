@@ -1,6 +1,5 @@
 <script lang="ts">
     import {navigate} from "svelte-routing";
-
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';
     import {baseurl} from "./constants";
@@ -8,13 +7,9 @@
     import Switch from "@smui/switch";
     import Select, {Option} from "@smui/select";
     import * as marked from 'marked';
-
     import { chart } from "svelte-apexcharts";
     import Timetable from "./Widgets/Timetable.svelte";
     import insane from "insane";
-    import Cookies from "js-cookie";
-    import Autocomplete from "@smui-extra/autocomplete";
-    import type {UserJSON} from "./typescript-definitions/tsdef";
     import {onMount} from "svelte";
 
     let options;
@@ -54,20 +49,20 @@
     let protonRatings = [];
 
     async function getTeachers() {
-        let response = await fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/teachers/get`, {credentials: "include"})
         let json = await response.json();
         teachers = json["data"];
     }
 
     async function getProtonSubstitutionRatings() {
-        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/substitutions/proton`, {credentials: "include"})
         let json = await response.json();
         protonRatings = json["data"];
     }
 
 
     async function getMeetingData() {
-        let response = await fetch(`${baseurl}/meeting/get/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}`, {credentials: "include"})
         let r = await response.json()
         meetingData = r.data;
         isSubstitution = meetingData.IsSubstitution;
@@ -86,7 +81,7 @@
     }
 
     async function deleteMeeting() {
-        await fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/meetings/new/${meetingId}`, {credentials: "include", method: "DELETE"})
         navigate("/")
     }
 
@@ -106,13 +101,8 @@
         fd.append("is_substitution", isSubstitution.toString())
         fd.append("teacherId", teacherId);
         fd.append("location", meetingData.Location);
-        await fetch(`${baseurl}/meetings/new/${meetingId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
+        await fetch(`${baseurl}/meetings/new/${meetingId}`, {credentials: "include", body: fd, method: "PATCH"})
         await getMeetingData()
-    }
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
     }
 
     let items = [];

@@ -1,17 +1,12 @@
 <script lang="ts">
     import Paper from "@smui/paper";
     import Textfield from "@smui/textfield";
-
     import {baseurl} from "./constants";
-
     import Icon from '@smui/textfield/icon';
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
-
     import { navigate, Link } from "svelte-routing";
-
     import Snackbar, {Actions} from "@smui/snackbar";
-    import Cookies from "js-cookie";
 
     async function login() {
         let fd = new FormData();
@@ -19,7 +14,7 @@
         fd.append("pass", password);
         fd.append("name", name);
         try {
-            let r = await fetch(`${baseurl}/user/new`, {body: fd, method: "POST", headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let r = await fetch(`${baseurl}/user/new`, {body: fd, method: "POST", credentials: "include"})
             let response = await r.json();
             if (response["success"] === true) {
                 navigate("/login")

@@ -13,10 +13,7 @@
         Meta,
     } from '@smui/list';
     import insane from "insane";
-    import Cookies from "js-cookie";
     import Tooltip, {Wrapper} from "@smui/tooltip";
-    import {onMount} from "svelte";
-
 
     let grades;
     let userData;
@@ -46,20 +43,20 @@
     let printTemplate = false;
 
     async function getUserData() {
-        let response = await fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/get/data/${studentId}`, {credentials: "include"})
         let r = await response.json()
         userData = r["data"];
         isPassing = userData.IsPassing;
     }
 
     async function getImprovements() {
-        let response = await fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/get/improvements?studentId=${studentId}`, {credentials: "include"})
         let r = await response.json()
         improvements = r.data;
     }
 
     async function getAbsences() {
-        let response = await fetch(`${baseurl}/user/get/absences/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/get/absences/${studentId}`, {credentials: "include"})
         let r = await response.json()
         absences = r["data"];
         let al = [];
@@ -71,19 +68,19 @@
     }
 
     async function getUserGradings() {
-        let response = await fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/my/gradings?studentId=${studentId}`, {credentials: "include"})
         let r = await response.json()
         gradings = r["data"];
     }
 
     async function getHomework() {
-        let response = await fetch(`${baseurl}/user/get/homework/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/user/get/homework/${studentId}`, {credentials: "include"})
         let r = await response.json()
         homework = r["data"];
     }
 
     async function getGrades() {
-        let response = await fetch(`${baseurl}/my/grades?studentId=${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/my/grades?studentId=${studentId}`, {credentials: "include"})
         let r = await response.json();
         if (r.data !== "Forbidden") {
             grades = r.data;
@@ -92,7 +89,7 @@
 
     async function getParentConfig() {
         if (localStorage.getItem("role") === "parent") {
-            let response = await fetch(`${baseurl}/parents/get/config`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+            let response = await fetch(`${baseurl}/parents/get/config`, {credentials: "include"})
             let r = await response.json()
             let data = r["data"];
             viewAbsences = data["parent_view_absences"];
@@ -129,13 +126,6 @@
         "#64DD17"
     ];
 
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
-
-
-
     const translatedSegments = {
         "DONE": "NAREJENO",
         "ABSENT": "MANJKAL",
@@ -154,7 +144,7 @@
 {/if}
 {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
     <Button on:click={() => {
-        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {credentials: "include"})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
         .catch((err) => {
@@ -236,7 +226,7 @@
             setTimeout(() => {
                 let fd = new FormData();
                 fd.append("is_passing", isPassing.toString());
-                fetch(`${baseurl}/user/get/data/${studentId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: fd})
+                fetch(`${baseurl}/user/get/data/${studentId}`, {credentials: "include", method: "PATCH", body: fd})
                     .then((response) => response.json())
                     .then((r) => getUserData());
             }, 200);
@@ -250,7 +240,7 @@
     </FormField>
     <p/>
     <Button on:click={() => {
-        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {credentials: "include"})
             .then((response) => response.blob())
             .then((blob) => saveBlob(blob))
             .catch((err) => {
@@ -284,7 +274,7 @@
                             <Meta>
                                 <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
                                     if (localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin") {
-                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {credentials: "include", method: "PATCH"})
                                             .then((r) => r.json())
                                             .then((r) => {
                                                 getAbsences();

@@ -4,7 +4,6 @@
     import Error from "./Widgets/Error.svelte";
     import Accordion, {Panel, Header, Content} from "@smui-extra/accordion";
     import IconButton, {Icon} from "@smui/button";
-    import Cookies from "js-cookie";
 
     let documents = [];
     let open = {};
@@ -17,7 +16,7 @@
     };
 
     async function getDocuments() {
-        let response = await fetch(`${baseurl}/documents/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/documents/get`, {credentials: "include"})
         let json = await response.json();
         documents = json.data;
         for (let i in documents) {
@@ -28,7 +27,7 @@
     async function deleteDocument(documentId: string) {
         let fd = new FormData()
         fd.append("documentId", documentId)
-        await fetch(`${baseurl}/documents/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "DELETE"})
+        await fetch(`${baseurl}/documents/get`, {credentials: "include", body: fd, method: "DELETE"})
         await getDocuments();
     }
 </script>

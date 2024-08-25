@@ -15,18 +15,12 @@
 
     import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
-    import Cookies from "js-cookie";
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
 
     let items = [];
     let teachers = [];
 
     function loadThings() {
-        fetch(`${baseurl}/classes/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/classes/get`, {credentials: "include"})
             .then((response) => response.json())
             .then((json) => {
                     items = json["data"];
@@ -35,7 +29,7 @@
     }
 
     function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/teachers/get`, {credentials: "include"})
             .then((response) => response.json())
             .then((json) => {
                     teachers = json["data"];
@@ -55,7 +49,7 @@
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
         fd.append("class_year", classYear);
-        fetch(`${baseurl}/class/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/class/new`, {credentials: "include", method: "POST", body: fd})
             .then((response) => response.json())
             .then((json) => {
                     loadThings();
@@ -64,7 +58,7 @@
     }
 
     function deleteClass(cid: number) {
-        fetch(`${baseurl}/class/get/${cid}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        fetch(`${baseurl}/class/get/${cid}`, {credentials: "include", method: "DELETE"})
             .then((response) => response.json())
             .then((json) => {
                     loadThings();

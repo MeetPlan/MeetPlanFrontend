@@ -16,14 +16,13 @@
     import Avatar from "svelte-avatar";
     import insane from "insane";
     import Error from "./Widgets/Error.svelte";
-    import Cookies from "js-cookie";
-    import List, {Item, Meta, PrimaryText, Text as TextList} from "@smui/list";
+    import List, {Item, Meta, PrimaryText} from "@smui/list";
 
 
     let meals = [];
     
     async function getMeals() {
-        let response = await fetch(`${baseurl}/meals/get`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        let response = await fetch(`${baseurl}/meals/get`, {credentials: "include"})
         let json = await response.json();
         meals = json["data"];
         for (let i in meals) {
@@ -65,33 +64,33 @@
 
     async function newMeal() {
         let fd = getMealParameters();
-        await fetch(`${baseurl}/meals/new`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd});
+        await fetch(`${baseurl}/meals/new`, {credentials: "include", method: "POST", body: fd});
         await getMeals()
     }
 
     async function order(mealId) {
-        await fetch(`${baseurl}/order/new/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST"});
+        await fetch(`${baseurl}/order/new/${mealId}`, {credentials: "include", method: "POST"});
         await getMeals();
     }
 
     async function editMeal(mealId) {
-        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH", body: getMealParameters()})
+        await fetch(`${baseurl}/meal/get/${mealId}`, {credentials: "include", method: "PATCH", body: getMealParameters()})
         await getMeals();
         resetMealParams();
     }
 
     async function deleteMeal(mealId) {
-        await fetch(`${baseurl}/meal/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/meal/get/${mealId}`, {credentials: "include", method: "DELETE"})
         await getMeals();
     }
 
     async function blockOrders(mealId) {
-        await fetch(`${baseurl}/order/get/${mealId}/block_unblock`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "PATCH"})
+        await fetch(`${baseurl}/order/get/${mealId}/block_unblock`, {credentials: "include", method: "PATCH"})
         await getMeals();
     }
 
     async function removeOrder(mealId) {
-        await fetch(`${baseurl}/order/get/${mealId}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+        await fetch(`${baseurl}/order/get/${mealId}`, {credentials: "include", method: "DELETE"})
         await getMeals();
     }
 
@@ -107,13 +106,6 @@
     let price = "0.00";
     let limit = 100;
     let mealEditId;
-
-    const token = Cookies.get("key");
-    if (token === null || token === undefined) {
-        navigate("/login");
-    }
-
-
 </script>
 
 {#await getMeals()}
@@ -291,7 +283,7 @@
                                         <Meta>
                                             <IconButton class="material-icons" on:click={async (e) => {
                                                 e.stopPropagation();
-                                                await fetch(`${baseurl}/order/get/${meal.ID}/${user.ID}`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "DELETE"})
+                                                await fetch(`${baseurl}/order/get/${meal.ID}/${user.ID}`, {credentials: "include", method: "DELETE"})
                                                 await getMeals();
                                             }} title="Odstrani naročilo">delete</IconButton>
                                         </Meta>

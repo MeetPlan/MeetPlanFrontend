@@ -2,30 +2,24 @@
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import IconButton, { Icon } from '@smui/icon-button';
     import {baseurl} from "./constants.ts";
-
     import SegmentedButton, {Segment} from "@smui/segmented-button";
     import { Label } from '@smui/common';
-
     import Button from "@smui/button";
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
-
     import Avatar from "svelte-avatar";
 
     import List, {
         Item,
-        Graphic,
         Meta,
         Text,
         PrimaryText,
-        SecondaryText,
     } from '@smui/list';
-    import Cookies from "js-cookie";
 
     let homework = [];
     
     function getHomework() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}})
+        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include"})
             .then((r) => r.json())
             .then((r) => {
                 homework = r.data;
@@ -40,7 +34,7 @@
         fd.append("name", name);
         fd.append("description", description);
         fd.append("to_date", date);
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {headers: {"Authorization": "Bearer " + Cookies.get("key")}, method: "POST", body: fd})
+        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include", method: "POST", body: fd})
             .then((r) => r.json())
             .then((r) => {
                 getHomework()
@@ -116,7 +110,7 @@
                                             let formData = new FormData();
                                             formData.append("status", segment)
 
-                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, headers: {"Authorization": "Bearer " + Cookies.get("key")}}).then((response) => {
+                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, credentials: "include"}).then((response) => {
                                                 return response.json()
                                             }).then((response) => {
                                                 getHomework();
