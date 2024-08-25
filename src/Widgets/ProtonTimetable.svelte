@@ -186,19 +186,16 @@
     }
 
     async function get() {
-        await getClasses();
         await assembleTimetable();
     }
 
-    onMount(() => {
+    onMount(async () => {
         window.onunhandledrejection = (e) => {
             window.location = `/napaka?error=${e.reason}`
         }
+        await getClasses();
+        await parseTimetable();
     })
-
-
-
-    getClasses().then(() => parseTimetable());
 </script>
 
 {#await get()}

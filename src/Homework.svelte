@@ -1,7 +1,7 @@
 <script lang="ts">
     import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
     import IconButton, { Icon } from '@smui/icon-button';
-    import {baseurl} from "./constants.ts";
+    import {baseurl} from "./constants";
     import SegmentedButton, {Segment} from "@smui/segmented-button";
     import { Label } from '@smui/common';
     import Button from "@smui/button";
@@ -18,27 +18,22 @@
 
     let homework = [];
     
-    function getHomework() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => {
-                homework = r.data;
-                for (let i in homework) {
-                    panels.push(false);
-                }
-            })
+    async function getHomework() {
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include"});
+        let r = await response.json();
+        homework = r.data;
+        for (let i in homework) {
+            panels.push(false);
+        }
     }
 
-    function newHomework() {
+    async function newHomework() {
         let fd = new FormData();
         fd.append("name", name);
         fd.append("description", description);
         fd.append("to_date", date);
-        fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include", method: "POST", body: fd})
-            .then((r) => r.json())
-            .then((r) => {
-                getHomework()
-            })
+        await fetch(`${baseurl}/meeting/get/${meetingId}/homework`, {credentials: "include", method: "POST", body: fd});
+        await getHomework();
     }
 
     let description = "";
@@ -55,7 +50,7 @@
         "NOT MANAGED": "NI VPISANO"
     }
 
-    export let meetingId;
+    export let meetingId: string;
 
     getHomework();
 </script>
@@ -106,15 +101,12 @@
                                 <Meta>
                                     <SegmentedButton segments={choices} let:segment singleSelect bind:selected={student.Status}>
                                         <!-- Note: the `segment` property is required! -->
-                                        <Segment {segment} on:click={() => {
+                                        <Segment {segment} on:click={async () => {
                                             let formData = new FormData();
                                             formData.append("status", segment)
 
-                                            fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, credentials: "include"}).then((response) => {
-                                                return response.json()
-                                            }).then((response) => {
-                                                getHomework();
-                                            })
+                                            await fetch(`${baseurl}/meeting/get/${meetingId}/homework/${p.ID}/${student.UserID}`, {method: "PATCH", body: formData, credentials: "include"});
+                                            await getHomework();
                                         }}>
                                             <Label>{translatedSegments[segment]}</Label>
                                         </Segment>

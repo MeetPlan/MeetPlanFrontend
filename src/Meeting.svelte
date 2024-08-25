@@ -60,7 +60,6 @@
         protonRatings = json["data"];
     }
 
-
     async function getMeetingData() {
         let response = await fetch(`${baseurl}/meeting/get/${meetingId}`, {credentials: "include"})
         let r = await response.json()

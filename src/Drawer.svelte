@@ -10,11 +10,11 @@
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
     import {baseurl} from "./constants";
-    import Dialog, {Actions} from "@smui/dialog";
     import Textfield from "@smui/textfield";
     import Button, {Label} from "@smui/button";
     import FormField from '@smui/form-field';
     import Select, {Option} from "@smui/select";
+    import Dialog, {Actions, Content as DialogContent, Title as DialogTitle} from "@smui/dialog";
 
     import * as marked from 'marked';
     import isMobile from "is-mobile";
@@ -263,14 +263,11 @@
         {/if}
     </DialogContent>
     <Actions>
-        <Button on:click={() => {
+        <Button on:click={async () => {
             let fd = new FormData();
             fd.append("message", improvementBody);
-            fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {credentials: "include", method: "POST", body: fd})
-                .then((r) => r.json())
-                .then((r) => {
-                    improvementBody = "";
-                });
+            await fetch(`${baseurl}/meeting/get/${meetingActive}/improvement/new/${user}`, {credentials: "include", method: "POST", body: fd})
+            improvementBody = "";
         }}>
             <Label>
                 POŠLJI
@@ -364,11 +361,12 @@
         </Group>
     </Content>
     <Actions>
-        <Button on:click={() => {
+        <Button on:click={async () => {
             let fd = new FormData();
             fd.append("users", JSON.stringify(selected));
             fd.append("title", newCommunicationTitle);
-            fetch(`${baseurl}/communication/new`, {credentials: "include", method: "POST", body: fd}).then(getCommunications)
+            await fetch(`${baseurl}/communication/new`, {credentials: "include", method: "POST", body: fd});
+            await getCommunications();
         }}>
             <Label>
                 USTVARI

@@ -13,13 +13,13 @@
 
     let absences = [];
 
-    function getStudents() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/absences`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => absences = r["data"])
+    async function getStudents() {
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/absences`, {credentials: "include"});
+        let r = await response.json();
+        absences = r["data"];
     }
 
-    export let meetingId;
+    export let meetingId: string;
 
     let choices = ["UNMANAGED", "ABSENT", "LATE", "PRESENT", "PRESENT ONLINE"];
     const c = {
@@ -49,16 +49,14 @@
                 <Meta>
                     <SegmentedButton segments={choices} let:segment singleSelect bind:selected={item.AbsenceType}>
                         <!-- Note: the `segment` property is required! -->
-                        <Segment {segment} on:click={() => {
+                        <Segment {segment} on:click={async () => {
                             let formData = new FormData();
                             formData.append("absence_type", segment)
 
-                            fetch(`${baseurl}/meeting/absence/${item.ID}`, {method: "PATCH", body: formData, credentials: "include"}).then((response) => {
-                                return response.json()
-                            }).then((response) => {
-                                console.log(response);
-                                getStudents()
-                            })
+                            let response = await fetch(`${baseurl}/meeting/absence/${item.ID}`, {method: "PATCH", body: formData, credentials: "include"});
+                            let r = await response.json()
+                            console.log(r);
+                            await getStudents();
                         }}>
                             <Label>{c[segment]}</Label>
                         </Segment>

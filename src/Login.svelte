@@ -68,16 +68,6 @@
             <p />
             <Link to="/src/Register">REGISTRACIJA</Link>
             <p/>
-            {#if constants.isTauri}
-                <Textfield on:change={() => {
-                    setTimeout(() => {
-                        localStorage.setItem("baseurl", url);
-                        constants.baseurl = url;
-                    }, 200)
-                }} type="url" bind:value={url} label="Povezava do strežnika">
-                    <Icon class="material-icons" slot="leadingIcon">link</Icon>
-                </Textfield>
-            {/if}
             {#if localStorage.getItem("role") !== "" && localStorage.getItem("role") !== null}
                 <Link to="/">POJDITE NEPOSREDNO V SISTEM</Link>
             {/if}

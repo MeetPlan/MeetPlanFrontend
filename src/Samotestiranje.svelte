@@ -82,13 +82,10 @@
                         </Meta>
                         <Meta>
                             {#if item["IsDone"] && item["Result"] !== "SE NE TESTIRA"}
-                                <IconButton class="material-icons" on:click={() => {
-                                    fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {credentials: "include"})
-                                        .then((response) => response.blob())
-                                        .then((blob) => saveBlob(blob))
-                                        .catch((err) => {
-                                        console.log(err);
-                                      });
+                                <IconButton class="material-icons" on:click={async () => {
+                                    let response = await fetch(`${baseurl}/user/self_testing/get_results/pdf/${item["ID"]}`, {credentials: "include"});
+                                    let blob = await response.blob();
+                                    await saveBlob(blob);
                                 }}>download</IconButton>
                             {:else}
                                 <div></div>

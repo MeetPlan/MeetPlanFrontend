@@ -1,10 +1,7 @@
 <script lang="ts">
     import { Icon } from '@smui/common';
-
     import Button, {Label} from "@smui/button";
     import Textfield from "@smui/textfield";
-
-
     import {baseurl} from "./constants";
     import * as marked from 'marked';
     import insane from "insane";
@@ -15,24 +12,22 @@
 
 
 
-    function getSystemNotifications() {
-        fetch(`${baseurl}/system/notifications`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((json) => systemNotifications = json.data);
+    async function getSystemNotifications() {
+        let response = await fetch(`${baseurl}/system/notifications`, {credentials: "include"});
+        let r = await response.json();
+        systemNotifications = r.data;
     }
 
-    function deleteNotification(nid) {
-        fetch(`${baseurl}/notification/${nid}`, {credentials: "include", method: "DELETE"})
-            .then((response) => response.json())
-            .then((json) => getSystemNotifications());
+    async function deleteNotification(nid: string) {
+        await fetch(`${baseurl}/notification/${nid}`, {credentials: "include", method: "DELETE"});
+        await getSystemNotifications();
     }
 
-    function newNotification() {
+    async function newNotification() {
         let fd = new FormData();
-        fd.append("body", newBody)
-        fetch(`${baseurl}/system/notifications/new`, {credentials: "include", method: "POST", body: fd})
-            .then((response) => response.json())
-            .then((json) => getSystemNotifications());
+        fd.append("body", newBody);
+        await fetch(`${baseurl}/system/notifications/new`, {credentials: "include", method: "POST", body: fd});
+        await getSystemNotifications();
     }
 
     getSystemNotifications();

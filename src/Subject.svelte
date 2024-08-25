@@ -122,7 +122,7 @@
                     <PrimaryText>{item.Name}</PrimaryText>
                 </TextList>
                 {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant"}
-                    <Meta><IconButton class="material-icons" on:click={() => deleteFromSubject(item.ID)} title="Remove from class">delete</IconButton></Meta>
+                    <Meta><IconButton class="material-icons" on:click={async () => await deleteFromSubject(item.ID)} title="Remove from class">delete</IconButton></Meta>
                 {/if}
             </Item>
         {/each}

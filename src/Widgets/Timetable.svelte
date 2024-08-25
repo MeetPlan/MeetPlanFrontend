@@ -47,8 +47,8 @@
 
     export let date: Date = new Date();
     let currentDate = new Date(date);
-    export let hour = -1;
-    export let dateCallback = (day) => {};
+    export let hour: number = -1;
+    export let dateCallback = (day) => {}; // TODO: NE!
 
     let start: Date = startOfWeek(currentDate, {weekStartsOn: 1})
     let end: Date = endOfWeek(currentDate, {weekStartsOn: 1})
@@ -84,27 +84,25 @@
     export let subjectId: number;
     export let teacherId: number;
 
-    function getTimetable() {
+    async function getTimetable() {
         console.log(fmtStart, fmtEnd)
 
         console.log(classId, teacherId, subjectId)
 
-        fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => {
-                mon = r["data"][0]["meetings"];
-                tue = r["data"][1]["meetings"];
-                wed = r["data"][2]["meetings"];
-                thu = r["data"][3]["meetings"];
-                fri = r["data"][4]["meetings"];
-                //sat = r["data"][5]["meetings"];
-                dates = [];
-                for (let i in r["data"]) {
-                    i = r["data"][i]
-                    dates.push(i["date"].substring(0, 5))
-                }
-                console.log(dates)
-            });
+        let response = await fetch(`${baseurl}/timetable/get?start=${fmtStart}&end=${fmtEnd}&${subjectId === undefined ? (teacherId === undefined ? `classId=${classId}` : `teacherId=${teacherId}`) : `subjectId=${subjectId}`}`, {credentials: "include"});
+        let r = await response.json();
+        mon = r["data"][0]["meetings"];
+        tue = r["data"][1]["meetings"];
+        wed = r["data"][2]["meetings"];
+        thu = r["data"][3]["meetings"];
+        fri = r["data"][4]["meetings"];
+        //sat = r["data"][5]["meetings"];
+        dates = [];
+        for (let i in r["data"]) {
+            i = r["data"][i]
+            dates.push(i["date"].substring(0, 5))
+        }
+        console.log(dates)
     }
 
     const hours: number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8];

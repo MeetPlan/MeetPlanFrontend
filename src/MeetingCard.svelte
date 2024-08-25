@@ -6,7 +6,6 @@
 
     export let n: Meeting;
     export let lengthOfArray: number;
-    export let i: number;
 
     const mobile: boolean = isMobile();
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import List, {Item, Meta, PrimaryText} from "@smui/list";
+    import List, {Item, Text as TextList, Meta, PrimaryText} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
     import Avatar from "svelte-avatar";
@@ -53,27 +53,24 @@
         console.log(lastDate);
     }
 
-    function assignToClass() {
-        fetch(`${baseurl}/class/get/${id}/add_user/${studentPick["ID"]}`, {credentials: "include", method: "PATCH"})
-            .then((response) => response.json())
-            .then((r) => getClass());
+    async function assignToClass() {
+        await fetch(`${baseurl}/class/get/${id}/add_user/${studentPick["ID"]}`, {credentials: "include", method: "PATCH"});
+        await getClass();
     }
 
-    function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {credentials: "include", method: "DELETE"})
-            .then((response) => response.json())
-            .then((r) => getClass());
+    async function deleteFromClass(cid: string) {
+        await fetch(`${baseurl}/class/get/${id}/remove_user/${cid}`, {credentials: "include", method: "DELETE"});
+        await getClass();
     }
 
-    function patchClass() {
+    async function patchClass() {
         let fd = new FormData();
         fd.append("class_year", classYear);
         fd.append("sok", sok.toString());
         fd.append("eok", eok.toString())
         fd.append("last_date", ((new Date(lastDate)).valueOf() / 1000).toString())
-        fetch(`${baseurl}/class/get/${id}`, {credentials: "include", method: "PATCH", body: fd})
-            .then((response) => response.json())
-            .then((r) => getClass());
+        await fetch(`${baseurl}/class/get/${id}`, {credentials: "include", method: "PATCH", body: fd});
+        await getClass();
     }
 
     onMount(async () => {

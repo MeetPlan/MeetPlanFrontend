@@ -9,16 +9,14 @@
     let newPassword = "";
     let oldPassword = "";
 
-    function updatePassword() {
+    async function updatePassword() {
         let fd = new FormData()
         fd.append("password", newPassword);
         fd.append("oldPassword", oldPassword);
-        fetch(`${baseurl}/user/get/password_change`, {credentials: "include", body: fd, method: "PATCH"})
-            .then((r) => {
-                if (r.status === 200) {
-                    navigate("/")
-                }
-            })
+        let response = await fetch(`${baseurl}/user/get/password_change`, {credentials: "include", body: fd, method: "PATCH"});
+        if (response.status === 200) {
+            navigate("/");
+        }
     }
 </script>
 
@@ -31,7 +29,7 @@
     <Icon class="material-icons" slot="leadingIcon">password</Icon>
     <HelperText slot="helper">Vpišite novo geslo</HelperText>
 </Textfield>
-<Button on:click={() => updatePassword()}>
+<Button on:click={async () => await updatePassword()}>
     <Icon class="material-icons">password</Icon>
     Spremeni geslo
 </Button>

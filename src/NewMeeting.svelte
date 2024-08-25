@@ -37,15 +37,12 @@
     let subjects: Subject[] = [];
     let subjectId: Subject = undefined;
 
-    export let editId;
+    export let editId: string;
 
-    function getSubjects() {
-        fetch(`${baseurl}/subjects/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((json) => {
-                    subjects = json["data"];
-                },
-            );
+    async function getSubjects() {
+        let response = await fetch(`${baseurl}/subjects/get`, {credentials: "include"})
+        let r = await response.json();
+        subjects = r["data"];
     }
 
     function fmtDate(date: Date): string {
@@ -82,7 +79,7 @@
         let json = await response.json()
         date = fmtDateReverse(new Date(reverseFmtDate(json["data"]["Date"])));
         console.log(date)
-        subjectId = json.data.SubjectID;
+        subjectId = json.data.SubjectID; // TODO: huh? types????
         name = json.data.MeetingName;
         description = json.data.Details;
         url = json.data.URL;
@@ -134,7 +131,7 @@
         fd.append("is_correction_test", isCorrectionTest.toString());
         await fetch(`${baseurl}/${(editId === undefined ? "meetings/new" : "meetings/new/" + editId)}`,
             {credentials: "include", body: fd, method: editId === undefined ? "POST" : "PATCH"})
-        navigate("/")
+        navigate("/");
     }
 
     getSubjects();

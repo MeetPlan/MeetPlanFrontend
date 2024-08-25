@@ -19,51 +19,37 @@
     let items = [];
     let teachers = [];
 
-    function loadThings() {
-        fetch(`${baseurl}/classes/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((json) => {
-                    items = json["data"];
-                },
-            );
+    async function getClasses() {
+        let response = await fetch(`${baseurl}/classes/get`, {credentials: "include"});
+        let r = await response.json();
+        items = r["data"];
     }
 
-    function getTeachers() {
-        fetch(`${baseurl}/teachers/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((json) => {
-                    teachers = json["data"];
-                },
-            );
+    async function getTeachers() {
+        let response = await fetch(`${baseurl}/teachers/get`, {credentials: "include"});
+        let r = response.json();
+        teachers = r["data"];
     }
 
-    loadThings();
+    getClasses();
     getTeachers();
 
     let nclass = "";
     let teacherId = "";
     let classYear = "";
 
-    function newClass() {
+    async function newClass() {
         let fd = new FormData();
         fd.append("teacher_id", teacherId);
         fd.append("name", nclass);
         fd.append("class_year", classYear);
-        fetch(`${baseurl}/class/new`, {credentials: "include", method: "POST", body: fd})
-            .then((response) => response.json())
-            .then((json) => {
-                    loadThings();
-                },
-            );
+        await fetch(`${baseurl}/class/new`, {credentials: "include", method: "POST", body: fd})
+        await getClasses();
     }
 
-    function deleteClass(cid: number) {
-        fetch(`${baseurl}/class/get/${cid}`, {credentials: "include", method: "DELETE"})
-            .then((response) => response.json())
-            .then((json) => {
-                    loadThings();
-                },
-            );
+    async function deleteClass(cid: string) {
+        await fetch(`${baseurl}/class/get/${cid}`, {credentials: "include", method: "DELETE"})
+        await getClasses();
     }
 </script>
 
@@ -74,7 +60,7 @@
     <Textfield label="Šolsko leto" bind:value={classYear} style="width: 100%;">
         <HelperText slot="helper">Vpišite prosimo šolsko leto - to ime se bo prikazalo na spričevalu, zato bodite še posebej previdni (primer - 2021/2022)</HelperText>
     </Textfield>
-    <Select bind:teacherId label="Izberite razrednika" variant="outlined">
+    <Select bind:value={teacherId} label="Izberite razrednika" variant="outlined">
         <Option value=""/>
         {#each teachers as c}
             <Option value={c["ID"]} on:click={() => teacherId = c["ID"]}>{c["Name"]}</Option>

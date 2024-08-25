@@ -4,4 +4,4 @@
     let url = new URL(window.location.toString());
 </script>
 
-<Error error={url.searchParams.get("error")}/>
+<Error error={url.searchParams.get("error") ?? ""}/>

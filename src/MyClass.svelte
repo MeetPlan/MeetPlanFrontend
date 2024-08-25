@@ -10,28 +10,28 @@
     import Avatar from "svelte-avatar";
 
     let classes = [];
-    let classId;
+    let classId: string | undefined;
 
     let className;
 
     let classDetails;
 
-    function getClasses() {
-        fetch(`${baseurl}/user/get/classes`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => classes = r["data"]);
+    async function getClasses() {
+        let response = await fetch(`${baseurl}/user/get/classes`, {credentials: "include"});
+        let r = await response.json();
+        classes = r["data"];
     }
 
-    function getClass(cid) {
-        fetch(`${baseurl}/class/get/${cid}`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => classDetails = r["data"]);
+    async function getClass(cid: string) {
+        let response = await fetch(`${baseurl}/class/get/${cid}`, {credentials: "include"});
+        let r = await response.json();
+        classDetails = r["data"];
     }
 
     getClasses();
 </script>
 
-<Select bind:classId label="Izberite razred">
+<Select bind:value={classId} label="Izberite razred">
     <Option value="" on:click={() => {
         classId = undefined
         className = undefined;

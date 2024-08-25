@@ -25,28 +25,25 @@
     let dates = [];
     let date = "";
 
-    function getConfiguration() {
-        fetch(`${baseurl}/admin/config/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((json) => {
-                    let config = json["data"];
-                    schoolName = config["school_name"];
-                    postNumber = config["school_post_code"];
-                    city = config["school_city"];
-                    address = config["school_address"];
-                    country = config["school_country"];
-                    parentViewGrades = config["parent_view_grades"];
-                    parentViewHomework = config["parent_view_homework"];
-                    parentViewAbsences = config["parent_view_absences"];
-                    parentViewGradings = config["parent_view_gradings"];
-                    blockRegistrations = config["block_registrations"];
-                    blockMeals = config["block_meals"];
-                    dates = config["school_free_days"];
-                },
-            );
+    async function getConfiguration() {
+        let response = await fetch(`${baseurl}/admin/config/get`, {credentials: "include"});
+        let r = await response.json();
+        let config = json["data"];
+        schoolName = config["school_name"];
+        postNumber = config["school_post_code"];
+        city = config["school_city"];
+        address = config["school_address"];
+        country = config["school_country"];
+        parentViewGrades = config["parent_view_grades"];
+        parentViewHomework = config["parent_view_homework"];
+        parentViewAbsences = config["parent_view_absences"];
+        parentViewGradings = config["parent_view_gradings"];
+        blockRegistrations = config["block_registrations"];
+        blockMeals = config["block_meals"];
+        dates = config["school_free_days"];
     }
 
-    function updateConfig() {
+    async function updateConfig() {
         let fd = new FormData()
         fd.append("school_name", schoolName);
         fd.append("school_post_code", postNumber.toString());
@@ -60,10 +57,8 @@
         fd.append("block_registrations", blockRegistrations.toString());
         fd.append("block_meals", blockMeals.toString());
         fd.append("school_free_days", JSON.stringify(dates));
-        fetch(`${baseurl}/admin/config/get`,
-            {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => getConfiguration())
+        await fetch(`${baseurl}/admin/config/get`, {credentials: "include", method: "POST", body: fd});
+        await getConfiguration();
     }
 
     getConfiguration();

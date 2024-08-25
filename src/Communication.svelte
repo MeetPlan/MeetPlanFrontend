@@ -16,38 +16,30 @@
 
     export let id: string = "";
 
-    function getCommunication() {
-        fetch(`${baseurl}/communication/get/${id}`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => {
-                comm = r.data;
-            });
+    async function getCommunication() {
+        let response = await fetch(`${baseurl}/communication/get/${id}`, {credentials: "include"});
+        let r = await response.json();
+        comm = r.data;
     }
 
-    function deleteMessage(messageId) {
-        fetch(`${baseurl}/message/get/${messageId}`, {credentials: "include", method: "DELETE"})
-            .then((r) => r.json())
-            .then((r) => {
-                getCommunication();
-            });
+    async function deleteMessage(messageId: string) {
+        await fetch(`${baseurl}/message/get/${messageId}`, {credentials: "include", method: "DELETE"});
+        await getCommunication();
     }
 
-    function editMessage() {
+    async function editMessage() {
         let fd = new FormData();
         fd.append("body", newMessageValue)
-        fetch(`${baseurl}/message/get/${messageEditingId}`, {credentials: "include", method: "PATCH", body: fd})
-            .then((r) => r.json())
-            .then((r) => {
-                getCommunication();
-                messageEditingId = undefined;
-                newMessageValue = "";
-            });
+        await fetch(`${baseurl}/message/get/${messageEditingId}`, {credentials: "include", method: "PATCH", body: fd});
+        await getCommunication();
+        messageEditingId = undefined;
+        newMessageValue = "";
     }
 
     let comm;
 
     let newMessageValue = "";
-    let messageEditingId = undefined;
+    let messageEditingId: string | undefined = undefined;
 
     let newCommunicationTitle = "";
     let usersAtCommunication = [];
@@ -105,14 +97,12 @@
     {/if}
     <p/>
     {#if messageEditingId === undefined}
-    <Button on:click={() => {
+    <Button on:click={async () => {
         let fd = new FormData();
         fd.append("body", newMessageValue)
-        fetch(`${baseurl}/communication/get/${id}/message/new`, {credentials: "include", body: fd, method: "POST"})
-            .then((r) => {
-                newMessageValue = "";
-                getCommunication();
-            });
+        await fetch(`${baseurl}/communication/get/${id}/message/new`, {credentials: "include", body: fd, method: "POST"});
+        newMessageValue = "";
+        await getCommunication();
     }}>
         <Icon class="material-icons">send</Icon>
         <Label>Pošlji</Label>

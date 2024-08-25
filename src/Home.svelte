@@ -17,23 +17,10 @@
 
     const mobile = isMobile();
 
-    function loadThings() {
-        fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {credentials: "include"})
-            .then((response) => {
-                if (response.ok) {
-                    return response
-                }
-                throw Error("invalid request")
-            })
-            .then((response) => response.json())
-            .then((json) => {
-                    items = json["data"];
-                },
-            ).catch((e) => {
-                console.log(e)
-                document.cookie = "";
-                window.location.href = "/login";
-        });
+    async function getClasses() {
+        let response = await fetch(`${baseurl}/${(localStorage.getItem("role") === "student" || localStorage.getItem("role") === "parent" ? 'user/get/classes' : "classes/get")}`, {credentials: "include"});
+        let r = await response.json();
+        items = r["data"];
     }
 
     async function getSystemNotifications() {
@@ -43,7 +30,7 @@
     }
 
     onMount(async () => {
-        loadThings()
+        await getClasses()
         await getSystemNotifications();
     });
 </script>

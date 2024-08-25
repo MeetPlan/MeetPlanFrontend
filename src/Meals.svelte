@@ -94,7 +94,7 @@
         await getMeals();
     }
 
-    let absenceList: number[boolean] = {};
+    let absenceList: Record<number, boolean> = {};
 
     let date = "";
     let mealName = "";

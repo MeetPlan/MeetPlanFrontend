@@ -61,7 +61,7 @@
         config = json["data"]["rules"];
     }
 
-    function newRule() {
+    async function newRule() {
         let fd = new FormData()
         let moduleId = -1;
         for (let i: number in moduleNames) {
@@ -80,17 +80,13 @@
         fd.append("subjects", JSON.stringify(selectedSubjects));
         fd.append("protonRuleId", moduleId.toString());
         fd.append("selectedHours", selectedHour.toString());
-        fetch(`${baseurl}/proton/rule/new`,
-            {credentials: "include", body: fd, method: "POST"})
-            .then((r) => r.json())
-            .then((r) => getConfiguration())
+        await fetch(`${baseurl}/proton/rule/new`, {credentials: "include", body: fd, method: "POST"});
+        await getConfiguration();
     }
 
-    function deleteConfig(configId: number) {
-        fetch(`${baseurl}/proton/rule/get/${configId}`,
-            {credentials: "include", method: "DELETE"})
-            .then((r) => r.json())
-            .then((r) => getConfiguration())
+    async function deleteConfig(configId: number) {
+        await fetch(`${baseurl}/proton/rule/get/${configId}`, {credentials: "include", method: "DELETE"})
+        await getConfiguration();
     }
 
     async function getTeachers() {

@@ -12,12 +12,10 @@
 
     let grades = null;
 
-    function getGrades() {
-        fetch(`${baseurl}/my/grades`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => {
-                grades = r["data"];
-            });
+    async function getGrades() {
+        let response = await fetch(`${baseurl}/my/grades`, {credentials: "include"});
+        let r = await response.json();
+        grades = r["data"];
     }
 
     const gradeColors = [

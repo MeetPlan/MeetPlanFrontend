@@ -20,22 +20,20 @@
     let open = false;
 
     let grades = null;
-    let toPatch;
+    let toPatch: string | undefined;
     let selectedPeriod;
-    let userId;
+    let userId: string;
     let finalize = false;
     let canPatch = true;
     let description: string = "";
 
-    function getGrades() {
-        fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {credentials: "include"})
-            .then((r) => r.json())
-            .then((r) => {
-                grades = r["data"];
-            });
+    async function getGrades() {
+        let response = await fetch(`${baseurl}/meeting/get/${meetingId}/grades`, {credentials: "include"});
+        let r = await response.json();
+        grades = r["data"];
     }
 
-    function insertGrade() {
+    async function insertGrade() {
         let fd = new FormData();
         fd.append("is_written", isWritten.toString());
         fd.append("grade", selectedGrade);
@@ -44,38 +42,29 @@
         fd.append("is_final", finalize.toString());
         fd.append("can_patch", canPatch.toString());
         fd.append("description", description);
-        fetch(`${baseurl}/grades/new/${meetingId}`, {credentials: "include", method: "POST", body: fd})
-            .then((r) => r.json())
-            .then((r) => {
-                getGrades();
-            });
+        await fetch(`${baseurl}/grades/new/${meetingId}`, {credentials: "include", method: "POST", body: fd});
+        await getGrades();
     }
 
-    function patchGrade() {
+    async function patchGrade() {
         let fd = new FormData();
         fd.append("is_written", isWritten.toString());
         fd.append("grade", selectedGrade);
         fd.append("period", selectedPeriod);
         fd.append("description", description);
-        fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "PATCH", body: fd})
-            .then((r) => r.json())
-            .then((r) => {
-                getGrades();
-            });
+        await fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "PATCH", body: fd});
+        await getGrades();
     }
 
-    function deleteGrade() {
-        fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "DELETE"})
-            .then((r) => r.json())
-            .then((r) => {
-                getGrades();
-                toPatch = undefined;
-            });
+    async function deleteGrade() {
+        await fetch(`${baseurl}/grade/get/${toPatch}`, {credentials: "include", method: "DELETE"});
+        await getGrades();
+        toPatch = undefined;
     }
 
     let isWritten = false;
 
-    export let meetingId;
+    export let meetingId: string;
 
     const gradeColors = [
         "#F44336",

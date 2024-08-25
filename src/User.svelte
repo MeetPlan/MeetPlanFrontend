@@ -9,7 +9,7 @@
         Option,
     } from '@smui/select';
 
-    import List, {Item, Meta} from "@smui/list";
+    import List, {Item, Meta, Text as TextList} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
     let classes = [];
@@ -27,45 +27,43 @@
 
     export let id: number;
 
-    function getClasses() {
-        fetch(`${baseurl}/classes/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => classes = r["data"]);
+    async function getClasses() {
+        let response = await fetch(`${baseurl}/classes/get`, {credentials: "include"});
+        let r = await response.json();
+        classes = r["data"];
     }
 
-    function getStudents() {
-        fetch(`${baseurl}/students/get`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => students = r["data"]);
+    async function getStudents() {
+        let response = await fetch(`${baseurl}/students/get`, {credentials: "include"});
+        let r = await response.json();
+        students = r["data"];
     }
 
-    function getMyClasses() {
-        fetch(`${baseurl}/user/get/classes?id=${id}`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => myClasses = r.data);
+    async function getMyClasses() {
+        let response = await fetch(`${baseurl}/user/get/classes?id=${id}`, {credentials: "include"});
+        let r = await response.json();
+        myClasses = r.data;
     }
 
-    function getMyChildren() {
-        fetch(`${baseurl}/parents/get/students?parentId=${id}`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => myStudents = r.data);
+    async function getMyChildren() {
+        let response = await fetch(`${baseurl}/parents/get/students?parentId=${id}`, {credentials: "include"});
+        let r = await response.json();
+        myStudents = r.data;
     }
 
-    function getData() {
-        fetch(`${baseurl}/user/get/data/${id}`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((r) => {
-                birthCertificateNumber = r.data.BirthCertificateNumber;
-                dateOfBirth = r.data.Birthday;
-                birthCity = r.data.CityOfBirth;
-                birthCountry = r.data.CountryOfBirth;
-                name = r.data.Name;
-                email = r.data.Email;
-                role = r.data.Role;
-            });
+    async function getUserData() {
+        let response = await fetch(`${baseurl}/user/get/data/${id}`, {credentials: "include"});
+        let r = await response.json();
+        birthCertificateNumber = r.data.BirthCertificateNumber;
+        dateOfBirth = r.data.Birthday;
+        birthCity = r.data.CityOfBirth;
+        birthCountry = r.data.CountryOfBirth;
+        name = r.data.Name;
+        email = r.data.Email;
+        role = r.data.Role;
     }
 
-    function patchUser() {
+    async function patchUser() {
         let fd = new FormData();
         fd.append("birth_certificate_number", birthCertificateNumber !== undefined ? birthCertificateNumber : "");
         fd.append("birthday", dateOfBirth !== undefined ? dateOfBirth : "");
@@ -73,61 +71,56 @@
         fd.append("country_of_birth", birthCountry !== undefined ? birthCountry : "");
         fd.append("name", name !== undefined ? name : "");
         fd.append("email", email !== undefined ? email : "");
-        fetch(`${baseurl}/user/get/data/${id}`, {credentials: "include", method: "PATCH", body: fd})
-            .then((response) => response.json())
-            .then((r) => getData());
+        await fetch(`${baseurl}/user/get/data/${id}`, {credentials: "include", method: "PATCH", body: fd});
+        await getUserData();
     }
 
-    function assignToClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {credentials: "include", method: "PATCH"})
-            .then((response) => response.json())
-            .then((r) => getMyClasses());
+    async function assignToClass(cid: string) {
+        await fetch(`${baseurl}/class/get/${cid}/add_user/${id}`, {credentials: "include", method: "PATCH"});
+         await getMyClasses();
     }
 
-    function deleteFromClass(cid: string) {
-        fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {credentials: "include", method: "DELETE"})
-            .then((response) => response.json())
-            .then((r) => getMyClasses());
+    async function deleteFromClass(cid: string) {
+        await fetch(`${baseurl}/class/get/${cid}/remove_user/${id}`, {credentials: "include", method: "DELETE"});
+        await getMyClasses();
     }
 
-    function removeUserFromParent(sid: string) {
-        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {credentials: "include", method: "DELETE"})
-            .then((response) => response.json())
-            .then((r) => getMyChildren());
+    async function removeUserFromParent(sid: string) {
+        await fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {credentials: "include", method: "DELETE"});
+        await getMyChildren();
     }
 
-    function assignToParent(sid: string) {
-        fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {credentials: "include", method: "PATCH"})
-            .then((response) => response.json())
-            .then((r) => getMyChildren());
+    async function assignToParent(sid: string) {
+        await fetch(`${baseurl}/parent/${id}/assign/student/${sid}`, {credentials: "include", method: "PATCH"});
+        await getMyChildren();
     }
 
     getClasses();
     getMyClasses();
-    getData();
+    getUserData();
     getStudents();
     getMyChildren();
 </script>
 
 {#if role === "student"}
-    <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={() => patchUser()}>
+    <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={async () => await patchUser()}>
         <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
     </Textfield>
-    <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+    <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
         <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
     </Textfield>
-    <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={() => patchUser()}>
+    <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
         <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
     </Textfield>
 {/if}
-<Textfield bind:value={dateOfBirth} type="date" required on:change={() => patchUser()}>
+<Textfield bind:value={dateOfBirth} type="date" required on:change={async () => await patchUser()}>
     <Icon class="material-icons" slot="leadingIcon">event</Icon>
     <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni (to se lahko uporabi za posebne funkcije ;-))</HelperText>
 </Textfield>
-<Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={() => patchUser()}>
+<Textfield bind:value={name} label="Ime in priimek" style="width: 100%;" required on:change={async () => await patchUser()}>
     <HelperText slot="helper">Vpišite ime in priimek - bodite zelo pozorni</HelperText>
 </Textfield>
-<Textfield bind:value={email} label="Elektronski naslov" style="width: 100%;" required on:change={() => patchUser()}>
+<Textfield bind:value={email} label="Elektronski naslov" style="width: 100%;" required on:change={async () => await patchUser()}>
     <HelperText slot="helper">Vpišite elektronski naslov - bodite zelo pozorni</HelperText>
 </Textfield>
 {#if role === "student"}
@@ -135,7 +128,7 @@
     <Select bind:classId label="Izberite razred" variant="outlined">
         <Option value=""/>
         {#each classes as c}
-            <Option on:click={() => {assignToClass(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+            <Option on:click={async () => {await assignToClass(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
         {/each}
     </Select>
     <h2>Razredi, v katere je učenec dodan:</h2>
@@ -143,7 +136,7 @@
         {#each myClasses as item}
             <Item>
                 <TextList>{item["Name"]}</TextList>
-                <Meta><IconButton class="material-icons" on:click={() => deleteFromClass(item["ID"])} title="Remove from class">delete</IconButton></Meta>
+                <Meta><IconButton class="material-icons" on:click={async () => await deleteFromClass(item["ID"])} title="Remove from class">delete</IconButton></Meta>
             </Item>
         {/each}
     </List>
@@ -153,7 +146,7 @@
     <Select bind:classId label="Izberite razred" variant="outlined">
         <Option value=""/>
         {#each students as c}
-            <Option on:click={() => {assignToParent(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
+            <Option on:click={async () => {await assignToParent(c["ID"])}} value={c["ID"]}>{c["Name"]}</Option>
         {/each}
     </Select>
     <h2>Učenci:</h2>
@@ -161,7 +154,7 @@
         {#each myStudents as item}
             <Item>
                 <TextList>{item["Name"]}</TextList>
-                <Meta><IconButton class="material-icons" on:click={() => removeUserFromParent(item["ID"])} title="Remove user from parent">delete</IconButton></Meta>
+                <Meta><IconButton class="material-icons" on:click={async () => await removeUserFromParent(item["ID"])} title="Remove user from parent">delete</IconButton></Meta>
             </Item>
         {/each}
     </List>

@@ -143,13 +143,10 @@
     <h1>{userData.Name}</h1>
 {/if}
 {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
-    <Button on:click={() => {
-        fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {credentials: "include"})
-            .then((response) => response.blob())
-            .then((blob) => saveBlob(blob))
-        .catch((err) => {
-            console.log(err);
-          });
+    <Button on:click={async () => {
+        let response = await fetch(`${baseurl}/user/get/certificate_of_schooling/${studentId}`, {credentials: "include"});
+        let blob = await response.blob();
+        await saveBlob(blob);
     }}>
         <Icon class="material-icons">download</Icon>
         Prenesi potrdilo o šolanju
@@ -223,13 +220,12 @@
     <p/>
     <FormField>
         <Switch bind:checked={isPassing} on:click={() => {
-            setTimeout(() => {
+            setTimeout(async () => {
                 let fd = new FormData();
                 fd.append("is_passing", isPassing.toString());
-                fetch(`${baseurl}/user/get/data/${studentId}`, {credentials: "include", method: "PATCH", body: fd})
-                    .then((response) => response.json())
-                    .then((r) => getUserData());
-            }, 200);
+                await fetch(`${baseurl}/user/get/data/${studentId}`, {credentials: "include", method: "PATCH", body: fd});
+                await getUserData();
+            }, 0);
         }}/>
         Bo opravil razred?
     </FormField>
@@ -239,13 +235,10 @@
         Natisni predlogo
     </FormField>
     <p/>
-    <Button on:click={() => {
-        fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {credentials: "include"})
-            .then((response) => response.blob())
-            .then((blob) => saveBlob(blob))
-            .catch((err) => {
-            console.log(err);
-          });
+    <Button on:click={async () => {
+        let response = await fetch(`${baseurl}/user/get/ending_certificate/${studentId}?useDocument=${printTemplate.toString()}`, {credentials: "include"});
+        let blob = await response.blob();
+        await saveBlob(blob);
     }}>
         <Icon class="material-icons">download</Icon>
         Prenesi spričevalo
@@ -272,14 +265,12 @@
                         <Item>
                             {c[item["AbsenceType"]]} - {item["IsExcused"] ? "OPRAVIČENO" : "ŠE NI OPRAVIČENO"}
                             <Meta>
-                                <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={() => {
-                                    if (localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin") {
-                                        fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {credentials: "include", method: "PATCH"})
-                                            .then((r) => r.json())
-                                            .then((r) => {
-                                                getAbsences();
-                                            });
+                                <IconButton class="material-icons" style="color: {item['IsExcused'] ? 'green' : 'red'};" on:click={async () => {
+                                    if (!(localStorage.getItem("role") === "teacher" || localStorage.getItem("role") === "admin")) {
+                                        return;
                                     }
+                                    await fetch(`${baseurl}/user/get/absences/${studentId}/excuse/${item["ID"]}`, {credentials: "include", method: "PATCH"});
+                                    await getAbsences();
                                 }}>task_alt</IconButton>
                             </Meta>
                         </Item>
