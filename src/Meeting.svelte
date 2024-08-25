@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
 
     import Button, {Label} from "@smui/button";
     import Icon from '@smui/textfield/icon';

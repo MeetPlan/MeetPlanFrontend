@@ -11,7 +11,7 @@
 
     import Autocomplete from '@smui-extra/autocomplete';
     import {baseurl} from "./constants";
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
 
     import Slider from "@smui/slider";
     import FormField from '@smui/form-field';

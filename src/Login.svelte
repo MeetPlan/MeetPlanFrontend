@@ -6,12 +6,10 @@
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
 
-    import { navigate, Link } from "svelte-navigator";
+    import { navigate, Link } from "svelte-routing";
 
     import Snackbar, {Actions} from "@smui/snackbar";
-    import type { SnackbarComponentDev } from '@smui/snackbar';
     import * as constants from "./constants";
-    import Cookies from "js-cookie";
 
     async function login() {
         let fd = new FormData();
@@ -24,7 +22,6 @@
                 localStorage.setItem("role", response["data"]["role"]);
                 localStorage.setItem("userId", response["data"]["user_id"]);
                 localStorage.setItem("email", response["data"]["email"]);
-                Cookies.set("key", response["data"]["token"], {sameSite: "strict"});
                 navigate("/")
             } else {
                 snackbarWithClose.open();
@@ -40,7 +37,7 @@
     let email = "";
     let password = "";
 
-    let snackbarWithClose: SnackbarComponentDev;
+    let snackbarWithClose: Snackbar;
 </script>
 
 <main>
@@ -69,7 +66,7 @@
                 <Label>PRIJAVA</Label>
             </Button>
             <p />
-            <Link to="/register">REGISTRACIJA</Link>
+            <Link to="/src/Register">REGISTRACIJA</Link>
             <p/>
             {#if constants.isTauri}
                 <Textfield on:change={() => {
@@ -81,7 +78,7 @@
                     <Icon class="material-icons" slot="leadingIcon">link</Icon>
                 </Textfield>
             {/if}
-            {#if Cookies.get("key") !== "" && Cookies.get("key") !== undefined && Cookies.get("key") !== null}
+            {#if localStorage.getItem("role") !== "" && localStorage.getItem("role") !== null}
                 <Link to="/">POJDITE NEPOSREDNO V SISTEM</Link>
             {/if}
         </Paper>

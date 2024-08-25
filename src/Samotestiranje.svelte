@@ -25,7 +25,7 @@
     import { Icon } from '@smui/common';
 
 
-    import { navigate } from "svelte-navigator";
+    import { navigate } from "svelte-routing";
     import Cookies from "js-cookie";
 
 

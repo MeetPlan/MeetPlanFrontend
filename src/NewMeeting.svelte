@@ -9,7 +9,7 @@
     import Timetable from "./Widgets/Timetable.svelte";
     import {baseurl} from "./constants";
 
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
     import * as marked from 'marked';
     import insane from "insane";
     import type {Subject} from "./typescript-definitions/tsdef";

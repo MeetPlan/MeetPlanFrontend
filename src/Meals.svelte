@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
     import {baseurl} from "./constants";
 
     import Textfield from "@smui/textfield";

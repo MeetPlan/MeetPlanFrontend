@@ -1,8 +1,6 @@
-import {dialog, fs} from "@tauri-apps/api";
-
-export const production: boolean = isProduction;
-export let baseurl: string = isTauriApp ? localStorage.getItem("baseurl") : (!production ? "http://127.0.0.1:8000" : "/api");
-export const isTauri: boolean = isTauriApp;
+export const production: boolean = import.meta.env.PROD;
+export let baseurl: string = !production ? "http://127.0.0.1:8000" : "/api";
+export const isTauri: boolean = false;
 console.log(baseurl, isTauri);
 
 const blobToBinary = async blob => {
@@ -12,16 +10,6 @@ const blobToBinary = async blob => {
 };
 
 export const saveBlob = async blob => {
-    if (isTauri) {
-        dialog.save()
-            .then(async (path)=>{
-                await fs.writeBinaryFile({
-                    path: path,
-                    contents: await blobToBinary(blob),
-                })
-            })
-    } else {
-        var _url = window.URL.createObjectURL(blob);
-        window.open(_url, "_blank").focus();
-    }
+    var _url = window.URL.createObjectURL(blob);
+    window.open(_url, "_blank").focus();
 }

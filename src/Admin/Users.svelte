@@ -30,7 +30,7 @@
 
     const choices = ["unverified", "student", "parent", "teacher", "food organizer", "school psychologist", "principal assistant", "principal"];
 
-    import { navigate } from "svelte-navigator";
+    import { navigate } from "svelte-routing";
     import Cookies from "js-cookie";
     import FormField from "@smui/form-field";
     import Switch from "@smui/switch";

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
     import Button from "@smui/button";
     import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
     import {baseurl, saveBlob} from "./constants";

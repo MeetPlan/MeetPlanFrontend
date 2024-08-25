@@ -4,8 +4,7 @@
     import {baseurl} from "./constants";
 
     import Button, {Icon} from "@smui/button";
-    import {navigate} from "svelte-navigator";
-    import Cookies from "js-cookie";
+    import {navigate} from "svelte-routing";
 
     let newPassword = "";
     let oldPassword = "";
@@ -14,8 +13,7 @@
         let fd = new FormData()
         fd.append("password", newPassword);
         fd.append("oldPassword", oldPassword);
-        fetch(`${baseurl}/user/get/password_change`,
-            {headers: {"Authorization": "Bearer " + Cookies.get("key")}, body: fd, method: "PATCH"})
+        fetch(`${baseurl}/user/get/password_change`, {credentials: "include", body: fd, method: "PATCH"})
             .then((r) => {
                 if (r.status === 200) {
                     navigate("/")

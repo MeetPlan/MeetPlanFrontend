@@ -8,10 +8,9 @@
     import Button, {Label} from "@smui/button";
     import IconButton from "@smui/button";
 
-    import { navigate, Link } from "svelte-navigator";
+    import { navigate, Link } from "svelte-routing";
 
     import Snackbar, {Actions} from "@smui/snackbar";
-    import type { SnackbarComponentDev } from '@smui/snackbar';
     import Cookies from "js-cookie";
 
     async function login() {
@@ -36,7 +35,7 @@
     let password = "";
     let name = "";
 
-    let snackbarWithClose: SnackbarComponentDev;
+    let snackbarWithClose: Snackbar;
 </script>
 
 

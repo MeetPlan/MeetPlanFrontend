@@ -1,5 +1,5 @@
 <script lang="ts">
-    import List, {Item, Text as TextList, Meta, PrimaryText} from "@smui/list";
+    import List, {Item, Meta, PrimaryText} from "@smui/list";
     import IconButton from "@smui/icon-button";
 
     import Avatar from "svelte-avatar";
@@ -8,7 +8,7 @@
 
     import Textfield from "@smui/textfield";
     import HelperText from '@smui/textfield/helper-text';
-    import {navigate} from "svelte-navigator";
+    import {navigate} from "svelte-routing";
     import Cookies from "js-cookie";
     import Autocomplete from "@smui-extra/autocomplete";
     import {onMount} from "svelte";

@@ -13,7 +13,7 @@
 
     import Select, {Option} from "@smui/select";
 
-    import { navigate } from "svelte-navigator";
+    import { navigate } from "svelte-routing";
     import {baseurl} from "./constants";
     import Cookies from "js-cookie";
     import DataTable, {Body, Cell, Head, Row} from "@smui/data-table";

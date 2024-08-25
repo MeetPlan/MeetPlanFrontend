@@ -1,14 +1,12 @@
 <script lang="ts">
-	import {Router, Route, globalHistory} from "svelte-navigator";
+	import {Router, Route, useLocation} from "svelte-routing";
 	import Drawer from "./Drawer.svelte";
 	import {AppContent} from "@smui/drawer";
-	import Error from "./Widgets/Error.svelte";
 	import isMobile from "is-mobile";
 	import Button, {Icon, Label} from "@smui/button";
-	import {onDestroy, onMount} from "svelte";
 	import Samotestiranje from "./Samotestiranje.svelte";
 	import Login from "./Login.svelte";
-	import Register from "./register.svelte";
+	import Register from "./Register.svelte";
 	import Users from "./Admin/Users.svelte";
 	import NewMeeting from "./NewMeeting.svelte";
 	import MyClass from "./MyClass.svelte";
@@ -36,18 +34,13 @@
 	let open = !mobile;
 
 	let pathname = window.location.pathname;
-	let unsub;
+	const location = useLocation();
 
-	onMount(() => {
-		unsub = globalHistory.listen(({ location, action }) => {
-			console.log(location, action);
-			pathname = location.pathname;
-		});
-	});
-
-	onDestroy(() => {
-		unsub();
-	});
+	$: () => {
+		console.log($location);
+		if ($location === undefined) return;
+		pathname = $location.pathname;
+	}
 </script>
 
 <div class="drawer-container">

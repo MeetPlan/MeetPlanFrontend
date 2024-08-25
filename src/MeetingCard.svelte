@@ -1,6 +1,6 @@
 <script lang="ts">
     import Tooltip, { Wrapper } from '@smui/tooltip';
-    import { link } from "svelte-navigator";
+    import { link } from "svelte-routing";
     import type {Meeting} from "./typescript-definitions/tsdef";
     import isMobile from "is-mobile";
 

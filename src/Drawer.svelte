@@ -6,7 +6,7 @@
         Scrim,
     } from '@smui/drawer';
     import List, {Item, Text, Graphic, Subheader, Group, Meta, Separator} from '@smui/list';
-    import { navigate } from "svelte-navigator";
+    import { navigate } from "svelte-routing";
     import IconButton from "@smui/icon-button";
     import Badge from '@smui-extra/badge';
 
@@ -23,7 +23,7 @@
     import isMobile from "is-mobile";
     import insane from "insane";
 
-    import {useLocation} from "svelte-navigator";
+    import {useLocation} from "svelte-routing";
     import Checkbox from "@smui/checkbox";
     import Cookies from "js-cookie";
     import * as child_process from "child_process";
