@@ -10,6 +10,8 @@
 
     import Snackbar, {Actions} from "@smui/snackbar";
     import * as constants from "./constants";
+    import {drawerOpen} from "./stores";
+    import isMobile from "is-mobile";
 
     async function login() {
         let fd = new FormData();
@@ -22,6 +24,7 @@
                 localStorage.setItem("role", response["data"]["role"]);
                 localStorage.setItem("userId", response["data"]["user_id"]);
                 localStorage.setItem("email", response["data"]["email"]);
+                drawerOpen.set(!isMobile());
                 navigate("/")
             } else {
                 snackbarWithClose.open();

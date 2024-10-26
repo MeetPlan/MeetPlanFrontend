@@ -53,8 +53,7 @@
         Za čim boljšo uporabniško izkušnjo, razvijalci MeetPlan sistema priporočajo uporabo računalnikov (namiznih ali prenosnih).
     </div>
 {/if}
-<h1>Pozdravljeni v MeetPlan sistemu</h1>
-<b>Vaša dovoljenja: {localStorage.getItem("role")}</b>
+Vaša dovoljenja: <b>{localStorage.getItem("role")}</b>
 <hr />
 <Select bind:classId variant="outlined">
     <Option value="" on:click={() => {

@@ -22,6 +22,7 @@
 
     import {useLocation} from "svelte-routing";
     import Checkbox from "@smui/checkbox";
+    import {drawerOpen, svelteLoc} from "./stores";
 
     const location = useLocation();
 
@@ -32,19 +33,18 @@
     let communicationUnread = {};
     let unreadMessages;
 
-    let allPaths = {};
+    let allPaths: Record<string, string> = {};
 
     let lastUrl = "";
-    let showDrawer = false;
     let hasRequested = false;
 
     $: (async () => {
-        statusCallback(open);
-        if (!($location.pathname === "/login" || $location.pathname === "/register")) {
-            showDrawer = true;
+        const path = $location.pathname;
 
-            let path = $location.pathname;
+        console.log(path);
+        svelteLoc.set(path);
 
+        if (path !== "/login" && path !== "/register") {
             if (path === lastUrl) {
                 return
             }
@@ -77,7 +77,7 @@
                     communicationActive = pathSplit[2];
                 }
             } else {
-                console.log("resetting", $location.pathname)
+                console.log("resetting", path)
                 meetingActive = undefined
                 communicationActive = undefined
             }
@@ -105,7 +105,7 @@
             return
         }
 
-        showDrawer = false;
+        drawerOpen.set(false);
         hasRequested = false;
 
         // Set a fake timeout to get the highest timeout id
@@ -160,8 +160,6 @@
     let user = 0;
 
     const mobile = isMobile();
-    export let open: boolean = !mobile;
-    export let statusCallback;
 
     async function fetchData() {
         if (hasRequested) {
@@ -237,7 +235,8 @@
     </DialogTitle>
     <DialogContent id="simple-content">
         <p/>
-        <Select bind:value={user} variant="outlined" style="width: 100%;" label="Izberite učenca">
+        <Select bind:value={user} variant="outlined" style="width: 100%; overflow: visible;"
+                label="Izberite učenca">
             <Option value="" on:click={() => user = -1}/>
             {#each users as c}
                 <Option on:click={async () => {
@@ -281,7 +280,6 @@
         aria-labelledby="simple-title"
         aria-describedby="list-content"
 >
-    <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
     <Title id="simple-title">
         <FormField>
             <Textfield
@@ -375,19 +373,8 @@
     </Actions>
 </Dialog>
 
-{#if showDrawer}
-    <Drawer variant={mobile ? "modal" : "dismissible"} fixed={false} style="position: absolute; top: 0;" bind:open>
-        <Header class="sameline">
-            <Title style="display:inline-block;">MeetPlan</Title>
-            <div style="display:inline-block; float:right;">
-                <IconButton class="material-icons" aria-hidden="true" on:click={() => navigate("/settings/user")}>settings</IconButton>
-                <IconButton class="material-icons" aria-hidden="true" on:click={() => {
-                    document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
-                    localStorage.clear()
-                    navigate("/login")
-                }}>logout</IconButton>
-            </div>
-        </Header>
+{#if $drawerOpen}
+    <Drawer variant={mobile ? "modal" : "dismissible"} fixed={false} style="position: absolute; top: 0;" bind:open={$drawerOpen}>
         <Content>
             <List>
                 <Item

@@ -16,8 +16,7 @@
     import Avatar from "svelte-avatar";
     import insane from "insane";
     import Error from "./Widgets/Error.svelte";
-    import List, {Item, Meta, PrimaryText} from "@smui/list";
-
+    import List, {Item, Meta, PrimaryText, Text as TextList} from "@smui/list";
 
     let meals = [];
     

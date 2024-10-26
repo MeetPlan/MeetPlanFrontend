@@ -6,7 +6,6 @@ html, body {
 
 body {
     margin: 0;
-    padding: 8px;
     box-sizing: border-box;
     font-family: 'Open Sans';
 }
@@ -61,30 +60,6 @@ button:focus {
     border-color: #666;
 }
 
-.drawer-container {
-    position: relative;
-    display: flex;
-    height: 100%;
-    border: 1px solid
-    var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));
-    overflow: hidden;
-    z-index: 0;
-}
-
-.app-content {
-    flex: auto;
-    overflow: auto;
-    position: relative;
-    flex-grow: 1;
-}
-
-.main-content {
-    overflow: auto;
-    padding: 16px;
-    height: 100%;
-    box-sizing: border-box;
-}
-
 .sameline {
     white-space: nowrap;
 }
@@ -93,10 +68,36 @@ button:focus {
     display: inline-block;
 }
 
-.center {
-    display:flex;
-    justify-content:center;
-    align-items:center;
+.drawer-container {
     position: relative;
+    overflow: hidden;
+}
+.app-content {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+    flex-grow: 1;
+    height: 100%;
+}
+.center {
     text-align: center;
+}
+.flexy {
+    display: flex;
+    flex-flow: column;
+    height: 100vh;
+}
+.flexor {
+    display: inline-flex;
+    flex-direction: column;
+    width: 100%;
+}
+.main-content {
+    overflow: auto;
+    padding: 16px;
+    height: 100%;
+    box-sizing: border-box;
+}
+#simple-content {
+    overflow: visible;
 }

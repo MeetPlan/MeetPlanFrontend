@@ -28,7 +28,7 @@
     async function getConfiguration() {
         let response = await fetch(`${baseurl}/admin/config/get`, {credentials: "include"});
         let r = await response.json();
-        let config = json["data"];
+        let config = r.data;
         schoolName = config["school_name"];
         postNumber = config["school_post_code"];
         city = config["school_city"];

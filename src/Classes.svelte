@@ -22,13 +22,13 @@
     async function getClasses() {
         let response = await fetch(`${baseurl}/classes/get`, {credentials: "include"});
         let r = await response.json();
-        items = r["data"];
+        items = r.data;
     }
 
     async function getTeachers() {
         let response = await fetch(`${baseurl}/teachers/get`, {credentials: "include"});
-        let r = response.json();
-        teachers = r["data"];
+        let r = await response.json();
+        teachers = r.data;
     }
 
     getClasses();
