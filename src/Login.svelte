@@ -16,7 +16,7 @@
         fd.append("email", email);
         fd.append("pass", password);
         try {
-            let r = await fetch(`${constants.baseurl}/user/login`, {body: fd, method: "POST"})
+            let r = await fetch(`${constants.baseurl}/user/login`, {body: fd, method: "POST", credentials: "include"})
             let response = await r.json();
             if (response["success"] === true) {
                 localStorage.setItem("role", response["data"]["role"]);
