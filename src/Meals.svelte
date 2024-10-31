@@ -113,7 +113,7 @@
         <h1>Dodaj nov meni</h1>
         <Textfield bind:value={date} label="Datum menija" type="date" required on:click={() => date = ""}>
             <Icon class="material-icons" slot="leadingIcon">event</Icon>
-            <HelperText slot="helper">Izberite prosim datum menija</HelperText>
+            <HelperText slot="helper">Izberite, prosim, datum menija</HelperText>
         </Textfield>
         <Textfield bind:value={mealName} label="Ime menija" required style="width: 100%;" helperLine$style="width: 100%;">
             <HelperText slot="helper">Izberite poljubno ime menija</HelperText>

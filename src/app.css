@@ -101,3 +101,6 @@ button:focus {
 #simple-content {
     overflow: visible;
 }
+.mdc-dialog__surface {
+    overflow: visible !important;
+}

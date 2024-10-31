@@ -85,7 +85,8 @@
             if (meetingActive !== undefined) {
                 allPaths[`/meeting/${meetingActive}`] = "srecanje"
                 allPaths[`/meeting/${meetingActive}/absence`] = "absenceManagement"
-                allPaths[`/meeting/${meetingActive}/grading`] = "grading"
+                allPaths[`/meeting/${meetingActive}/gradings`] = "gradings"
+                allPaths[`/meeting/${meetingActive}/grades`] = "grades"
                 allPaths[`/meeting/${meetingActive}/homework`] = "homework"
             }
             if (communicationActive !== undefined) {
@@ -562,8 +563,16 @@
                     </Item>
                     <Item
                             href="javascript:void(0)"
-                            on:click={() => navigate(`/meeting/${meetingActive}/grading`)}
-                            activated={active === 'grading'}
+                            on:click={() => navigate(`/meeting/${meetingActive}/gradings`)}
+                            activated={active === 'gradings'}
+                    >
+                        <Graphic class="material-icons" aria-hidden="true">grading</Graphic>
+                        <Text>Ocenjevanja</Text>
+                    </Item>
+                    <Item
+                            href="javascript:void(0)"
+                            on:click={() => navigate(`/meeting/${meetingActive}/grades`)}
+                            activated={active === 'grades'}
                     >
                         <Graphic class="material-icons" aria-hidden="true">grade</Graphic>
                         <Text>Ocene</Text>

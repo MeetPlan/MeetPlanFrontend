@@ -33,6 +33,7 @@
 	import IconButton from "@smui/icon-button";
 	import {baseurl} from "./constants";
 	import {drawerOpen, svelteLoc} from "./stores";
+	import MeetingGradings from "./MeetingGradings.svelte";
 
 	const mobile = isMobile();
 	let open = !mobile;
@@ -110,7 +111,10 @@
 						<Route path="/edit/:id" let:params >
 							<NewMeeting editId="{params.id}" />
 						</Route>
-						<Route path="/meeting/:id/grading" let:params >
+						<Route path="/meeting/:id/gradings" let:params >
+							<MeetingGradings meetingId="{params.id}" />
+						</Route>
+						<Route path="/meeting/:id/grades" let:params >
 							<SubjectGrades meetingId="{params.id}" />
 						</Route>
 						<Route path="/meeting/:id/absence" let:params >
