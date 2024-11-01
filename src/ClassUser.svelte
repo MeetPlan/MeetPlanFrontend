@@ -140,7 +140,7 @@
 </script>
 
 {#if userData}
-    <h1>{userData.Name}</h1>
+    <h1>{userData.Name} {userData.Surname}</h1>
 {/if}
 {#if localStorage.getItem("role") === "admin" || localStorage.getItem("role") === "principal" || localStorage.getItem("role") === "principal assistant" || localStorage.getItem("role") === "school psychologist"}
     <Button on:click={async () => {
@@ -178,7 +178,7 @@
                                     <div style="display:inline-block; width: 5px;"/>
                                     {#each period.Grades as grade}
                                         <Wrapper>
-                                            <span style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;">{grade.Grade}</span>
+                                            <span style="color: {grade.Counts ? gradeColors[grade.Grade - 1] : 'gray'}; display:inline-block; font-size: {grade.Counts ? 20 : 15}px;">{grade.Grade}</span>
                                             <Tooltip>
                                                 {#if grade.Description !== ''}
                                                     Opis ocene: {grade.Description}<br>

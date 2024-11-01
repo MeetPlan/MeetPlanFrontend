@@ -184,7 +184,7 @@
             {#each grades["Users"] as user}
                 <Row>
                     <Cell class="sameline">
-                        <div style="display:inline-block;">{user.Name}</div>
+                        <div style="display:inline-block;">{user.Name} {user.Surname}</div>
                         <div style="display:inline-block; font-size: 20px; float:right; color: gray;">{user.Average.toFixed(2)}</div>
                     </Cell>
                     {#each user.Periods as period, i}
@@ -201,7 +201,7 @@
                             <div class="sameline">
                                 <div style="display:inline-block; width: 5px;"/>
                                 {#each period.Grades as grade}
-                                    <div style="color: {gradeColors[grade.Grade - 1]}; display:inline-block; font-size: 20px;" on:click={(e) => {
+                                    <div style="color: {grade.Counts ? gradeColors[grade.Grade - 1] : 'gray'}; display:inline-block; font-size: {grade.Counts ? 20 : 15}px;" on:click={(e) => {
                                         e.stopPropagation();
                                         if (user.Final === 0 && grade.CanPatch === true) {
                                             toPatch = grade.ID;
