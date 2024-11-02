@@ -1,15 +1,26 @@
 // TypeScript definitions
 
-export declare interface UserJSON {
-    Name: string;
-    ID: string;
-    Email: string;
-    Role: string;
-    BirthCertificateNumber: string;
-    Birthday: string;
-    CityOfBirth: string;
-    CountryOfBirth: string;
-    IsPassing: boolean;
+export interface UserJSON {
+    ID: string
+    Email: string
+    Role: string
+    Name: string
+    Surname: string
+    EMSO: string
+    Citizenship: string
+    BeforeAchievedEducation: string
+    PermanentAddress: string
+    TemporaryAddress: string
+    TaxNumber: string
+    PhoneNumber: string
+    Gender: string
+    BirthCertificateNumber: string
+    Birthday: string
+    CityOfBirth: string
+    CountryOfBirth: string
+    IsPassing: boolean
+    IsLocked: boolean
+    IsMissingInfo: boolean
 }
 
 export declare interface Subject {

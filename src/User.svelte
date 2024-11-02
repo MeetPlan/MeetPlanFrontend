@@ -129,41 +129,6 @@
     getMyChildren();
 </script>
 
-{#if role === "student"}
-    <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={dateOfBirth} type="date" required on:change={async () => await patchUser()}>
-        <Icon class="material-icons" slot="leadingIcon">event</Icon>
-        <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={emso} label="EMŠO" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite EMŠO - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={citizenship} label="Državljanstvo" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite državljanstvo (npr. slovensko) - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={beforeAchievedEducation} label="Predhodno pridobljena izobrazba" style="width: 100%;" on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite predhodno pridobljeno izobrazbo (npr. OŠ Primer, 2013-2022)</HelperText>
-    </Textfield>
-{/if}
-{#if role === "student" || role === "parent"}
-    <Textfield bind:value={permanentAddress} label="Stalni naslov" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite stalni naslov - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={temporaryAddress} label="Začasni naslov" style="width: 100%;" required on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite začasni naslov - bodite zelo pozorni</HelperText>
-    </Textfield>
-    <Textfield bind:value={taxNumber} label="Država rojstva" style="width: 100%;" on:change={async () => await patchUser()}>
-        <HelperText slot="helper">Vpišite davčno številko - bodite zelo pozorni</HelperText>
-    </Textfield>
-{/if}
 <Textfield bind:value={name} label="Ime" style="width: 100%;" required on:change={async () => await patchUser()}>
     <HelperText slot="helper">Vpišite ime - bodite zelo pozorni</HelperText>
 </Textfield>
@@ -181,6 +146,42 @@
     <Option value="male">Moški</Option>
     <Option value="female">Ženski</Option>
 </Select>
+<p/>
+{#if role === "student" || role === "parent"}
+    <Textfield bind:value={permanentAddress} label="Stalni naslov" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite stalni naslov - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={temporaryAddress} label="Začasni naslov" style="width: 100%;" on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite začasni naslov - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={taxNumber} label="Davčna številka" style="width: 100%;" on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite davčno številko - bodite zelo pozorni</HelperText>
+    </Textfield>
+{/if}
+{#if role === "student"}
+    <Textfield bind:value={birthCertificateNumber} label="Številka matičnega lista" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite številko matičnega lista - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={birthCity} label="Kraj rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite kraj rojstva - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={birthCountry} label="Država rojstva" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite državo rojstva - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={dateOfBirth} type="date" required on:change={async () => await patchUser()}>
+        <Icon class="material-icons" slot="leadingIcon">event</Icon>
+        <HelperText slot="helper">Vpišite datum rojstva - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={emso} label="EMŠO" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite EMŠO (avtomatično preverja veljavnost glede na spol)</HelperText>
+    </Textfield>
+    <Textfield bind:value={citizenship} label="Državljanstvo" style="width: 100%;" required on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite državljanstvo (npr. slovensko) - bodite zelo pozorni</HelperText>
+    </Textfield>
+    <Textfield bind:value={beforeAchievedEducation} label="Predhodno pridobljena izobrazba" style="width: 100%;" on:change={async () => await patchUser()}>
+        <HelperText slot="helper">Vpišite predhodno pridobljeno izobrazbo (npr. OŠ Primer, 2013-2022)</HelperText>
+    </Textfield>
+{/if}
 
 {#if role === "student"}
     <h2>Dodaj učenca v razred:</h2>
